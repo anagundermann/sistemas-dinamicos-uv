@@ -1,27 +1,33 @@
 /* ==========================================================
-   SISTEMAS DINAMICOS UV - ESTILOS COMPARTIDOS
-   Editar colores en :root y distribucion en .sd-layout / .sd-intro.
+   SISTEMAS DINAMICOS UV — ESTILOS GENERALES
+   Disenado a 100 % de zoom del navegador.
+   Las tarjetas de navegacion se editan en zz-laboratorios.css.
+   Los conceptos se editan en zz-conceptos.css.
    ========================================================== */
 
-/* 1. PALETA */
+/* 1. PALETA Y TIPOGRAFIA */
 :root {
-    --sd-fondo: #F9F8FD;
+    --sd-fondo: #FFFFFF;
     --sd-blanco: #FFFFFF;
-    --sd-indigo: #211D4E;
+    --sd-indigo: #1E1B4B;
     --sd-violeta: #7C3AED;
     --sd-azul: #3B82F6;
     --sd-turquesa: #14B8A6;
     --sd-rosa: #EC4899;
-    --sd-lavanda: #F3EFFF;
-    --sd-texto: #35334F;
-    --sd-secundario: #62617D;
-    --sd-borde: #E5E1F2;
-    --sd-borde-violeta: #D9CBFA;
-    --sd-radio: 18px;
-    --sd-sombra: 0 5px 22px rgba(35, 28, 83, 0.045);
+    --sd-ambar: #F5B83D;
+    --sd-lavanda: #F3EDFF;
+    --sd-azul-suave: #EAF2FF;
+    --sd-turquesa-suave: #E5FAF6;
+    --sd-rosa-suave: #FCEAF3;
+    --sd-ambar-suave: #FFF2D8;
+    --sd-texto: #29254D;
+    --sd-secundario: #625E7C;
+    --sd-borde: #E7E1F4;
+    --sd-borde-violeta: #D9C8FF;
+    --sd-radio: 16px;
+    --sd-sombra: 0 6px 20px rgba(30, 27, 75, 0.07);
 }
 
-/* 2. BASE */
 *,
 *::before,
 *::after {
@@ -36,7 +42,9 @@ body {
     margin: 0;
     background: var(--sd-fondo);
     color: var(--sd-texto);
-    font: 19px/1.6 "Segoe UI", system-ui, Arial, sans-serif;
+    font-family: "Segoe UI", system-ui, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
 }
 
 button,
@@ -45,74 +53,117 @@ select {
     font: inherit;
 }
 
-/* 3. ESTRUCTURA Y ENCABEZADO */
 .sd-app {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     width: 100%;
-    padding: 24px clamp(18px, 2vw, 48px) 54px;
+    min-height: 100vh;
 }
 
+/* 2. ENCABEZADO — escala compacta y consistente */
 .sd-encabezado {
+    position: relative;
+    z-index: 20;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 12px 22px;
+    padding: 12px clamp(16px, 1.8vw, 32px);
+    background: var(--sd-blanco);
+    border-bottom: 1px solid var(--sd-borde);
+    box-shadow: 0 3px 12px rgba(30, 27, 75, 0.035);
+    overflow: visible;
+}
+
+.sd-marca {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    min-width: 0;
 }
 
 .sd-marca-etiqueta {
     color: var(--sd-violeta);
-    font-size: 0.88rem;
-    font-weight: 750;
-    letter-spacing: 0.09em;
+    font-size: 0.86rem;
+    font-weight: 800;
+    letter-spacing: 0.025em;
 }
 
 .sd-titulo-app {
-    margin: 2px 0 0;
+    margin: 0;
     color: var(--sd-indigo);
-    font-size: clamp(1.85rem, 2.5vw, 2.45rem);
-    font-weight: 760;
+    font-size: clamp(1.25rem, 1.45vw, 1.48rem);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.sd-acciones-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    margin-left: auto;
 }
 
 .sd-inicio {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 37px;
+    padding: 7px 12px;
     color: var(--sd-violeta);
-    background: var(--sd-blanco);
+    background: var(--sd-lavanda);
     border: 1px solid var(--sd-borde-violeta);
-    border-radius: 12px;
-    padding: 11px 20px;
-    font-size: 1.05rem;
-    font-weight: 700;
+    border-radius: 10px;
+    font-size: 0.98rem;
+    font-weight: 650;
+    line-height: 1.25;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .sd-inicio:hover,
 .sd-inicio.activo {
-    background: var(--sd-lavanda);
+    background: #EDE2FF;
 }
 
-/* 4. DISTRIBUCION GENERAL */
+/* 3. DISTRIBUCION — una columna lateral de tamano intermedio */
 .sd-layout {
     display: grid;
-    grid-template-columns: minmax(290px, 26%) minmax(0, 1fr);
-    gap: 24px;
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
     align-items: start;
+    gap: 16px;
     flex: 1;
     min-width: 0;
+    padding: 16px clamp(16px, 1.8vw, 32px);
 }
 
 .sd-contenido {
     min-width: 0;
 }
 
-/* 5. TARJETAS Y GRILLAS REUTILIZABLES */
+.sd-laboratorios {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.sd-laboratorios-titulo {
+    margin: 0 0 2px;
+    color: var(--sd-indigo);
+    font-size: 1.30rem;
+    font-weight: 800;
+}
+
+/* 4. TARJETAS Y GRILLAS COMPARTIDAS */
 .sd-tarjeta {
     min-width: 0;
-    padding: clamp(18px, 1.6vw, 25px);
+    padding: clamp(14px, 1.1vw, 20px);
     background: var(--sd-blanco);
-    border: 1px solid var(--sd-borde-violeta);
+    border: 1.5px solid var(--sd-borde-violeta);
     border-radius: var(--sd-radio);
     box-shadow: var(--sd-sombra);
 }
@@ -161,13 +212,13 @@ select {
 
 .sd-titulo-seccion {
     color: var(--sd-indigo);
-    font-size: 1.55rem;
+    font-size: 1.4rem;
     font-weight: 750;
 }
 
 .sd-titulo-tarjeta {
     color: var(--sd-indigo);
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 750;
 }
 
@@ -177,7 +228,7 @@ select {
 }
 
 .sd-formula {
-    padding: 7px;
+    padding: 8px;
     text-align: center;
     overflow-x: auto;
 }
@@ -188,114 +239,19 @@ select {
 
 .sd-vacia h2 {
     color: var(--sd-indigo);
-    font-size: 1.8rem;
+    font-size: 1.65rem;
 }
 
 .sd-vacia p {
     color: var(--sd-secundario);
 }
 
-/* 6. LABORATORIOS: NAVEGACION LATERAL */
-.sd-laboratorios {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-width: 0;
-}
-
-.sd-laboratorios-titulo {
-    margin: 0 0 5px;
-    color: var(--sd-indigo);
-    font-size: 1.55rem;
-    font-weight: 750;
-}
-
-.sd-lab-card {
-    --sd-color-lab: var(--sd-violeta);
-
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    width: 100%;
-    min-width: 0;
-    min-height: 112px;
-    padding: 18px 16px;
-    text-align: left;
-    background: var(--sd-blanco);
-    border: 1.5px solid var(--sd-color-lab);
-    border-radius: 15px;
-    box-shadow: var(--sd-sombra);
-    cursor: pointer;
-    transition: transform 150ms ease, box-shadow 150ms ease;
-}
-
-.sd-lab-card:hover,
-.sd-lab-card.activo {
-    box-shadow: 0 7px 22px rgba(35, 28, 83, 0.11);
-    transform: translateY(-1px);
-}
-
-.sd-lab-azul {
-    --sd-color-lab: var(--sd-azul);
-}
-
-.sd-lab-violeta {
-    --sd-color-lab: var(--sd-violeta);
-}
-
-.sd-lab-turquesa {
-    --sd-color-lab: var(--sd-turquesa);
-}
-
-.sd-lab-rosa {
-    --sd-color-lab: var(--sd-rosa);
-}
-
-.sd-lab-dibujo {
-    width: 88px;
-    height: 85px;
-    object-fit: contain;
-    flex-shrink: 0;
-}
-
-.sd-lab-textos {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-}
-
-.sd-lab-titulo {
-    color: var(--sd-indigo);
-    font-size: 1.28rem;
-    font-weight: 750;
-    line-height: 1.25;
-}
-
-.sd-lab-detalle {
-    color: var(--sd-secundario);
-    font-size: 1.02rem;
-}
-
-.sd-lab-explorar {
-    margin-top: 5px;
-    color: var(--sd-color-lab);
-    font-size: 1.05rem;
-    font-weight: 750;
-}
-
-.sd-lab-card:focus-visible,
-.sd-inicio:focus-visible {
-    outline: 3px solid var(--sd-violeta);
-    outline-offset: 3px;
-}
-
-/* 7. PORTADA: CENTRO Y COLUMNA DERECHA */
+/* 5. INTRODUCCION: CENTRO + TARJETAS DE LA DERECHA */
 .sd-intro {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
-    gap: 24px;
+    grid-template-columns: minmax(0, 1.1fr) minmax(290px, 0.9fr);
     align-items: stretch;
+    gap: 14px;
     min-width: 0;
 }
 
@@ -303,112 +259,112 @@ select {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: flex-start;
     min-height: 0;
-    padding: clamp(24px, 2.5vw, 38px);
-    text-align: left;
-    border-color: var(--sd-borde-violeta);
+    padding: clamp(16px, 1.3vw, 22px);
 }
 
 .sd-sobretitulo {
+    align-self: flex-start;
+    padding: 4px 10px;
     color: var(--sd-violeta);
-    font-size: 0.97rem;
+    background: var(--sd-lavanda);
+    border-radius: 999px;
+    font-size: 0.72rem;
     font-weight: 800;
-    letter-spacing: 0.075em;
+    letter-spacing: 0.035em;
 }
 
 .sd-portada-titulo {
-    margin: 16px 0;
+    margin: 13px 0 10px;
     color: var(--sd-indigo);
-    font-size: clamp(2.2rem, 2.8vw, 3.15rem);
-    font-weight: 780;
-    line-height: 1.18;
+    font-size: clamp(1.72rem, 2.1vw, 2.12rem);
+    font-weight: 800;
+    line-height: 1.13;
 }
 
 .sd-portada-descripcion {
     margin: 0;
     color: var(--sd-secundario);
-    font-size: 1.17rem;
-    line-height: 1.7;
+    font-size: 0.99rem;
+    line-height: 1.55;
 }
 
 .sd-portada-ilustracion {
     display: block;
     width: 100%;
-    max-width: 570px;
+    max-width: 360px;
     height: auto;
-    margin: 18px auto;
+    margin: 12px auto 16px;
 }
 
 .sd-portada-pie {
-    margin: 20px 0 0;
+    margin: 14px 0 0;
     color: var(--sd-secundario);
-    font-size: 1.02rem;
+    font-size: 0.84rem;
     text-align: center;
 }
 
-/* 8. PREGUNTAS DE LA PORTADA */
 .sd-portada-preguntas {
-    margin-top: 8px;
-    padding-top: 22px;
+    margin-top: auto;
+    padding-top: 16px;
     border-top: 1px solid var(--sd-borde);
 }
 
 .sd-portada-preguntas .sd-info-titulo {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .sd-portada-preguntas-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
+    gap: 8px;
 }
 
 .sd-portada-pregunta {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px 15px;
+    gap: 10px;
+    padding: 8px 10px;
     background: var(--sd-blanco);
     border: 1px solid var(--sd-borde-violeta);
-    border-radius: 12px;
+    border-radius: 10px;
 }
 
 .sd-portada-pregunta span {
-    display: flex;
-    justify-content: center;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    width: 37px;
-    height: 37px;
+    width: 32px;
+    min-height: 28px;
     color: var(--sd-violeta);
     background: var(--sd-lavanda);
-    border-radius: 10px;
-    font-size: 0.9rem;
+    border-radius: 8px;
+    font-size: 0.83rem;
     font-weight: 800;
 }
 
 .sd-portada-pregunta p {
     margin: 0;
     color: var(--sd-texto);
-    font-size: 1.02rem;
-    line-height: 1.4;
+    font-size: 0.92rem;
+    line-height: 1.35;
 }
 
-/* 9. TARJETAS DE INFORMACION */
+/* 6. TARJETAS DERECHAS */
 .sd-intro-derecha {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    gap: 11px;
     min-width: 0;
 }
 
 .sd-info-card {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: clamp(21px, 2vw, 30px);
-    border-color: var(--sd-borde-violeta);
+    gap: 9px;
+    padding: clamp(14px, 1.2vw, 19px);
     border-width: 1.5px;
 }
 
@@ -427,98 +383,93 @@ select {
 .sd-info-titulo {
     margin: 0;
     color: var(--sd-indigo);
-    font-size: 1.44rem;
-    font-weight: 750;
+    font-size: 1.08rem;
+    font-weight: 800;
     line-height: 1.3;
 }
 
 .sd-info-card p {
     margin: 0;
     color: var(--sd-secundario);
-    font-size: 1.07rem;
-    line-height: 1.6;
+    font-size: 0.96rem;
+    line-height: 1.5;
 }
 
-.sd-info-card .sd-formula {
-    padding: 12px 5px;
-    font-size: 1.24rem;
+.sd-info-matematica .sd-formula {
+    align-self: center;
+    max-width: 100%;
+    padding: 5px 13px;
+    background: var(--sd-lavanda);
+    border-radius: 999px;
+    font-size: 1.04rem;
 }
 
 .sd-info-ilustracion {
     display: block;
     width: 100%;
-    max-width: 360px;
-    max-height: 125px;
+    max-width: 290px;
+    max-height: 92px;
     object-fit: contain;
-    margin: 6px auto 0;
-}
-
-.sd-info-nota {
-    color: var(--sd-secundario) !important;
+    margin: 5px auto 0;
 }
 
 .sd-pasos {
+    list-style: none;
+    counter-reset: sd-paso;
     margin: 0;
-    padding-left: 26px;
-    color: var(--sd-texto);
-    font-size: 1.08rem;
+    padding: 0;
 }
 
 .sd-pasos li {
-    margin: 9px 0;
-    padding-left: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 7px 0;
+    color: var(--sd-texto);
+    font-size: 0.96rem;
 }
 
-/* 10. CONSULTA DE CONCEPTOS GLOBAL */
-.sd-conceptos-global {
-    width: 100%;
-    margin-top: 8px;
-}
-
-.sd-conceptos-global .sd-info-card {
-    padding: 23px;
-    border-color: var(--sd-violeta);
-}
-
-.sd-conceptos-global .sd-info-titulo {
-    margin-bottom: 14px;
-    font-size: 1.35rem;
-}
-
-.sd-concepto-selector {
-    font-size: 1.05rem;
-}
-
-.sd-conceptos-ayuda {
-    margin-top: 10px !important;
-    font-size: 1rem !important;
-    line-height: 1.55;
-}
-
-.sd-conceptos .Select-control,
-.sd-conceptos-global .Select-control {
-    border-color: var(--sd-borde-violeta);
-}
-
-.sd-conceptos-global .Select-control {
-    min-height: 44px;
-}
-
-.sd-modal-subtitulo {
-    margin: 10px 0 8px;
+.sd-pasos li::before {
+    counter-increment: sd-paso;
+    content: counter(sd-paso);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 25px;
+    height: 25px;
     color: var(--sd-indigo);
-    font-size: 1.15rem;
+    background: var(--sd-ambar);
+    border-radius: 50%;
+    font-size: 0.83rem;
+    font-weight: 800;
 }
 
-/* 11. FOOTER: IZQUIERDA 25%, CENTRO 50%, DERECHA 25% */
+.sd-info-experimento .sd-info-nota {
+    margin-top: 6px;
+    padding: 10px 12px;
+    color: var(--sd-indigo) !important;
+    background: var(--sd-ambar-suave);
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.sd-info-experimento .sd-info-nota::before {
+    content: "➜";
+    color: #BD7800;
+    margin-right: 8px;
+}
+
+/* 7. PIE COMPARTIDO */
 .sd-footer {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
     align-items: center;
     gap: 12px;
-    width: 100%;
-    margin-top: 28px;
-    padding: 16px 4px;
+    width: auto;
+    margin: 20px clamp(16px, 1.8vw, 32px) 0;
+    padding: 15px 4px;
     background: transparent;
     border-top: 1px solid var(--sd-borde-violeta);
 }
@@ -533,14 +484,14 @@ select {
 .sd-footer-titulo,
 .sd-footer-subtitulo {
     color: var(--sd-indigo);
-    font-size: 1rem;
+    font-size: 0.98rem;
     font-weight: 750;
     line-height: 1.35;
 }
 
 .sd-footer-texto {
     color: var(--sd-secundario);
-    font-size: 0.96rem;
+    font-size: 0.93rem;
     line-height: 1.4;
 }
 
@@ -558,14 +509,13 @@ select {
     text-align: right;
 }
 
-/* Compatibilidad si alguna pagina muestra el anio por separado. */
 .sd-footer-anio {
     color: var(--sd-violeta);
-    font-size: 1rem;
+    font-size: 0.96rem;
     font-weight: 750;
 }
 
-/* 12. TABLETS Y PORTATILES ESTRECHOS */
+/* 8. RESPONSIVE */
 @media (max-width: 1240px) {
     .sd-footer {
         grid-template-columns: minmax(0, 1fr);
@@ -585,32 +535,52 @@ select {
 
 @media (max-width: 1180px) {
     .sd-layout {
-        grid-template-columns: minmax(250px, 30%) minmax(0, 1fr);
+        grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
     }
 
     .sd-intro {
         grid-template-columns: minmax(0, 1fr);
     }
 
-    .sd-info-ilustracion {
-        max-width: 430px;
+    .sd-intro-derecha {
+        grid-template-rows: auto;
     }
 }
 
-/* 13. CELULARES */
 @media (max-width: 760px) {
-    body {
-        font-size: 17px;
+    .sd-encabezado {
+        padding: 12px 16px;
     }
 
-    .sd-app {
-        padding: 14px 12px 34px;
+    .sd-marca {
+        width: 100%;
+    }
+
+    .sd-marca-etiqueta {
+        font-size: 0.83rem;
+    }
+
+    .sd-titulo-app {
+        font-size: 1.27rem;
+    }
+
+    .sd-acciones-cabecera {
+        margin-left: 0;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    .sd-inicio {
+        font-size: 0.98rem;
+        padding: 7px 11px;
+        min-height: 36px;
     }
 
     .sd-layout {
         display: flex;
         flex-direction: column;
-        gap: 22px;
+        gap: 18px;
+        padding: 16px 12px;
     }
 
     .sd-laboratorios,
@@ -618,28 +588,8 @@ select {
         width: 100%;
     }
 
-    .sd-lab-card {
-        min-height: 95px;
-        padding: 14px;
-    }
-
-    .sd-lab-dibujo {
-        width: 72px;
-        height: 70px;
-    }
-
-    .sd-lab-titulo {
-        font-size: 1.15rem;
-    }
-
-    .sd-intro {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-    }
-
     .sd-portada-titulo {
-        font-size: clamp(1.9rem, 7vw, 2.4rem);
+        font-size: clamp(1.75rem, 6vw, 2.2rem);
     }
 
     .sd-portada-ilustracion {
@@ -647,26 +597,21 @@ select {
     }
 
     .sd-info-card {
-        padding: 21px;
+        padding: 16px;
     }
 
     .sd-info-titulo {
-        font-size: 1.3rem;
+        font-size: 1.07rem;
     }
 
     .sd-footer {
-        margin-top: 24px;
+        margin: 18px 12px 0;
         padding: 16px 4px;
     }
 }
 
-/* 14. ACCESIBILIDAD */
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
-    }
-
-    .sd-lab-card {
-        transition: none;
     }
 }

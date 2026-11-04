@@ -148,8 +148,9 @@ app.layout = html.Div(
             className="sd-encabezado",
             children=[
                 html.Div(
+                    className="sd-marca",
                     children=[
-                        html.Div(
+                        html.Span(
                             "UNIVERSIDAD DE VALPARAÍSO",
                             className="sd-marca-etiqueta",
                         ),
@@ -159,15 +160,22 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                html.Button(
-                    "Inicio",
-                    id="sd-ir-inicio",
-                    n_clicks=0,
-                    className="sd-inicio",
+                html.Div(
+                    className="sd-acciones-cabecera",
+                    children=[
+                        crear_consulta_conceptos(),
+                        html.Button(
+                            "Inicio",
+                            id="sd-ir-inicio",
+                            n_clicks=0,
+                            className="sd-inicio",
+                        ),
+                    ],
                 ),
             ],
         ),
         html.Div(
+            id="sd-layout",
             className="sd-layout",
             children=[
                 html.Aside(
@@ -178,11 +186,6 @@ app.layout = html.Div(
                             className="sd-laboratorios-titulo",
                         ),
                         *[crear_tarjeta_navegacion(*modelo) for modelo in LABORATORIOS],
-                        # Componente global y permanente.
-                        html.Div(
-                            className="sd-conceptos-global",
-                            children=crear_consulta_conceptos(),
-                        ),
                     ],
                 ),
                 html.Main(
@@ -223,10 +226,12 @@ def cambiar_pagina(*_):
 @app.callback(
     Output("sd-contenido-pagina", "children"),
     Output("sd-ir-inicio", "className"),
+    Output("sd-layout", "className"),
     *[Output(f"sd-nav-{clave}", "className") for clave, _, _, _ in LABORATORIOS],
     Input("sd-pagina-activa", "data"),
 )
 def mostrar_pagina(pagina):
+
     nombre, modulo = PAGINAS.get(
         pagina,
         PAGINAS["introduccion"],
@@ -245,14 +250,27 @@ def mostrar_pagina(pagina):
             ],
         )
 
-    clase_inicio = "sd-inicio activo" if pagina == "introduccion" else "sd-inicio"
+    # La portada muestra las tres columnas.
+    # Los laboratorios ocupan todo el ancho disponible.
+
+    if pagina == "introduccion":
+        clase_layout = "sd-layout"
+        clase_inicio = "sd-inicio activo"
+    else:
+        clase_layout = "sd-layout sd-layout-laboratorio"
+        clase_inicio = "sd-inicio"
 
     clases_labs = [
         f"sd-lab-card sd-lab-{color}" + (" activo" if pagina == clave else "")
         for clave, _, _, color in LABORATORIOS
     ]
 
-    return contenido, clase_inicio, *clases_labs
+    return (
+        contenido,
+        clase_inicio,
+        clase_layout,
+        *clases_labs,
+    )
 
 
 # --------------------------------------------------

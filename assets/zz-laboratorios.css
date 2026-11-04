@@ -1,0 +1,197 @@
+/* ==========================================================
+   SISTEMAS DINAMICOS UV
+   CUATRO TARJETAS DE LABORATORIOS
+   VERSION COMPACTA
+   ========================================================== */
+
+/* COLORES */
+
+.sd-lab-azul {
+    --sd-color-lab: var(--sd-azul);
+    --sd-fondo-icono: var(--sd-azul-suave);
+}
+
+.sd-lab-violeta {
+    --sd-color-lab: var(--sd-violeta);
+    --sd-fondo-icono: var(--sd-lavanda);
+}
+
+.sd-lab-turquesa {
+    --sd-color-lab: var(--sd-turquesa);
+    --sd-fondo-icono: var(--sd-turquesa-suave);
+}
+
+.sd-lab-rosa {
+    --sd-color-lab: var(--sd-rosa);
+    --sd-fondo-icono: var(--sd-rosa-suave);
+}
+
+/* TARJETA COMPLETA */
+
+.sd-lab-card {
+    display: grid;
+    grid-template-columns: 39% minmax(0, 1fr);
+    align-items: center;
+
+    gap: 9px;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 122px;
+    padding: 7px;
+
+    text-align: left;
+    color: var(--sd-indigo);
+    background: #FFFFFF;
+
+    border: 1.5px solid var(--sd-color-lab);
+    border-radius: 14px;
+
+    box-shadow: var(--sd-sombra);
+    cursor: pointer;
+
+    transition:
+        transform 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.sd-lab-card:hover,
+.sd-lab-card.activo {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(30, 27, 75, 0.13);
+}
+
+/* DIBUJO ADAPTABLE */
+
+.sd-lab-dibujo {
+    display: block;
+
+    width: 100%;
+    height: 106px;
+    min-width: 0;
+
+    padding: 4px;
+    object-fit: contain;
+
+    background: var(--sd-fondo-icono);
+    border-radius: 10px;
+}
+
+/* TEXTOS */
+
+.sd-lab-textos {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+
+    gap: 4px;
+    min-width: 0;
+}
+
+.sd-lab-titulo {
+    display: block;
+    margin: 0;
+
+    color: var(--sd-indigo);
+
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.2;
+
+    overflow-wrap: break-word;
+}
+
+.sd-lab-detalle {
+    display: block;
+    margin: 0;
+
+    color: var(--sd-secundario);
+
+    font-size: 0.96rem;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+/* EXPLORAR */
+
+.sd-lab-explorar {
+    position: static;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    align-self: flex-end;
+
+    margin: 5px 0 0;
+    padding: 5px 9px;
+
+    color: var(--sd-color-lab);
+
+    background: color-mix(in srgb,
+            var(--sd-color-lab) 14%,
+            white);
+
+    border-radius: 999px;
+
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+/* ACCESIBILIDAD */
+
+.sd-lab-card:focus-visible {
+    outline: 3px solid var(--sd-violeta);
+    outline-offset: 3px;
+}
+
+/* PANTALLAS INTERMEDIAS */
+
+@media (min-width: 761px) and (max-width: 1180px) {
+    .sd-lab-card {
+        grid-template-columns: 38% minmax(0, 1fr);
+        min-height: 122px;
+    }
+
+    .sd-lab-dibujo {
+        height: 106px;
+    }
+}
+
+/* CELULARES */
+
+@media (max-width: 760px) {
+    .sd-lab-card {
+        grid-template-columns: 37% minmax(0, 1fr);
+        min-height: 125px;
+        gap: 10px;
+        padding: 8px;
+    }
+
+    .sd-lab-dibujo {
+        height: 107px;
+    }
+
+    .sd-lab-titulo {
+        font-size: 1.05rem;
+    }
+
+    .sd-lab-detalle {
+        font-size: 0.96rem;
+    }
+
+    .sd-lab-explorar {
+        font-size: 0.88rem;
+    }
+}
+
+/* MOVIMIENTO REDUCIDO */
+
+@media (prefers-reduced-motion: reduce) {
+    .sd-lab-card {
+        transition: none;
+    }
+}
