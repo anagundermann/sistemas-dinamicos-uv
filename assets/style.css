@@ -1,0 +1,672 @@
+/* ==========================================================
+   SISTEMAS DINAMICOS UV - ESTILOS COMPARTIDOS
+   Editar colores en :root y distribucion en .sd-layout / .sd-intro.
+   ========================================================== */
+
+/* 1. PALETA */
+:root {
+    --sd-fondo: #F9F8FD;
+    --sd-blanco: #FFFFFF;
+    --sd-indigo: #211D4E;
+    --sd-violeta: #7C3AED;
+    --sd-azul: #3B82F6;
+    --sd-turquesa: #14B8A6;
+    --sd-rosa: #EC4899;
+    --sd-lavanda: #F3EFFF;
+    --sd-texto: #35334F;
+    --sd-secundario: #62617D;
+    --sd-borde: #E5E1F2;
+    --sd-borde-violeta: #D9CBFA;
+    --sd-radio: 18px;
+    --sd-sombra: 0 5px 22px rgba(35, 28, 83, 0.045);
+}
+
+/* 2. BASE */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: var(--sd-fondo);
+    color: var(--sd-texto);
+    font: 19px/1.6 "Segoe UI", system-ui, Arial, sans-serif;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+/* 3. ESTRUCTURA Y ENCABEZADO */
+.sd-app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    padding: 24px clamp(18px, 2vw, 48px) 54px;
+}
+
+.sd-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.sd-marca-etiqueta {
+    color: var(--sd-violeta);
+    font-size: 0.88rem;
+    font-weight: 750;
+    letter-spacing: 0.09em;
+}
+
+.sd-titulo-app {
+    margin: 2px 0 0;
+    color: var(--sd-indigo);
+    font-size: clamp(1.85rem, 2.5vw, 2.45rem);
+    font-weight: 760;
+}
+
+.sd-inicio {
+    color: var(--sd-violeta);
+    background: var(--sd-blanco);
+    border: 1px solid var(--sd-borde-violeta);
+    border-radius: 12px;
+    padding: 11px 20px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.sd-inicio:hover,
+.sd-inicio.activo {
+    background: var(--sd-lavanda);
+}
+
+/* 4. DISTRIBUCION GENERAL */
+.sd-layout {
+    display: grid;
+    grid-template-columns: minmax(290px, 26%) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+    flex: 1;
+    min-width: 0;
+}
+
+.sd-contenido {
+    min-width: 0;
+}
+
+/* 5. TARJETAS Y GRILLAS REUTILIZABLES */
+.sd-tarjeta {
+    min-width: 0;
+    padding: clamp(18px, 1.6vw, 25px);
+    background: var(--sd-blanco);
+    border: 1px solid var(--sd-borde-violeta);
+    border-radius: var(--sd-radio);
+    box-shadow: var(--sd-sombra);
+}
+
+.sd-tarjeta-grafico {
+    overflow: hidden;
+}
+
+.sd-tarjeta-resultado {
+    border-color: var(--sd-azul);
+}
+
+.sd-tarjeta-matematica {
+    border-color: var(--sd-violeta);
+}
+
+.sd-tarjeta-controles {
+    border-color: var(--sd-borde);
+}
+
+.sd-tarjeta-explicacion {
+    border-color: var(--sd-turquesa);
+}
+
+.sd-tarjeta-compacta {
+    padding: 14px;
+}
+
+.sd-tarjeta-acento {
+    border-color: var(--sd-rosa);
+}
+
+.sd-grid {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+}
+
+.sd-grid-dos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sd-grid-tres {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.sd-titulo-seccion {
+    color: var(--sd-indigo);
+    font-size: 1.55rem;
+    font-weight: 750;
+}
+
+.sd-titulo-tarjeta {
+    color: var(--sd-indigo);
+    font-size: 1.3rem;
+    font-weight: 750;
+}
+
+.sd-contenedor-grafico {
+    width: 100%;
+    min-width: 0;
+}
+
+.sd-formula {
+    padding: 7px;
+    text-align: center;
+    overflow-x: auto;
+}
+
+.sd-formula p {
+    margin: 0;
+}
+
+.sd-vacia h2 {
+    color: var(--sd-indigo);
+    font-size: 1.8rem;
+}
+
+.sd-vacia p {
+    color: var(--sd-secundario);
+}
+
+/* 6. LABORATORIOS: NAVEGACION LATERAL */
+.sd-laboratorios {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
+.sd-laboratorios-titulo {
+    margin: 0 0 5px;
+    color: var(--sd-indigo);
+    font-size: 1.55rem;
+    font-weight: 750;
+}
+
+.sd-lab-card {
+    --sd-color-lab: var(--sd-violeta);
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-width: 0;
+    min-height: 112px;
+    padding: 18px 16px;
+    text-align: left;
+    background: var(--sd-blanco);
+    border: 1.5px solid var(--sd-color-lab);
+    border-radius: 15px;
+    box-shadow: var(--sd-sombra);
+    cursor: pointer;
+    transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.sd-lab-card:hover,
+.sd-lab-card.activo {
+    box-shadow: 0 7px 22px rgba(35, 28, 83, 0.11);
+    transform: translateY(-1px);
+}
+
+.sd-lab-azul {
+    --sd-color-lab: var(--sd-azul);
+}
+
+.sd-lab-violeta {
+    --sd-color-lab: var(--sd-violeta);
+}
+
+.sd-lab-turquesa {
+    --sd-color-lab: var(--sd-turquesa);
+}
+
+.sd-lab-rosa {
+    --sd-color-lab: var(--sd-rosa);
+}
+
+.sd-lab-dibujo {
+    width: 88px;
+    height: 85px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.sd-lab-textos {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.sd-lab-titulo {
+    color: var(--sd-indigo);
+    font-size: 1.28rem;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.sd-lab-detalle {
+    color: var(--sd-secundario);
+    font-size: 1.02rem;
+}
+
+.sd-lab-explorar {
+    margin-top: 5px;
+    color: var(--sd-color-lab);
+    font-size: 1.05rem;
+    font-weight: 750;
+}
+
+.sd-lab-card:focus-visible,
+.sd-inicio:focus-visible {
+    outline: 3px solid var(--sd-violeta);
+    outline-offset: 3px;
+}
+
+/* 7. PORTADA: CENTRO Y COLUMNA DERECHA */
+.sd-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+    gap: 24px;
+    align-items: stretch;
+    min-width: 0;
+}
+
+.sd-portada-central {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    min-height: 0;
+    padding: clamp(24px, 2.5vw, 38px);
+    text-align: left;
+    border-color: var(--sd-borde-violeta);
+}
+
+.sd-sobretitulo {
+    color: var(--sd-violeta);
+    font-size: 0.97rem;
+    font-weight: 800;
+    letter-spacing: 0.075em;
+}
+
+.sd-portada-titulo {
+    margin: 16px 0;
+    color: var(--sd-indigo);
+    font-size: clamp(2.2rem, 2.8vw, 3.15rem);
+    font-weight: 780;
+    line-height: 1.18;
+}
+
+.sd-portada-descripcion {
+    margin: 0;
+    color: var(--sd-secundario);
+    font-size: 1.17rem;
+    line-height: 1.7;
+}
+
+.sd-portada-ilustracion {
+    display: block;
+    width: 100%;
+    max-width: 570px;
+    height: auto;
+    margin: 18px auto;
+}
+
+.sd-portada-pie {
+    margin: 20px 0 0;
+    color: var(--sd-secundario);
+    font-size: 1.02rem;
+    text-align: center;
+}
+
+/* 8. PREGUNTAS DE LA PORTADA */
+.sd-portada-preguntas {
+    margin-top: 8px;
+    padding-top: 22px;
+    border-top: 1px solid var(--sd-borde);
+}
+
+.sd-portada-preguntas .sd-info-titulo {
+    margin-bottom: 16px;
+}
+
+.sd-portada-preguntas-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+}
+
+.sd-portada-pregunta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 15px;
+    background: var(--sd-blanco);
+    border: 1px solid var(--sd-borde-violeta);
+    border-radius: 12px;
+}
+
+.sd-portada-pregunta span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    width: 37px;
+    height: 37px;
+    color: var(--sd-violeta);
+    background: var(--sd-lavanda);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.sd-portada-pregunta p {
+    margin: 0;
+    color: var(--sd-texto);
+    font-size: 1.02rem;
+    line-height: 1.4;
+}
+
+/* 9. TARJETAS DE INFORMACION */
+.sd-intro-derecha {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    min-width: 0;
+}
+
+.sd-info-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: clamp(21px, 2vw, 30px);
+    border-color: var(--sd-borde-violeta);
+    border-width: 1.5px;
+}
+
+.sd-info-matematica {
+    border-color: var(--sd-violeta);
+}
+
+.sd-info-instrucciones {
+    border-color: var(--sd-azul);
+}
+
+.sd-info-experimento {
+    border-color: var(--sd-turquesa);
+}
+
+.sd-info-titulo {
+    margin: 0;
+    color: var(--sd-indigo);
+    font-size: 1.44rem;
+    font-weight: 750;
+    line-height: 1.3;
+}
+
+.sd-info-card p {
+    margin: 0;
+    color: var(--sd-secundario);
+    font-size: 1.07rem;
+    line-height: 1.6;
+}
+
+.sd-info-card .sd-formula {
+    padding: 12px 5px;
+    font-size: 1.24rem;
+}
+
+.sd-info-ilustracion {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    max-height: 125px;
+    object-fit: contain;
+    margin: 6px auto 0;
+}
+
+.sd-info-nota {
+    color: var(--sd-secundario) !important;
+}
+
+.sd-pasos {
+    margin: 0;
+    padding-left: 26px;
+    color: var(--sd-texto);
+    font-size: 1.08rem;
+}
+
+.sd-pasos li {
+    margin: 9px 0;
+    padding-left: 6px;
+}
+
+/* 10. CONSULTA DE CONCEPTOS GLOBAL */
+.sd-conceptos-global {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.sd-conceptos-global .sd-info-card {
+    padding: 23px;
+    border-color: var(--sd-violeta);
+}
+
+.sd-conceptos-global .sd-info-titulo {
+    margin-bottom: 14px;
+    font-size: 1.35rem;
+}
+
+.sd-concepto-selector {
+    font-size: 1.05rem;
+}
+
+.sd-conceptos-ayuda {
+    margin-top: 10px !important;
+    font-size: 1rem !important;
+    line-height: 1.55;
+}
+
+.sd-conceptos .Select-control,
+.sd-conceptos-global .Select-control {
+    border-color: var(--sd-borde-violeta);
+}
+
+.sd-conceptos-global .Select-control {
+    min-height: 44px;
+}
+
+.sd-modal-subtitulo {
+    margin: 10px 0 8px;
+    color: var(--sd-indigo);
+    font-size: 1.15rem;
+}
+
+/* 11. FOOTER: IZQUIERDA 25%, CENTRO 50%, DERECHA 25% */
+.sd-footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-top: 28px;
+    padding: 16px 4px;
+    background: transparent;
+    border-top: 1px solid var(--sd-borde-violeta);
+}
+
+.sd-footer-bloque {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.sd-footer-titulo,
+.sd-footer-subtitulo {
+    color: var(--sd-indigo);
+    font-size: 1rem;
+    font-weight: 750;
+    line-height: 1.35;
+}
+
+.sd-footer-texto {
+    color: var(--sd-secundario);
+    font-size: 0.96rem;
+    line-height: 1.4;
+}
+
+.sd-footer-integrantes {
+    align-items: center;
+    text-align: center;
+}
+
+.sd-footer-nombres {
+    white-space: nowrap;
+}
+
+.sd-footer-final {
+    align-items: flex-end;
+    text-align: right;
+}
+
+/* Compatibilidad si alguna pagina muestra el anio por separado. */
+.sd-footer-anio {
+    color: var(--sd-violeta);
+    font-size: 1rem;
+    font-weight: 750;
+}
+
+/* 12. TABLETS Y PORTATILES ESTRECHOS */
+@media (max-width: 1240px) {
+    .sd-footer {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .sd-footer-integrantes,
+    .sd-footer-final {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .sd-footer-nombres {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 1180px) {
+    .sd-layout {
+        grid-template-columns: minmax(250px, 30%) minmax(0, 1fr);
+    }
+
+    .sd-intro {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sd-info-ilustracion {
+        max-width: 430px;
+    }
+}
+
+/* 13. CELULARES */
+@media (max-width: 760px) {
+    body {
+        font-size: 17px;
+    }
+
+    .sd-app {
+        padding: 14px 12px 34px;
+    }
+
+    .sd-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .sd-laboratorios,
+    .sd-contenido {
+        width: 100%;
+    }
+
+    .sd-lab-card {
+        min-height: 95px;
+        padding: 14px;
+    }
+
+    .sd-lab-dibujo {
+        width: 72px;
+        height: 70px;
+    }
+
+    .sd-lab-titulo {
+        font-size: 1.15rem;
+    }
+
+    .sd-intro {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .sd-portada-titulo {
+        font-size: clamp(1.9rem, 7vw, 2.4rem);
+    }
+
+    .sd-portada-ilustracion {
+        max-width: 360px;
+    }
+
+    .sd-info-card {
+        padding: 21px;
+    }
+
+    .sd-info-titulo {
+        font-size: 1.3rem;
+    }
+
+    .sd-footer {
+        margin-top: 24px;
+        padding: 16px 4px;
+    }
+}
+
+/* 14. ACCESIBILIDAD */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .sd-lab-card {
+        transition: none;
+    }
+}
