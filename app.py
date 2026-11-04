@@ -134,7 +134,7 @@ app = Dash(
     suppress_callback_exceptions=True,
 )
 
-app.title = "Sistemas Dinámicos UV"
+app.title = "Sistemas Dinámicos"
 
 
 app.layout = html.Div(
@@ -150,12 +150,8 @@ app.layout = html.Div(
                 html.Div(
                     className="sd-marca",
                     children=[
-                        html.Span(
-                            "UNIVERSIDAD DE VALPARAÍSO",
-                            className="sd-marca-etiqueta",
-                        ),
                         html.H1(
-                            "Sistemas Dinámicos UV",
+                            "Sistemas Dinámicos",
                             className="sd-titulo-app",
                         ),
                     ],
