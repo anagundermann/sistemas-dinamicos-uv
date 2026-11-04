@@ -1,6 +1,7 @@
 """Sistemas Dinamicos UV: aplicacion y navegacion principal."""
 
 from urllib.parse import quote
+import networkx as nx
 
 from dash import Dash, Input, Output, ctx, dcc, html
 from dash.exceptions import PreventUpdate
