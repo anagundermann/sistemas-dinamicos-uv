@@ -44,7 +44,7 @@ def crear_footer():
                         className="sd-footer-subtitulo",
                     ),
                     html.Span(
-                        "Visualización de Datos · Tarea 3 · 2026",
+                        "Visualización de Datos · 2026",
                         className="sd-footer-texto",
                     ),
                 ],
