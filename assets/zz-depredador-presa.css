@@ -53,13 +53,15 @@
 .lv-pagina .lv-distribucion {
     display: grid;
     grid-template-columns: minmax(260px, 27fr) minmax(0, 73fr);
-    align-items: start;
+    align-items: stretch;
     gap: 12px;
     min-width: 0;
 }
 
 .lv-pagina .lv-panel-controles {
-    padding: 12px 15px 8px;
+    align-self: stretch;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 .lv-pagina .lv-panel-controles>.sd-titulo-tarjeta {
@@ -184,7 +186,7 @@
 
 /* Recuadro de equilibrio: blanco, borde discreto, cifras destacadas. */
 .lv-pagina .lv-equilibrio-recuadro {
-    min-width: 0;
+    min-width: 340x;
     padding: 8px 12px;
     border: 1.5px solid #bdd8f2;
     border-radius: 11px;
@@ -215,8 +217,9 @@
 .lv-pagina .lv-equilibrio-etiqueta {
     font-size: 0.70rem;
     color: var(--sd-secundario);
-    white-space: normal;
+    white-space: nowrap;
     line-height: 1.25;
+    min-height: 2.5em;
 }
 
 .lv-pagina .lv-equilibrio-numero {

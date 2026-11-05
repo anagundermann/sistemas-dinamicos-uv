@@ -4,7 +4,8 @@ La presentacion de esta pagina se controla en assets/zz-depredador-presa.css.
 Se mantienen los seis parametros y los identificadores de los callbacks originales.
 """
 
-from dash import Input, Output, State, ctx, dcc, html, no_update
+from components.barra_animacion_lv import crear_barra_animacion_vista_previa
+from dash import Input, Output, State, ctx, dcc, get_asset_url, html, no_update
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 
@@ -97,6 +98,21 @@ def crear_pagina():
                         className="sd-titulo-seccion lv-titulo",
                     ),
                     html.Div(
+                        className="lv-cabecera-siluetas",
+                        children=[
+                            html.Img(
+                                src=get_asset_url("zorro-lineal.svg"),
+                                alt="",
+                                className="lv-silueta-zorro",
+                            ),
+                            html.Img(
+                                src=get_asset_url("conejo-lineal.svg"),
+                                alt="",
+                                className="lv-silueta-conejo",
+                            ),
+                        ],
+                    ),
+                    html.Div(
                         className="lv-botones-info",
                         children=[
                             dbc.Button(
@@ -156,6 +172,7 @@ def crear_pagina():
                                     html.Div(
                                         id="lv-lectura", className="sd-modal-texto"
                                     ),
+                                    crear_barra_animacion_vista_previa(),
                                 ],
                             ),
                         ],
@@ -347,10 +364,6 @@ def registrar_callbacks(app):
                                 html.Strong("Plano de fases. "),
                                 "Muestra la trayectoria (x(t), y(t)) alrededor del equilibrio.",
                             ]
-                        ),
-                        html.P(
-                            "Prueba cambiar un parámetro y observa cómo varían las oscilaciones y el equilibrio.",
-                            className="lv-sugerencia",
                         ),
                     ],
                 ),

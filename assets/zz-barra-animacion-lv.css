@@ -1,0 +1,113 @@
+/* VISTA PREVIA · Barra de animacion compartida de Lotka-Volterra.
+   Solo afecta la tarjeta inferior de esta pagina. Sin callbacks. */
+
+.lv-pagina .lv-panel-resultados:has(.lv-animacion-vista) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 230px;
+    align-items: center;
+    gap: 10px;
+}
+
+.lv-pagina .lv-panel-resultados:has(.lv-animacion-vista) .lv-resumen {
+    grid-template-columns: minmax(205px, 0.80fr) minmax(0, 1.55fr);
+    gap: 12px;
+}
+
+.lv-pagina .lv-animacion-vista {
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border-left: 1px solid var(--sd-borde, #e7e1f4);
+    padding: 4px 0 4px 12px;
+}
+
+.lv-pagina .lv-animacion-titulo {
+    font-size: 0.73rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--sd-secundario, #625e7c);
+    white-space: nowrap;
+}
+
+.lv-pagina .lv-animacion-fila {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.lv-pagina .lv-animacion-boton {
+    display: inline-grid;
+    place-items: center;
+    box-sizing: border-box;
+    width: 31px;
+    height: 31px;
+    flex-shrink: 0;
+    padding: 0;
+    border-radius: 9px;
+    border: 1px solid #bdd8f2;
+    background: #eaf3ff;
+    color: #245d91;
+    font-size: 1rem;
+    font-weight: 750;
+    line-height: 1;
+}
+
+/* Los controles deben parecerse a su aspecto final, aunque en la etapa A
+   permanezcan desactivados para no prometer una animacion inexistente. */
+.lv-pagina .lv-animacion-boton:disabled,
+.lv-pagina .lv-animacion-select:disabled {
+    opacity: 1;
+    cursor: default;
+}
+
+.lv-pagina .lv-animacion-etiqueta {
+    margin: 0 1px 0 4px;
+    font-size: 0.71rem;
+    color: var(--sd-secundario, #625e7c);
+    font-weight: 600;
+}
+
+.lv-pagina .lv-animacion-select {
+    width: 58px;
+    height: 31px;
+    box-sizing: border-box;
+    padding: 0 4px;
+    border: 1px solid #bdd8f2;
+    border-radius: 9px;
+    background: #fff;
+    color: #245d91;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+@media (max-width: 1050px) {
+    .lv-pagina .lv-panel-resultados:has(.lv-animacion-vista) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lv-pagina .lv-animacion-vista {
+        border-left: 0;
+        border-top: 1px solid var(--sd-borde, #e7e1f4);
+        padding: 8px 0 0;
+        flex-direction: row;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 700px) {
+    .lv-pagina .lv-panel-resultados:has(.lv-animacion-vista) .lv-resumen {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lv-pagina .lv-animacion-vista {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
