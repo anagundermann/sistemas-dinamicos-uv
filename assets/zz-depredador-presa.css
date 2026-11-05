@@ -1,0 +1,305 @@
+/* ==========================================================
+   LOTKA–VOLTERRA · SOLO LA PAGINA DEPREDADOR-PRESA
+   Este archivo complementa style.css; no modifica la app global.
+   Dash carga automaticamente los archivos CSS dentro de assets/.
+   ========================================================== */
+
+.lv-pagina {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+}
+
+/* Titulo e informacion opcional, sin ocupar un bloque alto. */
+.lv-pagina .lv-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 18px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.lv-pagina .lv-titulo {
+    margin: 0;
+    font-size: clamp(1.18rem, 1.5vw, 1.4rem);
+    line-height: 1.25;
+}
+
+.lv-pagina .lv-botones-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.lv-pagina .lv-boton-info,
+.lv-pagina .lv-boton-info:hover,
+.lv-pagina .lv-boton-info:focus {
+    background: #eaf3ff;
+    color: #245d91;
+    border: 1px solid #bdd8f2;
+    border-radius: 9px;
+    padding: 6px 12px;
+    font-size: 0.86rem;
+    font-weight: 650;
+    box-shadow: none;
+}
+
+.lv-pagina .lv-boton-info:hover {
+    background: #dcecff;
+}
+
+/* Panel izquierdo 27%; derecha 73% para graficos y lectura. */
+.lv-pagina .lv-distribucion {
+    display: grid;
+    grid-template-columns: minmax(260px, 27fr) minmax(0, 73fr);
+    align-items: start;
+    gap: 12px;
+    min-width: 0;
+}
+
+.lv-pagina .lv-panel-controles {
+    padding: 12px 15px 8px;
+}
+
+.lv-pagina .lv-panel-controles>.sd-titulo-tarjeta {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    line-height: 1.3;
+}
+
+/* Los controles siempre quedan visibles, uno bajo otro. */
+.lv-pagina .lv-lista-controles {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+}
+
+.lv-pagina .lv-control {
+    min-width: 0;
+}
+
+.lv-pagina .lv-control-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 0;
+}
+
+.lv-pagina .lv-control-etiqueta {
+    color: var(--sd-texto);
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.lv-pagina .lv-control-valor {
+    flex-shrink: 0;
+    color: #245d91;
+    font-size: 0.82rem;
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Ajustes acotados a los sliders de esta pagina. */
+.lv-pagina .lv-control .rc-slider {
+    padding: 9px 2px 17px;
+    margin: 0;
+}
+
+.lv-pagina .lv-control .rc-slider-mark-text {
+    color: var(--sd-secundario);
+    font-size: 0.66rem;
+    white-space: nowrap;
+}
+
+.lv-pagina .lv-control .rc-slider-track {
+    background: #38a6cf;
+}
+
+.lv-pagina .lv-control .rc-slider-handle {
+    border-color: #238db8;
+    opacity: 1;
+}
+
+/* El panel derecho apila dos graficos y lectura en el espacio disponible. */
+.lv-pagina .lv-panel-derecho {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 12px;
+    min-width: 0;
+}
+
+/* Dos graficos simultaneos, en paralelo dentro del panel derecho. */
+.lv-pagina .lv-panel-graficos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 12px;
+    min-width: 0;
+}
+
+.lv-pagina .lv-tarjeta-grafico {
+    padding: 12px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 375px;
+    overflow: hidden;
+}
+
+.lv-pagina .lv-tarjeta-grafico>.sd-titulo-tarjeta {
+    margin: 0 0 4px;
+    font-size: 0.96rem;
+    line-height: 1.3;
+}
+
+.lv-pagina .lv-grafico {
+    width: 100%;
+    height: clamp(310px, 36vh, 345px);
+    min-height: 0;
+    flex: 0 0 auto;
+    min-width: 0;
+}
+
+/* Lectura compacta debajo de ambos graficos. */
+.lv-pagina .lv-panel-resultados {
+    padding: 10px 12px;
+    align-self: start;
+}
+
+.lv-pagina .lv-panel-resultados>.sd-titulo-tarjeta {
+    margin: 0 0 6px;
+    font-size: 1rem;
+}
+
+.lv-pagina .lv-resumen {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.8fr);
+    gap: 12px;
+    align-items: center;
+}
+
+/* Recuadro de equilibrio: blanco, borde discreto, cifras destacadas. */
+.lv-pagina .lv-equilibrio-recuadro {
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1.5px solid #bdd8f2;
+    border-radius: 11px;
+    background: #fff;
+}
+
+.lv-pagina .lv-equilibrio-titulo {
+    font-size: 0.81rem;
+    line-height: 1.3;
+    font-weight: 750;
+    color: var(--sd-indigo);
+    margin-bottom: 5px;
+}
+
+.lv-pagina .lv-equilibrio-valores {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.lv-pagina .lv-equilibrio-metrica {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.lv-pagina .lv-equilibrio-etiqueta {
+    font-size: 0.70rem;
+    color: var(--sd-secundario);
+    white-space: normal;
+    line-height: 1.25;
+}
+
+.lv-pagina .lv-equilibrio-numero {
+    font-size: clamp(1.25rem, 1.5vw, 1.6rem);
+    color: #245d91;
+    font-weight: 800;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.lv-pagina .lv-interpretacion {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.lv-pagina .lv-panel-resultados .lv-interpretacion p {
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1.35;
+}
+
+.lv-pagina .lv-panel-resultados .lv-interpretacion .lv-sugerencia {
+    color: var(--sd-secundario);
+    font-size: 0.80rem;
+}
+
+/* El modal se dibuja fuera de la pagina; por eso su clase es propia. */
+.lv-modal .modal-content {
+    border: 1px solid #bdd8f2;
+    border-radius: 14px;
+}
+
+.lv-modal .modal-header,
+.lv-modal .modal-footer {
+    border-color: #e2edf9;
+}
+
+.lv-modal .modal-title {
+    color: #1e1b4b;
+    font-size: 1.18rem;
+    font-weight: 750;
+}
+
+.lv-modal .lv-formula-modal {
+    overflow-x: auto;
+    text-align: center;
+    padding: 8px 0 12px;
+}
+
+.lv-modal .lv-boton-cerrar {
+    background: #eaf3ff;
+    border: 1px solid #bdd8f2;
+    color: #245d91;
+    font-weight: 650;
+}
+
+/* Responsive: preservar legibilidad si la pantalla no es amplia. */
+@media (max-width: 1120px) {
+    .lv-pagina .lv-distribucion {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .lv-pagina .lv-resumen {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lv-pagina .lv-panel-graficos {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lv-pagina .lv-cabecera {
+        align-items: flex-start;
+    }
+
+    .lv-pagina .lv-grafico {
+        height: 360px;
+        min-height: 360px;
+    }
+
+    .lv-pagina .lv-tarjeta-grafico {
+        min-height: 410px;
+    }
+}

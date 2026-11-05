@@ -1,6 +1,11 @@
-"""Laboratorio interactivo de depredador-presa (Lotka-Volterra)."""
+"""Laboratorio interactivo de depredador-presa (Lotka-Volterra).
 
-from dash import Input, Output, dcc, html
+La presentacion de esta pagina se controla en assets/zz-depredador-presa.css.
+Se mantienen los seis parametros y los identificadores de los callbacks originales.
+"""
+
+from dash import Input, Output, State, ctx, dcc, html, no_update
+import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 
 from models.modelo_lotka_volterra import (
@@ -13,189 +18,223 @@ COLOR_PRESAS = "#14B8A6"
 COLOR_DEPREDADORES = "#7C3AED"
 
 
-def crear_control(titulo, control_id, minimo, maximo, paso, valor, marcas):
+# Configuracion separada para editar los controles sin tocar el layout.
+CONTROLES = [
+    ("α · Crecimiento de presas", "lv-alpha", 0.1, 1.2, 0.05, 0.65),
+    ("β · Intensidad de depredación", "lv-beta", 0.005, 0.05, 0.001, 0.018),
+    ("γ · Mortalidad de depredadores", "lv-gamma", 0.1, 1.0, 0.05, 0.55),
+    ("δ · Reproducción por depredación", "lv-delta", 0.005, 0.04, 0.001, 0.012),
+    ("Presas iniciales", "lv-presas-0", 10, 120, 5, 60),
+    ("Depredadores iniciales", "lv-depredadores-0", 5, 100, 5, 20),
+]
+
+
+def crear_control(titulo, control_id, minimo, maximo, paso, valor):
+    """Control compacto: etiqueta y valor arriba, deslizador debajo."""
     return html.Div(
-        className="sd-control-lv",
+        className="lv-control",
         children=[
-            html.Label(titulo, className="sd-lab-detalle"),
+            html.Div(
+                className="lv-control-encabezado",
+                children=[
+                    html.Label(titulo, className="lv-control-etiqueta"),
+                    html.Output(
+                        id=f"{control_id}-valor",
+                        children=f"{valor:g}",
+                        className="lv-control-valor",
+                    ),
+                ],
+            ),
             dcc.Slider(
                 id=control_id,
                 min=minimo,
                 max=maximo,
                 step=paso,
                 value=valor,
-                marks=marcas,
+                marks={minimo: f"{minimo:g}", maximo: f"{maximo:g}"},
                 tooltip={"placement": "bottom", "always_visible": False},
             ),
         ],
-        style={"paddingBottom": "12px"},
+    )
+
+
+def crear_grafico(titulo, grafico_id):
+    return html.Section(
+        className="sd-tarjeta sd-tarjeta-grafico lv-tarjeta-grafico",
+        children=[
+            html.H3(titulo, className="sd-titulo-tarjeta"),
+            dcc.Graph(
+                id=grafico_id,
+                className="lv-grafico",
+                config={
+                    "displayModeBar": False,
+                    "scrollZoom": False,
+                    "responsive": True,
+                },
+            ),
+        ],
     )
 
 
 def crear_pagina():
     return html.Div(
-        className="sd-grid",
+        className="lv-pagina",
         children=[
-            html.Section(
-                className="sd-tarjeta sd-tarjeta-matematica",
+            html.Header(
+                className="lv-cabecera",
                 children=[
                     html.H2(
                         "Depredador–Presa · Lotka–Volterra",
-                        className="sd-titulo-seccion",
-                    ),
-                    html.P(
-                        "Explora cómo interactúan dos poblaciones: las presas crecen "
-                        "en ausencia de depredadores y estos dependen de las presas "
-                        "para reproducirse.",
-                        className="sd-portada-descripcion",
+                        className="sd-titulo-seccion lv-titulo",
                     ),
                     html.Div(
-                        dcc.Markdown(
-                            r"$$\begin{aligned}"
-                            r"\dot{x}&=\alpha x-\beta xy\\"
-                            r"\dot{y}&=\delta xy-\gamma y"
-                            r"\end{aligned}$$",
-                            mathjax=True,
-                        ),
-                        className="sd-formula",
-                        style={"overflow": "visible"},
-                    ),
-                    html.P(
-                        "x: presas · y: depredadores · t: tiempo. "
-                        "Las poblaciones son valores teóricos del modelo.",
-                        className="sd-lab-detalle",
-                    ),
-                ],
-            ),
-            html.Section(
-                className="sd-tarjeta sd-tarjeta-controles",
-                children=[
-                    html.H3(
-                        "Experimenta con los parámetros", className="sd-titulo-tarjeta"
-                    ),
-                    html.Div(
-                        className="sd-grid sd-grid-dos",
+                        className="lv-botones-info",
                         children=[
-                            html.Div(
-                                children=[
-                                    crear_control(
-                                        "α · Crecimiento de presas",
-                                        "lv-alpha",
-                                        0.1,
-                                        1.2,
-                                        0.05,
-                                        0.65,
-                                        {0.1: "0.1", 0.65: "0.65", 1.2: "1.2"},
-                                    ),
-                                    crear_control(
-                                        "β · Intensidad de depredación",
-                                        "lv-beta",
-                                        0.005,
-                                        0.05,
-                                        0.001,
-                                        0.018,
-                                        {0.005: "0.005", 0.025: "0.025", 0.05: "0.05"},
-                                    ),
-                                    crear_control(
-                                        "γ · Mortalidad de depredadores",
-                                        "lv-gamma",
-                                        0.1,
-                                        1.0,
-                                        0.05,
-                                        0.55,
-                                        {0.1: "0.1", 0.55: "0.55", 1.0: "1.0"},
-                                    ),
-                                ]
+                            dbc.Button(
+                                "Ver modelo",
+                                id="lv-boton-modelo",
+                                className="lv-boton-info",
+                                n_clicks=0,
                             ),
-                            html.Div(
-                                children=[
-                                    crear_control(
-                                        "δ · Reproducción por depredación",
-                                        "lv-delta",
-                                        0.005,
-                                        0.04,
-                                        0.001,
-                                        0.012,
-                                        {0.005: "0.005", 0.02: "0.02", 0.04: "0.04"},
-                                    ),
-                                    crear_control(
-                                        "Presas iniciales",
-                                        "lv-presas-0",
-                                        10,
-                                        120,
-                                        5,
-                                        60,
-                                        {10: "10", 60: "60", 120: "120"},
-                                    ),
-                                    crear_control(
-                                        "Depredadores iniciales",
-                                        "lv-depredadores-0",
-                                        5,
-                                        100,
-                                        5,
-                                        20,
-                                        {5: "5", 50: "50", 100: "100"},
-                                    ),
-                                ]
+                            dbc.Button(
+                                "Ecuaciones",
+                                id="lv-boton-ecuaciones",
+                                className="lv-boton-info",
+                                n_clicks=0,
+                            ),
+                            dbc.Button(
+                                "Variables",
+                                id="lv-boton-variables",
+                                className="lv-boton-info",
+                                n_clicks=0,
                             ),
                         ],
                     ),
                 ],
             ),
             html.Div(
-                className="sd-grid sd-grid-dos",
+                className="lv-distribucion",
                 children=[
                     html.Section(
-                        className="sd-tarjeta sd-tarjeta-grafico",
+                        className="sd-tarjeta sd-tarjeta-controles lv-panel-controles",
                         children=[
                             html.H3(
-                                "Evolución de las poblaciones",
+                                "Experimenta con los parámetros",
                                 className="sd-titulo-tarjeta",
                             ),
-                            dcc.Graph(
-                                id="lv-grafico-tiempo",
-                                config={
-                                    "displayModeBar": False,
-                                    "scrollZoom": False,
-                                    "responsive": True,
-                                },
-                                style={
-                                    "height": "clamp(270px, 40vh, 350px)",
-                                    "width": "100%",
-                                },
+                            html.Div(
+                                className="lv-lista-controles",
+                                children=[crear_control(*datos) for datos in CONTROLES],
                             ),
                         ],
                     ),
-                    html.Section(
-                        className="sd-tarjeta sd-tarjeta-grafico",
+                    html.Div(
+                        className="lv-panel-derecho",
                         children=[
-                            html.H3("Plano de fases", className="sd-titulo-tarjeta"),
-                            dcc.Graph(
-                                id="lv-grafico-fases",
-                                config={
-                                    "displayModeBar": False,
-                                    "scrollZoom": False,
-                                    "responsive": True,
-                                },
-                                style={
-                                    "height": "clamp(270px, 40vh, 350px)",
-                                    "width": "100%",
-                                },
+                            html.Div(
+                                className="lv-panel-graficos",
+                                children=[
+                                    crear_grafico(
+                                        "Evolución de las poblaciones",
+                                        "lv-grafico-tiempo",
+                                    ),
+                                    crear_grafico("Plano de fases", "lv-grafico-fases"),
+                                ],
+                            ),
+                            html.Section(
+                                className="sd-tarjeta sd-tarjeta-resultado lv-panel-resultados",
+                                children=[
+                                    html.Div(
+                                        id="lv-lectura", className="sd-modal-texto"
+                                    ),
+                                ],
                             ),
                         ],
                     ),
                 ],
             ),
-            html.Section(
-                className="sd-tarjeta sd-tarjeta-resultado",
+            dbc.Modal(
+                id="lv-modal-informacion",
+                is_open=False,
+                centered=True,
+                size="lg",
+                className="lv-modal",
                 children=[
-                    html.H3(
-                        "¿Qué nos dicen los gráficos?", className="sd-titulo-tarjeta"
+                    dbc.ModalHeader(dbc.ModalTitle(id="lv-modal-titulo")),
+                    dbc.ModalBody(id="lv-modal-cuerpo"),
+                    dbc.ModalFooter(
+                        dbc.Button(
+                            "Cerrar", id="lv-cerrar-modal", className="lv-boton-cerrar"
+                        )
                     ),
-                    html.Div(id="lv-lectura", className="sd-modal-texto"),
                 ],
             ),
         ],
+    )
+
+
+def contenido_modal(seccion):
+    """Contenido de ayuda sin ocupar espacio en el laboratorio."""
+    if seccion == "modelo":
+        return (
+            "Información del modelo",
+            html.Div(
+                children=[
+                    html.P(
+                        "Explora cómo interactúan dos poblaciones: las presas crecen "
+                        "en ausencia de depredadores y estos dependen de las presas "
+                        "para reproducirse."
+                    ),
+                    html.P(
+                        "El modelo de Lotka–Volterra describe un sistema idealizado "
+                        "de dos poblaciones que interactúan en el tiempo."
+                    ),
+                    html.P(
+                        "Modifica los controles de la izquierda y observa cómo "
+                        "cambian simultáneamente los dos gráficos."
+                    ),
+                ]
+            ),
+        )
+    if seccion == "ecuaciones":
+        return (
+            "Ecuaciones del modelo",
+            html.Div(
+                children=[
+                    dcc.Markdown(
+                        r"$$\begin{aligned}"
+                        r"\dot{x}&=\alpha x-\beta xy\\"
+                        r"\dot{y}&=\delta xy-\gamma y"
+                        r"\end{aligned}$$",
+                        mathjax=True,
+                        className="sd-formula",
+                        style={"overflow": "visible"},
+                    ),
+                    html.P(
+                        "La primera ecuación representa el crecimiento de las presas "
+                        "y su disminución por depredación. La segunda representa "
+                        "la reproducción y la mortalidad de los depredadores."
+                    ),
+                ]
+            ),
+        )
+    return (
+        "Variables y parámetros",
+        html.Div(
+            children=[
+                html.P(
+                    "x(t): población de presas; y(t): población de depredadores; t: tiempo."
+                ),
+                html.P("α: crecimiento de presas; β: intensidad de depredación."),
+                html.P(
+                    "γ: mortalidad de depredadores; δ: reproducción por depredación."
+                ),
+                html.P(
+                    "Las condiciones iniciales indican las poblaciones al comenzar la simulación."
+                ),
+                html.P("Las poblaciones representan valores teóricos del modelo."),
+            ]
+        ),
     )
 
 
@@ -237,12 +276,19 @@ def registrar_callbacks(app):
             )
         )
         figura_tiempo.update_layout(
-            margin={"l": 45, "r": 15, "t": 20, "b": 45},
-            xaxis_title="Tiempo",
-            yaxis_title="Población (unidades del modelo)",
+            # Espacio real para titulos y numeros de los dos ejes.
+            margin={"l": 70, "r": 18, "t": 35, "b": 78},
+            xaxis={
+                "title": {"text": "Tiempo", "standoff": 14},
+                "automargin": True,
+            },
+            yaxis={
+                "title": {"text": "Población (unidades del modelo)", "standoff": 12},
+                "automargin": True,
+            },
             hovermode="x unified",
             dragmode=False,
-            legend={"orientation": "h", "y": 1.13, "x": 0},
+            legend={"orientation": "h", "y": 1.12, "x": 0},
             paper_bgcolor="white",
             plot_bgcolor="white",
         )
@@ -276,32 +322,121 @@ def registrar_callbacks(app):
             )
         )
         figura_fases.update_layout(
-            margin={"l": 45, "r": 15, "t": 20, "b": 45},
-            xaxis_title="Presas (x)",
-            yaxis_title="Depredadores (y)",
+            margin={"l": 70, "r": 18, "t": 35, "b": 78},
+            xaxis={
+                "title": {"text": "Presas (x)", "standoff": 14},
+                "automargin": True,
+            },
+            yaxis={
+                "title": {"text": "Depredadores (y)", "standoff": 12},
+                "automargin": True,
+            },
             dragmode=False,
-            legend={"orientation": "h", "y": 1.13, "x": 0},
+            legend={"orientation": "h", "y": 1.12, "x": 0},
             paper_bgcolor="white",
             plot_bgcolor="white",
         )
 
         lectura = html.Div(
+            className="lv-resumen",
             children=[
-                html.P(
-                    [
-                        html.Strong("Equilibrio de coexistencia: "),
-                        f"x* = {presas_eq:.1f} presas; y* = {depredadores_eq:.1f} depredadores.",
-                    ]
+                html.Div(
+                    className="lv-equilibrio-recuadro",
+                    children=[
+                        html.Div(
+                            "Equilibrio de coexistencia",
+                            className="lv-equilibrio-titulo",
+                        ),
+                        html.Div(
+                            className="lv-equilibrio-valores",
+                            children=[
+                                html.Div(
+                                    className="lv-equilibrio-metrica",
+                                    children=[
+                                        html.Span(
+                                            "x* · Presas",
+                                            className="lv-equilibrio-etiqueta",
+                                        ),
+                                        html.Strong(
+                                            f"{presas_eq:.1f}",
+                                            className="lv-equilibrio-numero",
+                                        ),
+                                    ],
+                                ),
+                                html.Div(
+                                    className="lv-equilibrio-metrica",
+                                    children=[
+                                        html.Span(
+                                            "y* · Depredadores",
+                                            className="lv-equilibrio-etiqueta",
+                                        ),
+                                        html.Strong(
+                                            f"{depredadores_eq:.1f}",
+                                            className="lv-equilibrio-numero",
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
                 ),
-                html.P(
-                    "En este modelo idealizado, las poblaciones pueden oscilar "
-                    "alrededor del equilibrio. El gráfico temporal muestra cómo "
-                    "cambian; el plano de fases muestra la trayectoria (x(t), y(t))."
+                html.Div(
+                    className="lv-interpretacion",
+                    children=[
+                        html.P(
+                            [
+                                html.Strong("Evolución temporal. "),
+                                "Muestra cómo varían las poblaciones de presas y depredadores.",
+                            ]
+                        ),
+                        html.P(
+                            [
+                                html.Strong("Plano de fases. "),
+                                "Muestra la trayectoria (x(t), y(t)) alrededor del equilibrio.",
+                            ]
+                        ),
+                        html.P(
+                            "Prueba cambiar un parámetro y observa cómo varían las oscilaciones y el equilibrio.",
+                            className="lv-sugerencia",
+                        ),
+                    ],
                 ),
-                html.P(
-                    "Prueba cambiar solo un parámetro y observa qué ocurre "
-                    "con el equilibrio y la forma de las oscilaciones."
-                ),
-            ]
+            ],
         )
         return figura_tiempo, figura_fases, lectura
+
+    # Actualizar el valor visible junto al nombre de cada control.
+    for _, control_id, _, _, _, _ in CONTROLES:
+        app.clientside_callback(
+            "function(valor) { return valor == null ? '—' : String(valor); }",
+            Output(f"{control_id}-valor", "children"),
+            Input(control_id, "value"),
+        )
+
+    @app.callback(
+        Output("lv-modal-informacion", "is_open"),
+        Output("lv-modal-titulo", "children"),
+        Output("lv-modal-cuerpo", "children"),
+        Input("lv-boton-modelo", "n_clicks"),
+        Input("lv-boton-ecuaciones", "n_clicks"),
+        Input("lv-boton-variables", "n_clicks"),
+        Input("lv-cerrar-modal", "n_clicks"),
+        State("lv-modal-titulo", "children"),
+        State("lv-modal-cuerpo", "children"),
+        prevent_initial_call=True,
+    )
+    def mostrar_informacion(
+        n_modelo, n_ecuaciones, n_variables, n_cerrar, titulo, cuerpo
+    ):
+        accion = ctx.triggered_id
+        if accion == "lv-cerrar-modal":
+            return False, titulo, cuerpo
+        secciones = {
+            "lv-boton-modelo": "modelo",
+            "lv-boton-ecuaciones": "ecuaciones",
+            "lv-boton-variables": "variables",
+        }
+        if accion in secciones:
+            nuevo_titulo, nuevo_cuerpo = contenido_modal(secciones[accion])
+            return True, nuevo_titulo, nuevo_cuerpo
+        return False, no_update, no_update
