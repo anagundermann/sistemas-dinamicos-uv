@@ -8,6 +8,11 @@ from dash import Input, Output, State, ctx, dcc, html, no_update
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 
+from components.ecosistema_lv import (
+    crear_contenido_ecosistema,
+    registrar_callbacks_ecosistema,
+)
+
 from models.modelo_lotka_volterra import (
     calcular_equilibrio,
     simular_lotka_volterra,
@@ -91,7 +96,7 @@ def crear_pagina():
                         className="lv-botones-info",
                         children=[
                             dbc.Button(
-                                "Ver modelo",
+                                "Ecosistema",
                                 id="lv-boton-modelo",
                                 className="lv-boton-info",
                                 n_clicks=0,
@@ -157,7 +162,7 @@ def crear_pagina():
                 id="lv-modal-informacion",
                 is_open=False,
                 centered=True,
-                size="lg",
+                size="xl",
                 className="lv-modal",
                 children=[
                     dbc.ModalHeader(dbc.ModalTitle(id="lv-modal-titulo")),
@@ -176,26 +181,7 @@ def crear_pagina():
 def contenido_modal(seccion):
     """Contenido de ayuda sin ocupar espacio en el laboratorio."""
     if seccion == "modelo":
-        return (
-            "Información del modelo",
-            html.Div(
-                children=[
-                    html.P(
-                        "Explora cómo interactúan dos poblaciones: las presas crecen "
-                        "en ausencia de depredadores y estos dependen de las presas "
-                        "para reproducirse."
-                    ),
-                    html.P(
-                        "El modelo de Lotka–Volterra describe un sistema idealizado "
-                        "de dos poblaciones que interactúan en el tiempo."
-                    ),
-                    html.P(
-                        "Modifica los controles de la izquierda y observa cómo "
-                        "cambian simultáneamente los dos gráficos."
-                    ),
-                ]
-            ),
-        )
+        return "Ecosistema · Zorros y conejos", crear_contenido_ecosistema()
     if seccion == "ecuaciones":
         return (
             "Ecuaciones del modelo",
@@ -440,3 +426,6 @@ def registrar_callbacks(app):
             nuevo_titulo, nuevo_cuerpo = contenido_modal(secciones[accion])
             return True, nuevo_titulo, nuevo_cuerpo
         return False, no_update, no_update
+
+    # Callback del ciclo biologico (solo modal Ecosistema).
+    registrar_callbacks_ecosistema(app)

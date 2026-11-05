@@ -1,0 +1,8 @@
+dash
+dash-bootstrap-components
+dash-cytoscape
+plotly
+numpy
+scipy
+pandas
+networkx
