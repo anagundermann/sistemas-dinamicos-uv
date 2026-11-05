@@ -13,6 +13,10 @@ from components.ecosistema_lv import (
     registrar_callbacks_ecosistema,
 )
 
+from components.modelo_matematico_lv import crear_contenido_modelo_matematico
+
+from components.analisis_sistema_lv import crear_contenido_analisis_sistema
+
 from models.modelo_lotka_volterra import (
     calcular_equilibrio,
     simular_lotka_volterra,
@@ -102,13 +106,13 @@ def crear_pagina():
                                 n_clicks=0,
                             ),
                             dbc.Button(
-                                "Ecuaciones",
+                                "Modelo matemático",
                                 id="lv-boton-ecuaciones",
                                 className="lv-boton-info",
                                 n_clicks=0,
                             ),
                             dbc.Button(
-                                "Variables",
+                                "Análisis del sistema",
                                 id="lv-boton-variables",
                                 className="lv-boton-info",
                                 n_clicks=0,
@@ -183,45 +187,8 @@ def contenido_modal(seccion):
     if seccion == "modelo":
         return "Ecosistema · Zorros y conejos", crear_contenido_ecosistema()
     if seccion == "ecuaciones":
-        return (
-            "Ecuaciones del modelo",
-            html.Div(
-                children=[
-                    dcc.Markdown(
-                        r"$$\begin{aligned}"
-                        r"\dot{x}&=\alpha x-\beta xy\\"
-                        r"\dot{y}&=\delta xy-\gamma y"
-                        r"\end{aligned}$$",
-                        mathjax=True,
-                        className="sd-formula",
-                        style={"overflow": "visible"},
-                    ),
-                    html.P(
-                        "La primera ecuación representa el crecimiento de las presas "
-                        "y su disminución por depredación. La segunda representa "
-                        "la reproducción y la mortalidad de los depredadores."
-                    ),
-                ]
-            ),
-        )
-    return (
-        "Variables y parámetros",
-        html.Div(
-            children=[
-                html.P(
-                    "x(t): población de presas; y(t): población de depredadores; t: tiempo."
-                ),
-                html.P("α: crecimiento de presas; β: intensidad de depredación."),
-                html.P(
-                    "γ: mortalidad de depredadores; δ: reproducción por depredación."
-                ),
-                html.P(
-                    "Las condiciones iniciales indican las poblaciones al comenzar la simulación."
-                ),
-                html.P("Las poblaciones representan valores teóricos del modelo."),
-            ]
-        ),
-    )
+        return "Modelo matemático · Lotka–Volterra", crear_contenido_modelo_matematico()
+    return "Análisis del sistema · Lotka–Volterra", crear_contenido_analisis_sistema()
 
 
 def registrar_callbacks(app):
