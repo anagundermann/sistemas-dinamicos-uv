@@ -1,8 +1,3 @@
-"""
-Sistemas Dinámicos UV: Laboratorio Modelo SIR en Grafos aplicados a COVID-19 en Chile.
-Optimizado para garantizar la carga correcta de datos, modales emergentes y visualización fluida.
-"""
-
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -205,13 +200,14 @@ def crear_pagina():
                     "display": "flex",
                     "justifyContent": "space-between",
                     "alignItems": "center",
+                    "borderLeft": "4px solid #7C3AED",
                 },
                 children=[
                     html.Span(
-                        "🔬 Laboratorio COVID-19 en Redes de Chile",
+                        " Laboratorio COVID-19 en Redes de Chile",
                         style={
                             "fontWeight": "800",
-                            "color": "#1E1B4B",
+                            "color": "#4C1D95",
                             "fontSize": "1.05rem",
                         },
                     ),
@@ -224,7 +220,7 @@ def crear_pagina():
                         },
                         children=[
                             html.Button(
-                                "📖 ¿Qué es el Modelo SIR?",
+                                " ¿Qué es el Modelo SIR?",
                                 id="btn-abrir-modal-sir",
                                 n_clicks=0,
                                 className="sd-inicio",
@@ -232,10 +228,12 @@ def crear_pagina():
                                     "fontSize": "0.85rem",
                                     "padding": "5px 10px",
                                     "cursor": "pointer",
+                                    "borderColor": "#C4B5FD",
+                                    "color": "#5B21B6",
                                 },
                             ),
                             html.Button(
-                                "📐 Modelo Matemático",
+                                " Modelo Matemático",
                                 id="btn-abrir-modal-mat",
                                 n_clicks=0,
                                 className="sd-inicio",
@@ -243,6 +241,8 @@ def crear_pagina():
                                     "fontSize": "0.85rem",
                                     "padding": "5px 10px",
                                     "cursor": "pointer",
+                                    "borderColor": "#C4B5FD",
+                                    "color": "#5B21B6",
                                 },
                             ),
                             crear_boton_supuestos_sir(),
@@ -254,96 +254,252 @@ def crear_pagina():
             dbc.Modal(
                 [
                     dbc.ModalHeader(
-                        dbc.ModalTitle("Definición: Modelo SIR en Redes Complejas"),
-                        style={"color": "#1E1B4B", "fontWeight": "800"},
+                        dbc.ModalTitle(" Definición: Modelo SIR en Redes Complejas"),
+                        style={"color": "#4C1D95", "fontWeight": "800", "borderBottom": "1px solid #F3E8FF"},
                     ),
                     dbc.ModalBody(
+                        style={"backgroundColor": "#FBF7FF", "padding": "20px"},
                         children=[
-                            html.P(
-                                "El modelo epidemiológico SIR clásico divide a una población homogénea en tres estados: Susceptibles (S), Infectados (I) y Recuperados (R)."
+                            html.Div(
+                                style={
+                                    "backgroundColor": "white",
+                                    "padding": "15px",
+                                    "borderRadius": "12px",
+                                    "border": "1px solid #E9D5FF",
+                                    "marginBottom": "12px",
+                                },
+                                children=[
+                                    html.H6("Enfoque Compartimental", style={"color": "#6D28D9", "fontWeight": "700", "fontSize": "0.9rem", "marginBottom": "6px"}),
+                                    html.P(
+                                        "El modelo epidemiológico SIR clásico divide a una población homogénea en tres estados dinámicos: Susceptibles (S), Infectados (I) y Recuperados (R).",
+                                        style={"fontSize": "0.85rem", "color": "#334155", "margin": "0"}
+                                    ),
+                                ]
                             ),
-                            html.P(
-                                "Este laboratorio utiliza un grafo hipotético que conecta las 16 regiones de Chile. Sus conexiones representan contactos de transmisión entre regiones, no flujos reales de personas medidos."
+                            html.Div(
+                                style={
+                                    "backgroundColor": "white",
+                                    "padding": "15px",
+                                    "borderRadius": "12px",
+                                    "border": "1px solid #E9D5FF",
+                                },
+                                children=[
+                                    html.H6("Red de Conectividad Regional", style={"color": "#6D28D9", "fontWeight": "700", "fontSize": "0.9rem", "marginBottom": "6px"}),
+                                    html.P(
+                                        "Este laboratorio utiliza un grafo espacial que conecta las 16 regiones de Chile. Las aristas representan canales de transmisión interregional influenciados por la movilidad.",
+                                        style={"fontSize": "0.85rem", "color": "#334155", "margin": "0"}
+                                    ),
+                                ]
                             ),
                         ]
                     ),
                     dbc.ModalFooter(
-                        dbc.Button(
-                            "Cerrar",
-                            id="btn-cerrar-modal-sir",
-                            className="ms-auto",
-                            n_clicks=0,
-                            style={
-                                "backgroundColor": "#7C3AED",
-                                "color": "white",
-                                "border": "none",
-                            },
-                        )
+                        style={"borderTop": "1px solid #F3E8FF"},
+                        children=[
+                            dbc.Button(
+                                "Entendido",
+                                id="btn-cerrar-modal-sir",
+                                className="ms-auto",
+                                n_clicks=0,
+                                style={
+                                    "backgroundColor": "#7C3AED",
+                                    "color": "white",
+                                    "border": "none",
+                                    "borderRadius": "8px",
+                                    "padding": "6px 18px",
+                                    "fontWeight": "600",
+                                },
+                            )
+                        ]
                     ),
                 ],
                 id="modal-sir",
                 is_open=False,
                 centered=True,
+                size="lg",
             ),
-            # Modal 2: Matemáticas
+            # Modal 2: Matemáticas (Con LaTeX corregido)
             dbc.Modal(
                 [
                     dbc.ModalHeader(
-                        dbc.ModalTitle("Modelo Matemático y Variables"),
-                        style={"color": "#1E1B4B", "fontWeight": "800"},
+                        dbc.ModalTitle(" Modelo matemático · COVID-19 en Redes"),
+                        style={"color": "#4C1D95", "fontWeight": "800", "borderBottom": "1px solid #F3E8FF"},
                     ),
                     dbc.ModalBody(
+                        style={"backgroundColor": "#FBF7FF", "padding": "20px"},
                         children=[
                             html.Div(
-                                dcc.Markdown(
-                                    r"$$\begin{aligned}"
-                                    r"\frac{dS_i}{dt}&=-\beta\frac{S_iI_i}{N_i}-\alpha S_i\sum_j A_{ij}\frac{I_j}{N_j}\\"
-                                    r"\frac{dI_i}{dt}&=\beta\frac{S_iI_i}{N_i}+\alpha S_i\sum_j A_{ij}\frac{I_j}{N_j}-\gamma I_i\\"
-                                    r"\frac{dR_i}{dt}&=\gamma I_i"
-                                    r"\end{aligned}$$",
-                                    mathjax=True,
-                                ),
-                                className="sd-formula",
+                                style={
+                                    "display": "grid",
+                                    "gridTemplateColumns": "1.1fr 0.9fr",
+                                    "gap": "16px",
+                                },
+                                children=[
+                                    # Columna Izquierda: Sistema de ecuaciones y condiciones iniciales
+                                    html.Div(
+                                        children=[
+                                            html.H6(
+                                                "Sistema de ecuaciones",
+                                                style={"fontWeight": "700", "color": "#4C1D95", "marginBottom": "10px"},
+                                            ),
+                                            html.Div(
+                                                style={
+                                                    "display": "grid",
+                                                    "gridTemplateColumns": "1fr 1fr",
+                                                    "gap": "10px",
+                                                    "marginBottom": "12px",
+                                                },
+                                                children=[
+                                                    html.Div(
+                                                        style={
+                                                            "border": "1px solid #DDD6FE",
+                                                            "backgroundColor": "white",
+                                                            "padding": "10px",
+                                                            "borderRadius": "12px",
+                                                            "textAlign": "center",
+                                                        },
+                                                        children=[
+                                                            html.Div("Susceptibles", style={"fontSize": "0.75rem", "fontWeight": "600", "color": "#6D28D9"}),
+                                                            dcc.Markdown(r"$$\frac{dS_i}{dt} = -\beta \frac{S_i I_i}{N_i} - \alpha S_i \sum_j A_{ij}\frac{I_j}{N_j}$$", mathjax=True, style={"fontSize": "0.85rem", "margin": "6px 0"}),
+                                                        ],
+                                                    ),
+                                                    html.Div(
+                                                        style={
+                                                            "border": "1px solid #DDD6FE",
+                                                            "backgroundColor": "white",
+                                                            "padding": "10px",
+                                                            "borderRadius": "12px",
+                                                            "textAlign": "center",
+                                                        },
+                                                        children=[
+                                                            html.Div("Infectados", style={"fontSize": "0.75rem", "fontWeight": "600", "color": "#6D28D9"}),
+                                                            dcc.Markdown(r"$$\frac{dI_i}{dt} = \beta \frac{S_i I_i}{N_i} + \alpha S_i \sum_j A_{ij}\frac{I_j}{N_j} - \gamma I_i$$", mathjax=True, style={"fontSize": "0.85rem", "margin": "6px 0"}),
+                                                        ],
+                                                    ),
+                                                ],
+                                            ),
+                                            html.Div(
+                                                style={
+                                                    "border": "1px solid #E9D5FF",
+                                                    "backgroundColor": "white",
+                                                    "padding": "12px",
+                                                    "borderRadius": "12px",
+                                                },
+                                                children=[
+                                                    html.H6("Condiciones iniciales", style={"fontSize": "0.8rem", "fontWeight": "750", "color": "#5B21B6", "marginBottom": "6px"}),
+                                                    dcc.Markdown(r"$$I_i(0) = 1000 \text{ (en región semilla)}, \quad S_i(0) = N_i - I_i(0)$$", mathjax=True, style={"fontSize": "0.85rem"}),
+                                                    html.P("Poblaciones regionales conectadas por la matriz de adyacencia del grafo.", style={"fontSize": "0.7rem", "color": "#64748B", "margin": "4px 0 0 0"}),
+                                                ],
+                                            ),
+                                        ]
+                                    ),
+                                    # Columna Derecha: Variables y parámetros
+                                    html.Div(
+                                        children=[
+                                            html.H6(
+                                                "Variables y parámetros",
+                                                style={"fontWeight": "700", "color": "#4C1D95", "marginBottom": "10px"},
+                                            ),
+                                            html.Div(
+                                                style={
+                                                    "display": "grid",
+                                                    "gridTemplateColumns": "1fr 1fr",
+                                                    "gap": "8px",
+                                                    "marginBottom": "10px",
+                                                },
+                                                children=[
+                                                    html.Div(style={"border": "1px solid #E2E8F0", "backgroundColor": "white", "padding": "8px", "borderRadius": "10px"}, children=[
+                                                        dcc.Markdown(r"$S_i(0), I_i(0), R_i(0)$", mathjax=True, style={"fontSize": "0.8rem", "fontWeight": "700", "margin": "0"}),
+                                                        html.Span("Estados por región", style={"fontSize": "0.7rem", "color": "#64748B"})
+                                                    ]),
+                                                    html.Div(style={"border": "1px solid #E2E8F0", "backgroundColor": "white", "padding": "8px", "borderRadius": "10px"}, children=[
+                                                        dcc.Markdown(r"$N_i$", mathjax=True, style={"fontSize": "0.8rem", "fontWeight": "700", "margin": "0"}),
+                                                        html.Span("Población regional", style={"fontSize": "0.7rem", "color": "#64748B"})
+                                                    ]),
+                                                ]
+                                            ),
+                                            html.Div(
+                                                style={"border": "1px solid #E2E8F0", "backgroundColor": "white", "padding": "8px", "borderRadius": "10px", "marginBottom": "8px"},
+                                                children=[
+                                                    dcc.Markdown(r"$\beta$ : Infección local", mathjax=True, style={"fontSize": "0.8rem", "fontWeight": "700", "margin": "0"}),
+                                                    html.Span("Tasa de transmisión intrarregional", style={"fontSize": "0.7rem", "color": "#64748B"})
+                                                ]
+                                            ),
+                                            html.Div(
+                                                style={"border": "1px solid #E2E8F0", "backgroundColor": "white", "padding": "8px", "borderRadius": "10px", "marginBottom": "8px"},
+                                                children=[
+                                                    dcc.Markdown(r"$\gamma$ : Recuperación", mathjax=True, style={"fontSize": "0.8rem", "fontWeight": "700", "margin": "0"}),
+                                                    html.Span("Inversos del periodo infeccioso", style={"fontSize": "0.7rem", "color": "#64748B"})
+                                                ]
+                                            ),
+                                            html.Div(
+                                                style={"border": "1px solid #E2E8F0", "backgroundColor": "white", "padding": "8px", "borderRadius": "10px"},
+                                                children=[
+                                                    dcc.Markdown(r"$\alpha$ : Movilidad en red", mathjax=True, style={"fontSize": "0.8rem", "fontWeight": "700", "margin": "0"}),
+                                                    html.Span("Coeficiente de flujo entre regiones $A_{ij}$", style={"fontSize": "0.7rem", "color": "#64748B"})
+                                                ]
+                                            ),
+                                        ]
+                                    ),
+                                ],
                             ),
-                            html.P(
-                                "Sᵢ, Iᵢ, Rᵢ: susceptibles, infectados y recuperados; Nᵢ: población regional; β: infección local; γ: recuperación; α: transmisión asociada a las conexiones de la red."
+                            html.Div(
+                                style={"marginTop": "14px", "borderTop": "1px solid #E9D5FF", "paddingTop": "10px"},
+                                children=[
+                                    dcc.Markdown(
+                                        r"El término acoplado $\alpha S_i \sum_j A_{ij} \frac{I_j}{N_j}$ modela la difusión espacial del virus a través de las conexiones de transporte de Chile.",
+                                        mathjax=True,
+                                        style={"fontSize": "0.75rem", "color": "#64748B", "margin": "0"}
+                                    )
+                                ]
                             ),
                         ]
                     ),
                     dbc.ModalFooter(
-                        dbc.Button(
-                            "Cerrar",
-                            id="btn-cerrar-modal-mat",
-                            className="ms-auto",
-                            n_clicks=0,
-                            style={
-                                "backgroundColor": "#7C3AED",
-                                "color": "white",
-                                "border": "none",
-                            },
-                        )
+                        style={"borderTop": "1px solid #F3E8FF"},
+                        children=[
+                            dbc.Button(
+                                "Cerrar",
+                                id="btn-cerrar-modal-mat",
+                                className="ms-auto",
+                                n_clicks=0,
+                                style={
+                                    "backgroundColor": "#7C3AED",
+                                    "color": "white",
+                                    "border": "none",
+                                    "borderRadius": "8px",
+                                    "padding": "6px 16px",
+                                    "fontWeight": "600",
+                                },
+                            )
+                        ]
                     ),
                 ],
                 id="modal-mat",
                 is_open=False,
                 centered=True,
-                size="lg",
+                size="xl",
             ),
-            # Modal 3: Supuestos, datos y limitaciones
+            # Modal 3: Supuestos, datos y limitaciones (Estilo Rosa/Magenta Vivo)
             crear_modal_supuestos_sir(),
-            # KPIs de Resumen
+            # KPIs de Resumen (Estilo Lila)
             html.Div(
                 className="sd-grid sd-grid-tres",
                 style={"gap": "8px"},
                 children=[
                     html.Div(
                         className="sd-tarjeta sd-tarjeta-resultado",
-                        style={"padding": "8px"},
+                        style={
+                            "padding": "8px",
+                            "backgroundColor": "#F5F3FF",
+                            "border": "1px solid #DDD6FE",
+                            "borderRadius": "10px",
+                        },
                         children=[
                             html.Span(
                                 "β/γ · referencia local",
                                 className="sd-lab-detalle",
-                                style={"fontSize": "0.75rem"},
+                                style={"fontSize": "0.75rem", "color": "#6D28D9"},
                             ),
                             html.H3(
                                 id="sir-kpi-r0",
@@ -351,7 +507,7 @@ def crear_pagina():
                                 style={
                                     "fontSize": "1.1rem",
                                     "margin": "2px 0",
-                                    "color": "#1E1B4B",
+                                    "color": "#4C1D95",
                                 },
                             ),
                             html.P(
@@ -360,19 +516,24 @@ def crear_pagina():
                                 style={
                                     "fontSize": "0.7rem",
                                     "margin": "0",
-                                    "color": "#625E7C",
+                                    "color": "#6D28D9",
                                 },
                             ),
                         ],
                     ),
                     html.Div(
                         className="sd-tarjeta sd-tarjeta-resultado",
-                        style={"padding": "8px"},
+                        style={
+                            "padding": "8px",
+                            "backgroundColor": "#F5F3FF",
+                            "border": "1px solid #DDD6FE",
+                            "borderRadius": "10px",
+                        },
                         children=[
                             html.Span(
                                 "Pico Máx. (I_max)",
                                 className="sd-lab-detalle",
-                                style={"fontSize": "0.75rem"},
+                                style={"fontSize": "0.75rem", "color": "#6D28D9"},
                             ),
                             html.H3(
                                 id="sir-kpi-imax",
@@ -380,7 +541,7 @@ def crear_pagina():
                                 style={
                                     "fontSize": "1.1rem",
                                     "margin": "2px 0",
-                                    "color": "#1E1B4B",
+                                    "color": "#4C1D95",
                                 },
                             ),
                             html.P(
@@ -389,19 +550,24 @@ def crear_pagina():
                                 style={
                                     "fontSize": "0.7rem",
                                     "margin": "0",
-                                    "color": "#625E7C",
+                                    "color": "#6D28D9",
                                 },
                             ),
                         ],
                     ),
                     html.Div(
                         className="sd-tarjeta sd-tarjeta-resultado",
-                        style={"padding": "8px"},
+                        style={
+                            "padding": "8px",
+                            "backgroundColor": "#F5F3FF",
+                            "border": "1px solid #DDD6FE",
+                            "borderRadius": "10px",
+                        },
                         children=[
                             html.Span(
                                 "Umbral teórico sin red",
                                 className="sd-lab-detalle",
-                                style={"fontSize": "0.75rem"},
+                                style={"fontSize": "0.75rem", "color": "#6D28D9"},
                             ),
                             html.H3(
                                 id="sir-kpi-rebaño",
@@ -409,7 +575,7 @@ def crear_pagina():
                                 style={
                                     "fontSize": "1.1rem",
                                     "margin": "2px 0",
-                                    "color": "#1E1B4B",
+                                    "color": "#4C1D95",
                                 },
                             ),
                             html.P(
@@ -417,7 +583,7 @@ def crear_pagina():
                                 style={
                                     "fontSize": "0.7rem",
                                     "margin": "0",
-                                    "color": "#625E7C",
+                                    "color": "#6D28D9",
                                 },
                             ),
                         ],
@@ -432,7 +598,7 @@ def crear_pagina():
                     html.H3(
                         "Controles de Parámetros Epidémicos y Conectividad",
                         className="sd-titulo-tarjeta",
-                        style={"fontSize": "0.95rem", "marginBottom": "6px"},
+                        style={"fontSize": "0.95rem", "marginBottom": "6px", "color": "#4C1D95"},
                     ),
                     html.Div(
                         className="sd-grid sd-grid-dos",
@@ -604,58 +770,60 @@ def crear_pagina():
                     ),
                 ],
             ),
-            # GRÁFICOS VISIBLES DIRECTAMENTE (Sin sub-pestañas para evitar errores de renderizado)
-            html.Div(
-                className="sd-grid sd-grid-dos",
-                style={"gap": "10px"},
-                children=[
-                    html.Section(
-                        className="sd-tarjeta sd-tarjeta-grafico",
-                        style={"padding": "10px"},
-                        children=[
-                            html.H3(
-                                "🌐 Grafo Espacial de Chile",
-                                className="sd-titulo-tarjeta",
-                                style={"fontSize": "0.95rem", "marginBottom": "4px"},
-                            ),
-                            dcc.Graph(
-                                id="sir-grafico-grafo",
-                                style={"height": "300px"},
-                                config={"displayModeBar": False},
-                            ),
-                        ],
-                    ),
-                    html.Section(
-                        className="sd-tarjeta sd-tarjeta-grafico",
-                        style={"padding": "10px"},
-                        children=[
-                            html.H3(
-                                "📈 Curvas temporales S-I-R (simulación)",
-                                className="sd-titulo-tarjeta",
-                                style={"fontSize": "0.95rem", "marginBottom": "4px"},
-                            ),
-                            dcc.Graph(
-                                id="sir-grafico-curvas",
-                                style={"height": "300px"},
-                                config={"displayModeBar": False},
-                            ),
-                        ],
-                    ),
-                ],
-            ),
+            # Gráficos organizados en pestañas (Evita el scroll vertical)
             html.Section(
-                className="sd-tarjeta sd-tarjeta-grafico",
-                style={"padding": "10px"},
+                className="sd-tarjeta",
+                style={"padding": "10px", "marginTop": "6px"},
                 children=[
-                    html.H3(
-                        "🗺️ Matriz Espacio-Temporal de Propagación Regional",
-                        className="sd-titulo-tarjeta",
-                        style={"fontSize": "0.95rem", "marginBottom": "4px"},
-                    ),
-                    dcc.Graph(
-                        id="sir-grafico-heatmap",
-                        style={"height": "250px"},
-                        config={"displayModeBar": False},
+                    dcc.Tabs(
+                        id="sir-tabs-graficos",
+                        value="tab-grafo",
+                        children=[
+                            dcc.Tab(
+                                label=" Grafo Espacial de Chile",
+                                value="tab-grafo",
+                                style={"padding": "8px", "fontWeight": "600", "fontSize": "0.85rem"},
+                                selected_style={"padding": "8px", "fontWeight": "600", "fontSize": "0.85rem", "borderTop": "3px solid #7C3AED", "color": "#6D28D9"},
+                                children=[
+                                    dcc.Graph(
+                                        id="sir-grafico-grafo",
+                                        style={"height": "400px"},
+                                        config={"displayModeBar": False},
+                                    )
+                                ],
+                            ),
+                            dcc.Tab(
+                                label=" Curvas Temporales S-I-R",
+                                value="tab-curvas",
+                                style={"padding": "8px", "fontWeight": "600", "fontSize": "0.85rem"},
+                                selected_style={"padding": "8px", "fontWeight": "600", "fontSize": "0.85rem", "borderTop": "3px solid #7C3AED", "color": "#6D28D9"},
+                                children=[
+                                    dcc.Graph(
+                                        id="sir-grafico-curvas",
+                                        style={"height": "400px"},
+                                        config={"displayModeBar": False},
+                                    )
+                                ],
+                            ),
+                            dcc.Tab(
+                                label="Matriz Espacio-Temporal",
+                                value="tab-heatmap",
+                                style={"padding": "8px", "fontWeight": "600", "fontSize": "0.85rem"},
+                                selected_style={"padding": "8px", "fontWeight": "600", "fontSize": "0.85rem", "borderTop": "3px solid #7C3AED", "color": "#6D28D9"},
+                                children=[
+                                    dcc.Graph(
+                                        id="sir-grafico-heatmap",
+                                        style={"height": "400px"},
+                                        config={"displayModeBar": False},
+                                    )
+                                ],
+                            ),
+                        ],
+                        colors={
+                            "border": "#E2E8F0",
+                            "primary": "#7C3AED",
+                            "background": "#F8FAFC",
+                        },
                     ),
                 ],
             ),
