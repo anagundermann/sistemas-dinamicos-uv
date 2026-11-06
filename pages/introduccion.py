@@ -78,38 +78,38 @@ def imagen_svg(svg):
 
 
 def crear_pagina():
+    """Portada compacta: dos tarjetas centrales y dos tarjetas a la derecha."""
     return html.Div(
         className="sd-intro",
         children=[
-            # --------------------------------------
-            # TARJETA CENTRAL
-            # --------------------------------------
-            html.Section(
-                className="sd-tarjeta sd-portada-central",
+            # Columna central: la portada y las preguntas son tarjetas separadas.
+            html.Div(
+                className="sd-intro-central",
                 children=[
-                    html.Div(
-                        "MATEMÁTICA EN MOVIMIENTO",
-                        className="sd-sobretitulo",
+                    html.Section(
+                        className="sd-tarjeta sd-portada-central",
+                        children=[
+                            html.Div(
+                                "MATEMÁTICA EN MOVIMIENTO",
+                                className="sd-sobretitulo",
+                            ),
+                            html.H2(
+                                "Explora cómo evolucionan los sistemas",
+                                className="sd-portada-titulo",
+                            ),
+                            html.P(
+                                "Visualiza trayectorias, modifica parámetros y compara sistemas.",
+                                className="sd-portada-descripcion",
+                            ),
+                            html.Img(
+                                src=imagen_svg(ORBIPLOT),
+                                alt="Ilustración de trayectorias dinámicas",
+                                className="sd-portada-ilustracion",
+                            ),
+                        ],
                     ),
-                    html.H2(
-                        "Explora cómo evolucionan los sistemas",
-                        className="sd-portada-titulo",
-                    ),
-                    html.P(
-                        (
-                            "Visualiza trayectorias, modifica "
-                            "parámetros y compara cómo evolucionan "
-                            "diferentes sistemas dinámicos."
-                        ),
-                        className="sd-portada-descripcion",
-                    ),
-                    html.Img(
-                        src=imagen_svg(ORBIPLOT),
-                        alt="Ilustración de trayectorias dinámicas",
-                        className="sd-portada-ilustracion",
-                    ),
-                    html.Div(
-                        className="sd-portada-preguntas",
+                    html.Section(
+                        className="sd-tarjeta sd-portada-preguntas",
                         children=[
                             html.H3(
                                 "¿Qué podemos investigar?",
@@ -123,8 +123,7 @@ def crear_pagina():
                                         children=[
                                             html.Span("01"),
                                             html.P(
-                                                "¿Qué ocurre cuando "
-                                                "cambiamos un parámetro?"
+                                                "¿Qué ocurre cuando cambiamos un parámetro?"
                                             ),
                                         ],
                                     ),
@@ -140,8 +139,7 @@ def crear_pagina():
                                         children=[
                                             html.Span("03"),
                                             html.P(
-                                                "¿Qué patrones presentan "
-                                                "las trayectorias?"
+                                                "¿Qué patrones presentan las trayectorias?"
                                             ),
                                         ],
                                     ),
@@ -149,20 +147,14 @@ def crear_pagina():
                             ),
                         ],
                     ),
-                    html.P(
-                        "Estado · Tiempo · Parámetros · Trayectorias",
-                        className="sd-portada-pie",
-                    ),
                 ],
             ),
-            # --------------------------------------
-            # TARJETAS DERECHAS
-            # --------------------------------------
+            # Columna derecha: información matemática e instrucciones.
             html.Aside(
                 className="sd-intro-derecha",
                 children=[
                     html.Section(
-                        className=("sd-tarjeta sd-info-card sd-info-matematica"),
+                        className="sd-tarjeta sd-info-card sd-info-matematica",
                         children=[
                             html.H3(
                                 "¿Qué tienen en común?",
@@ -177,9 +169,8 @@ def crear_pagina():
                                 className="sd-formula",
                             ),
                             html.P(
-                                "Todos describen cómo evoluciona "
-                                "el estado de un sistema a partir "
-                                "de una ley matemática."
+                                "Todos describen cómo evoluciona el estado de un "
+                                "sistema a partir de una ley matemática."
                             ),
                             html.Img(
                                 src=imagen_svg(GRAFICO_TIEMPO),
@@ -189,7 +180,7 @@ def crear_pagina():
                         ],
                     ),
                     html.Section(
-                        className=("sd-tarjeta sd-info-card sd-info-instrucciones"),
+                        className="sd-tarjeta sd-info-card sd-info-instrucciones",
                         children=[
                             html.H3(
                                 "¿Cómo utilizar el laboratorio?",
@@ -200,36 +191,15 @@ def crear_pagina():
                                 children=[
                                     html.Li("Elige un modelo."),
                                     html.Li(
-                                        "Modifica sus parámetros "
-                                        "y condiciones iniciales."
+                                        "Ajusta sus parámetros y condiciones iniciales."
                                     ),
-                                    html.Li("Observa, compara e interpreta."),
+                                    html.Li("Observa y compara los resultados."),
                                 ],
                             ),
                             html.Img(
                                 src=imagen_svg(GRAFICO_PARAMETROS),
                                 alt="Controles de parámetros",
                                 className="sd-info-ilustracion",
-                            ),
-                        ],
-                    ),
-                    html.Section(
-                        className=("sd-tarjeta sd-info-card sd-info-experimento"),
-                        children=[
-                            html.H3(
-                                "Una pregunta para comenzar",
-                                className="sd-info-titulo",
-                            ),
-                            html.P(
-                                "¿Dos sistemas que comienzan "
-                                "en estados distintos pueden "
-                                "evolucionar de manera parecida?"
-                            ),
-                            html.P(
-                                "Explora los modelos y compara "
-                                "sus trayectorias para investigar "
-                                "esta pregunta.",
-                                className="sd-info-nota",
                             ),
                         ],
                     ),
