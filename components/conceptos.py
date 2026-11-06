@@ -1,44 +1,41 @@
-"""Menu y ventana de conceptos matematicos."""
+"""Biblioteca matematica: un solo modal con navegacion lateral.
 
-from dash import ALL, Input, Output, ctx, dcc, html, no_update
+Los textos y formulas se mantienen en conceptos_data.py.
+Esta interfaz solo selecciona y presenta las fichas existentes.
+"""
+
+from dash import ALL, Input, Output, ctx, dcc, html
 from dash.exceptions import PreventUpdate
-
 import dash_bootstrap_components as dbc
 
 from conceptos_data import CONCEPTOS
 
 
+CLAVES_CONCEPTOS = tuple(CONCEPTOS)
+CLAVE_INICIAL = CLAVES_CONCEPTOS[0]
+DATO_INICIAL = CONCEPTOS[CLAVE_INICIAL]
+
+
 def crear_consulta_conceptos():
+    """Crea el acceso global y la biblioteca de conceptos matematicos."""
     return html.Div(
         className="sd-conceptos-control",
         children=[
-            # MENU SIN BUSCADOR
-            dbc.DropdownMenu(
-                label="Consultar conceptos",
-                color="light",
-                direction="down",
-                caret=True,
-                class_name="sd-conceptos-menu",
-                toggle_class_name="sd-inicio",
-                children=[
-                    dbc.DropdownMenuItem(
-                        dato["titulo"],
-                        id={
-                            "type": "sd-opcion-concepto",
-                            "index": clave,
-                        },
-                        n_clicks=0,
-                    )
-                    for clave, dato in CONCEPTOS.items()
-                ],
+            # Un solo clic abre la biblioteca; ya no hay menu desplegable previo.
+            html.Button(
+                "Biblioteca matemática",
+                id="sd-abrir-conceptos",
+                n_clicks=0,
+                type="button",
+                className="sd-inicio sd-consultar-boton",
+                **{"aria-haspopup": "dialog", "aria-controls": "sd-concepto-modal"},
             ),
-            # VENTANA MATEMATICA
             dbc.Modal(
                 id="sd-concepto-modal",
                 is_open=False,
                 centered=True,
-                scrollable=True,
-                size="lg",
+                scrollable=False,
+                size="xl",
                 class_name="sd-concepto-modal",
                 children=[
                     dbc.ModalHeader(
@@ -55,119 +52,153 @@ def crear_consulta_conceptos():
                                     dbc.ModalTitle(
                                         id="sd-concepto-titulo",
                                         class_name="sd-modal-titulo",
+                                        children=CONCEPTOS[CLAVE_INICIAL]["titulo"],
                                     ),
                                 ],
                             ),
                             html.Button(
-                                "×",
                                 id="sd-cerrar-concepto-x",
                                 n_clicks=0,
                                 type="button",
                                 title="Cerrar ventana",
-                                className="sd-modal-cerrar-x",
+                                className="btn-close sd-modal-cerrar-x",
                                 **{"aria-label": "Cerrar ventana"},
                             ),
                         ],
                     ),
-                    # CUERPO: OPCION E
                     dbc.ModalBody(
                         class_name="sd-modal-cuerpo",
                         children=[
-                            # FILA SUPERIOR:
-                            # DEFINICION MATEMATICA + NOTACION
-                            html.Div(
-                                className="sd-modal-grid-superior",
+                            # Columna izquierda: los diez nombres, sin submodales.
+                            html.Nav(
+                                className="sd-modal-lateral",
+                                **{"aria-label": "Conceptos matemáticos"},
                                 children=[
-                                    html.Section(
+                                    html.Button(
+                                        dato["titulo"],
+                                        id={
+                                            "type": "sd-opcion-concepto",
+                                            "index": clave,
+                                        },
+                                        n_clicks=0,
+                                        type="button",
                                         className=(
-                                            "sd-concepto-seccion "
-                                            "sd-concepto-seccion-matematica"
+                                            "sd-concepto-opcion "
+                                            "sd-concepto-opcion-activa"
+                                            if clave == CLAVE_INICIAL
+                                            else "sd-concepto-opcion"
                                         ),
+                                    )
+                                    for clave, dato in CONCEPTOS.items()
+                                ],
+                            ),
+                            # Columna derecha: misma ficha, con distribucion renovada.
+                            html.Div(
+                                className="sd-modal-principal",
+                                children=[
+                                    html.Div(
+                                        className="sd-modal-ficha",
                                         children=[
-                                            html.H4(
-                                                "Definición matemática",
-                                                className="sd-modal-seccion-titulo",
-                                            ),
-                                            html.P(
-                                                id="sd-concepto-descripcion",
-                                                className="sd-modal-texto",
-                                            ),
                                             html.Div(
-                                                className="sd-modal-formula",
+                                                className="sd-modal-grid-superior",
                                                 children=[
-                                                    dcc.Markdown(
-                                                        id="sd-concepto-formula",
-                                                        mathjax=True,
-                                                        className="sd-modal-mathjax",
+                                                    html.Section(
+                                                        className=(
+                                                            "sd-concepto-seccion "
+                                                            "sd-concepto-seccion-matematica"
+                                                        ),
+                                                        children=[
+                                                            html.H4(
+                                                                "Definición matemática",
+                                                                className="sd-modal-seccion-titulo",
+                                                            ),
+                                                            html.P(
+                                                                id="sd-concepto-descripcion",
+                                                                children=DATO_INICIAL[
+                                                                    "definicion_texto"
+                                                                ],
+                                                                className="sd-modal-texto",
+                                                            ),
+                                                            html.Div(
+                                                                className="sd-modal-formula",
+                                                                children=[
+                                                                    dcc.Markdown(
+                                                                        id="sd-concepto-formula",
+                                                                        children="$$\n"
+                                                                        + DATO_INICIAL[
+                                                                            "formula"
+                                                                        ]
+                                                                        + "\n$$",
+                                                                        mathjax=True,
+                                                                        className="sd-modal-mathjax",
+                                                                    ),
+                                                                ],
+                                                            ),
+                                                        ],
+                                                    ),
+                                                    html.Section(
+                                                        className=(
+                                                            "sd-concepto-seccion "
+                                                            "sd-concepto-seccion-notacion"
+                                                        ),
+                                                        children=[
+                                                            html.H4(
+                                                                "Donde",
+                                                                className="sd-modal-seccion-titulo",
+                                                            ),
+                                                            dcc.Markdown(
+                                                                id="sd-concepto-notacion",
+                                                                children=DATO_INICIAL.get(
+                                                                    "notacion", ""
+                                                                ),
+                                                                mathjax=True,
+                                                                className="sd-modal-notacion",
+                                                            ),
+                                                        ],
+                                                    ),
+                                                ],
+                                            ),
+                                            html.Section(
+                                                className=(
+                                                    "sd-concepto-seccion "
+                                                    "sd-concepto-seccion-intuitiva"
+                                                ),
+                                                children=[
+                                                    html.H4(
+                                                        "Interpretación intuitiva",
+                                                        className="sd-modal-seccion-titulo",
+                                                    ),
+                                                    html.P(
+                                                        id="sd-concepto-explicacion",
+                                                        children=DATO_INICIAL[
+                                                            "explicacion"
+                                                        ],
+                                                        className="sd-modal-texto",
+                                                    ),
+                                                ],
+                                            ),
+                                            html.Section(
+                                                className=(
+                                                    "sd-concepto-seccion "
+                                                    "sd-concepto-seccion-propiedades"
+                                                ),
+                                                children=[
+                                                    html.H4(
+                                                        "Propiedades matemáticas",
+                                                        className="sd-modal-seccion-titulo",
+                                                    ),
+                                                    html.P(
+                                                        id="sd-concepto-propiedades",
+                                                        children=DATO_INICIAL[
+                                                            "propiedades"
+                                                        ],
+                                                        className="sd-modal-texto",
                                                     ),
                                                 ],
                                             ),
                                         ],
                                     ),
-                                    # EXPLICACION DE LOS SIMBOLOS
-                                    html.Section(
-                                        className=(
-                                            "sd-concepto-seccion "
-                                            "sd-concepto-seccion-notacion"
-                                        ),
-                                        children=[
-                                            html.H4(
-                                                "Donde",
-                                                className="sd-modal-seccion-titulo",
-                                            ),
-                                            dcc.Markdown(
-                                                id="sd-concepto-notacion",
-                                                mathjax=True,
-                                                className="sd-modal-notacion",
-                                            ),
-                                        ],
-                                    ),
                                 ],
-                            ),
-                            # INTERPRETACION: ANCHO COMPLETO
-                            html.Section(
-                                className=(
-                                    "sd-concepto-seccion sd-concepto-seccion-intuitiva"
-                                ),
-                                children=[
-                                    html.H4(
-                                        "Interpretación intuitiva",
-                                        className="sd-modal-seccion-titulo",
-                                    ),
-                                    html.P(
-                                        id="sd-concepto-explicacion",
-                                        className="sd-modal-texto",
-                                    ),
-                                ],
-                            ),
-                            # PROPIEDADES: ANCHO COMPLETO
-                            html.Section(
-                                className=(
-                                    "sd-concepto-seccion "
-                                    "sd-concepto-seccion-propiedades"
-                                ),
-                                children=[
-                                    html.H4(
-                                        "Propiedades matemáticas",
-                                        className="sd-modal-seccion-titulo",
-                                    ),
-                                    html.P(
-                                        id="sd-concepto-propiedades",
-                                        className="sd-modal-texto",
-                                    ),
-                                ],
-                            ),
-                        ],
-                    ),
-                    dbc.ModalFooter(
-                        class_name="sd-modal-pie",
-                        children=[
-                            html.Button(
-                                "Cerrar",
-                                id="sd-cerrar-concepto",
-                                n_clicks=0,
-                                type="button",
-                                className="sd-modal-boton",
                             ),
                         ],
                     ),
@@ -178,65 +209,66 @@ def crear_consulta_conceptos():
 
 
 def registrar_callbacks_conceptos(app):
+    """Registra acciones separadas para cierre y seleccion de conceptos.
+
+    El estado abierto/cerrado no depende de las salidas dinamicas del menu.
+    Asi, cerrar el modal no intenta modificar elementos dentro de el.
+    """
 
     @app.callback(
         Output("sd-concepto-modal", "is_open"),
+        Input("sd-abrir-conceptos", "n_clicks"),
+        Input("sd-cerrar-concepto-x", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def cambiar_visibilidad_conceptos(_abrir, _cerrar_x):
+        origen = ctx.triggered_id
+
+        if origen == "sd-abrir-conceptos":
+            return True
+
+        if origen == "sd-cerrar-concepto-x":
+            return False
+
+        raise PreventUpdate
+
+    @app.callback(
         Output("sd-concepto-titulo", "children"),
         Output("sd-concepto-descripcion", "children"),
         Output("sd-concepto-formula", "children"),
         Output("sd-concepto-notacion", "children"),
         Output("sd-concepto-explicacion", "children"),
         Output("sd-concepto-propiedades", "children"),
-        Input(
-            {"type": "sd-opcion-concepto", "index": ALL},
-            "n_clicks",
-        ),
-        Input("sd-cerrar-concepto", "n_clicks"),
-        Input("sd-cerrar-concepto-x", "n_clicks"),
+        Output({"type": "sd-opcion-concepto", "index": ALL}, "className"),
+        Input({"type": "sd-opcion-concepto", "index": ALL}, "n_clicks"),
         prevent_initial_call=True,
     )
-    def actualizar_ventana_concepto(
-        _clics_conceptos,
-        _clic_cerrar,
-        _clic_cerrar_x,
-    ):
+    def seleccionar_concepto(_clics_conceptos):
         origen = ctx.triggered_id
-
-        if origen in (
-            "sd-cerrar-concepto",
-            "sd-cerrar-concepto-x",
-        ):
-            return (
-                False,
-                no_update,
-                no_update,
-                no_update,
-                no_update,
-                no_update,
-                no_update,
-            )
 
         if not isinstance(origen, dict):
             raise PreventUpdate
-
         if origen.get("type") != "sd-opcion-concepto":
             raise PreventUpdate
 
         clave = origen.get("index")
-
         if clave not in CONCEPTOS:
             raise PreventUpdate
 
         dato = CONCEPTOS[clave]
-
-        formula = "$$\n" + dato["formula"] + "\n$$"
+        clases = [
+            "sd-concepto-opcion sd-concepto-opcion-activa"
+            if item == clave
+            else "sd-concepto-opcion"
+            for item in CLAVES_CONCEPTOS
+        ]
 
         return (
-            True,
             dato["titulo"],
             dato["definicion_texto"],
-            formula,
+            "$$\n" + dato["formula"] + "\n$$",
             dato.get("notacion", ""),
             dato["explicacion"],
             dato["propiedades"],
+            clases,
         )

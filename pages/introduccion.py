@@ -121,25 +121,36 @@ def crear_pagina():
                                     html.Div(
                                         className="sd-portada-pregunta",
                                         children=[
-                                            html.Span("01"),
+                                            html.Span("1"),
                                             html.P(
-                                                "¿Qué ocurre cuando cambiamos un parámetro?"
+                                                "Los conceptos matemáticos de cada modelo."
                                             ),
                                         ],
                                     ),
                                     html.Div(
                                         className="sd-portada-pregunta",
                                         children=[
-                                            html.Span("02"),
-                                            html.P("¿Cómo influye el estado inicial?"),
+                                            html.Span("2"),
+                                            html.P(
+                                                "El efecto de cambiar los parámetros."
+                                            ),
                                         ],
                                     ),
                                     html.Div(
                                         className="sd-portada-pregunta",
                                         children=[
-                                            html.Span("03"),
+                                            html.Span("3"),
                                             html.P(
-                                                "¿Qué patrones presentan las trayectorias?"
+                                                "La influencia de las condiciones iniciales."
+                                            ),
+                                        ],
+                                    ),
+                                    html.Div(
+                                        className="sd-portada-pregunta",
+                                        children=[
+                                            html.Span("4"),
+                                            html.P(
+                                                "Los patrones que presentan las trayectorias."
                                             ),
                                         ],
                                     ),

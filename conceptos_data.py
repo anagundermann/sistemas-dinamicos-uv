@@ -184,4 +184,135 @@ CONCEPTOS = {
             "requiere un análisis adicional."
         ),
     },
+    # --------------------------------------------------
+    # CONCEPTOS ADICIONALES (BIBLIOTECA MATEMATICA)
+    # --------------------------------------------------
+    "ecuacion_diferencial": {
+        "titulo": "Ecuación diferencial",
+        "definicion_texto": (
+            "Una ecuación diferencial relaciona una función desconocida "
+            "con sus derivadas. En un sistema dinámico continuo, "
+            "describe la evolución temporal del vector de estado."
+        ),
+        "formula": (
+            r"\frac{d\mathbf{x}(t)}{dt}"
+            r"=F(t,\mathbf{x}(t);\mathbf{p})"
+        ),
+        "notacion": (
+            r"- $t$: tiempo."
+            "\n"
+            r"- $\mathbf{x}(t)$: vector de estado."
+            "\n"
+            r"- $\frac{d\mathbf{x}(t)}{dt}$: tasa de cambio del estado."
+            "\n"
+            r"- $F$: función que determina su evolución."
+            "\n"
+            r"- $\mathbf{p}$: vector de parámetros del modelo."
+        ),
+        "explicacion": (
+            "Indica cómo cambia el estado en cada instante. "
+            "Resolverla permite conocer su evolución a partir "
+            "de una condición inicial."
+        ),
+        "propiedades": (
+            "Si F no depende explícitamente del tiempo, "
+            "la ecuación es autónoma. Una ecuación diferencial "
+            "de orden superior puede expresarse como un sistema "
+            "de primer orden al introducir nuevas variables de estado."
+        ),
+    },
+    "espacio_estados": {
+        "titulo": "Espacio de estados",
+        "definicion_texto": (
+            "Es el conjunto de los estados admisibles de un modelo. "
+            "Cada punto de ese conjunto representa una posible "
+            "configuración del sistema."
+        ),
+        "formula": (r"\mathbf{x}(t)\in\mathcal{X}\subseteq\mathbb{R}^{n}"),
+        "notacion": (
+            r"- $\mathbf{x}(t)$: estado del sistema en el instante $t$."
+            "\n"
+            r"- $\mathcal{X}$: conjunto de estados admisibles."
+            "\n"
+            r"- $\mathbb{R}^{n}$: espacio de vectores reales de $n$ componentes."
+            "\n"
+            r"- $n$: número de variables de estado."
+        ),
+        "explicacion": (
+            "Es el espacio donde se representan los estados "
+            "y por el que se desplazan las trayectorias del sistema."
+        ),
+        "propiedades": (
+            "El espacio de estados puede estar restringido "
+            "por condiciones del modelo. Por ejemplo, "
+            "el volumen de líquido en un recipiente de capacidad V "
+            "debe estar entre 0 y V."
+        ),
+    },
+    "estabilidad": {
+        "titulo": "Estabilidad",
+        "definicion_texto": (
+            "Un punto de equilibrio es estable en el sentido de Lyapunov "
+            "si, para toda distancia positiva al equilibrio, "
+            "existe una distancia inicial suficientemente pequeña "
+            "que garantiza que las soluciones permanezcan "
+            "dentro de la primera para todo tiempo futuro."
+        ),
+        "formula": (
+            r"\|\mathbf{x}(t_0)-\mathbf{x}^{*}\|<\delta"
+            r"\;\Longrightarrow\;"
+            r"\|\mathbf{x}(t)-\mathbf{x}^{*}\|<\varepsilon"
+        ),
+        "notacion": (
+            r"- $\mathbf{x}^{*}$: punto de equilibrio."
+            "\n"
+            r"- $\mathbf{x}(t_0)$: estado inicial."
+            "\n"
+            r"- $\delta>0$: distancia inicial permitida."
+            "\n"
+            r"- $\varepsilon>0$: distancia máxima exigida para $t\geq t_0$."
+        ),
+        "explicacion": (
+            "Una pequeña perturbación del equilibrio "
+            "no provoca que las trayectorias se alejen "
+            "arbitrariamente de él."
+        ),
+        "propiedades": (
+            "Ser estable no significa necesariamente que las "
+            "trayectorias regresen al equilibrio. "
+            "Si el equilibrio es estable y además las soluciones "
+            "que comienzan suficientemente cerca convergen a él, "
+            "se denomina asintóticamente estable."
+        ),
+    },
+    "plano_fases": {
+        "titulo": "Plano de fases",
+        "definicion_texto": (
+            "Es una representación de la evolución del sistema "
+            "en un plano cuyos ejes corresponden a dos "
+            "variables de estado, sin usar el tiempo como eje."
+        ),
+        "formula": (r"t\longmapsto(x_1(t),x_2(t))"),
+        "notacion": (
+            r"- $t$: tiempo que parametriza la trayectoria."
+            "\n"
+            r"- $x_1(t)$: primera variable representada."
+            "\n"
+            r"- $x_2(t)$: segunda variable representada."
+            "\n"
+            r"- $(x_1(t),x_2(t))$: punto dibujado en el plano."
+        ),
+        "explicacion": (
+            "Permite observar cómo se relacionan dos variables "
+            "mientras el sistema evoluciona. Por ejemplo, "
+            "pueden representarse las concentraciones de dos reactivos."
+        ),
+        "propiedades": (
+            "En un sistema de dos variables, el plano de fases "
+            "representa sus trayectorias en el espacio de estados. "
+            "Si el sistema tiene más de dos variables, "
+            "la gráfica de dos de ellas es una proyección. "
+            "El sentido de recorrido puede indicarse con flechas."
+        ),
+    },
 }

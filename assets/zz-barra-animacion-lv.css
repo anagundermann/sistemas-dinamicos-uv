@@ -73,18 +73,32 @@
     font-weight: 600;
 }
 
+
 .lv-pagina .lv-animacion-select {
-    width: 58px;
-    height: 31px;
+    flex: 0 0 90px;
+    width: 90px;
+    height: 34px;
     box-sizing: border-box;
-    padding: 0 4px;
+
+    padding: 0 26px 0 8px;
+
     border: 1px solid #bdd8f2;
     border-radius: 9px;
-    background: #fff;
+
+    background-color: #ffffff;
+    background-position: right 9px center;
+    background-size: 13px 10px;
+
     color: #245d91;
-    font-size: 0.76rem;
+    font-size: 0.85rem;
     font-weight: 700;
+
+    text-align: center;
+    text-align-last: center;
+
+    cursor: pointer;
 }
+
 
 @media (max-width: 1050px) {
     .lv-pagina .lv-panel-resultados:has(.lv-animacion-vista) {

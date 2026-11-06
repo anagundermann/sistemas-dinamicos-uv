@@ -306,3 +306,8 @@
         min-height: 410px;
     }
 }
+
+/* Ocultar el pie y el boton Cerrar de los modales */
+.lv-modal .modal-footer {
+    display: none;
+}

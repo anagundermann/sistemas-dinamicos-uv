@@ -124,8 +124,7 @@ select {
     white-space: nowrap;
 }
 
-.sd-inicio:hover,
-.sd-inicio.activo {
+.sd-inicio:hover {
     background: #EDE2FF;
 }
 

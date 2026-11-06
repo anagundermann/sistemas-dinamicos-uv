@@ -75,11 +75,6 @@ def crear_barra_animacion():
                         title="Volver al inicio y pausar",
                         **{"aria-label": "Reiniciar animación"},
                     ),
-                    html.Label(
-                        "Vel.",
-                        htmlFor=ID_VELOCIDAD,
-                        className="lv-animacion-etiqueta",
-                    ),
                     dbc.Select(
                         id=ID_VELOCIDAD,
                         class_name="lv-animacion-select",
