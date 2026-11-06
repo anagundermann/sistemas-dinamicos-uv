@@ -34,8 +34,8 @@ CONTROLES = [
     ("β · Intensidad de depredación", "lv-beta", 0.005, 0.05, 0.001, 0.018),
     ("γ · Mortalidad de depredadores", "lv-gamma", 0.1, 1.0, 0.05, 0.55),
     ("δ · Reproducción por depredación", "lv-delta", 0.005, 0.04, 0.001, 0.012),
-    ("Presas iniciales", "lv-presas-0", 10, 120, 5, 60),
-    ("Depredadores iniciales", "lv-depredadores-0", 5, 100, 5, 20),
+    ("Presas iniciales", "lv-presas-0", 2, 120, 1, 60),
+    ("Depredadores iniciales", "lv-depredadores-0", 2, 100, 1, 20),
 ]
 
 
