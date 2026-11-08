@@ -93,8 +93,8 @@ select {
 
 .sd-titulo-app {
     margin: 0;
-    color: var(--sd-indigo);
-    font-size: clamp(1.25rem, 1.45vw, 1.48rem);
+    color: #7C3AED;
+    font-size: 1.75rem;
     font-weight: 800;
     line-height: 1.2;
 }
@@ -307,7 +307,7 @@ select {
 .sd-portada-ilustracion {
     display: block;
     width: 100%;
-    max-width: 360px;
+    max-width: 400px;
     height: auto;
     margin: 12px auto 16px;
 }

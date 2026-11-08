@@ -9,24 +9,43 @@ from dash import dcc, html
 # ILUSTRACIONES
 # --------------------------------------------------
 
+
 ORBIPLOT = """
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 340">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 20 380 285">
+
+  <!-- Circunferencia de referencia -->
   <circle cx="230" cy="170" r="102"
     fill="none" stroke="#DDD4FE" stroke-width="2"
     stroke-dasharray="7 8"/>
-  <ellipse cx="230" cy="170" rx="169" ry="70"
-    transform="rotate(-26 230 170)" fill="none"
-    stroke="#8C79D4" stroke-width="3"/>
-  <ellipse cx="230" cy="170" rx="164" ry="68"
-    transform="rotate(26 230 170)" fill="none"
-    stroke="#14B8A6" stroke-width="3"/>
+
+  <!-- Trayectoria violeta original -->
+  <g transform="rotate(-26 230 170)">
+    <ellipse cx="230" cy="170" rx="169" ry="70"
+      fill="none" stroke="#8C79D4" stroke-width="3"/>
+
+    <!-- Punto violeta -->
+    <circle cx="399" cy="170" r="9"
+      fill="#7C3AED" stroke="#FFFFFF" stroke-width="2"/>
+
+    <!-- Punto rosado sobre la misma trayectoria -->
+    <circle cx="61" cy="170" r="9"
+      fill="#EC4899" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+
+  <!-- Trayectoria turquesa original -->
+  <g transform="rotate(26 230 170)">
+    <ellipse cx="230" cy="170" rx="164" ry="68"
+      fill="none" stroke="#14B8A6" stroke-width="3"/>
+
+    <!-- Punto turquesa -->
+    <circle cx="230" cy="238" r="9"
+      fill="#14B8A6" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+
+  <!-- Centro fijo de referencia -->
   <circle cx="230" cy="170" r="34" fill="#F3EFFF"/>
   <circle cx="230" cy="170" r="16" fill="#7C3AED"/>
-  <circle cx="101" cy="246" r="10" fill="#14B8A6"/>
-  <circle cx="355" cy="91" r="10" fill="#EC4899"/>
-  <circle cx="309" cy="270" r="8" fill="#7C3AED"/>
-  <text x="53" y="60" fill="#7C3AED" font-size="22">x(t)</text>
-  <text x="400" y="306" fill="#14B8A6" font-size="22">t</text>
+
 </svg>
 """
 

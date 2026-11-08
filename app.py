@@ -15,7 +15,7 @@ from pages import (
     sir,
 )
 
-from components.conceptos import (
+from components.conceptos_biblioteca import (
     crear_consulta_conceptos,
     registrar_callbacks_conceptos,
 )
@@ -48,22 +48,33 @@ LABORATORIOS = [
 
 TRAZOS = {
     "pendulo_simple": (
+        '<path d="M7 46 Q26 67 59 42" '
+        'fill="none" stroke="#B7CDFB" '
+        'stroke-width="2.3" stroke-dasharray="0.5 5" '
+        'stroke-linecap="round"/>'
         '<line x1="24" y1="8" x2="47" y2="49" '
-        'stroke="#3B82F6" stroke-width="4"/>'
-        '<circle cx="24" cy="8" r="4" fill="#211D4E"/>'
-        '<circle cx="47" cy="49" r="10" fill="#3B82F6"/>'
-        '<path d="M8 52 Q25 66 58 40" fill="none" '
-        'stroke="#B7CDFB" stroke-dasharray="4 4" '
-        'stroke-width="2"/>'
+        'stroke="#3B82F6" stroke-width="3.6" '
+        'stroke-linecap="round"/>'
+        '<circle cx="24" cy="8" r="3.2" fill="#211D4E"/>'
+        '<circle cx="47" cy="49" r="5.2" fill="#3B82F6"/>'
+        '<circle cx="45" cy="47" r="1.3" fill="#A8CCFF"/>'
     ),
     "pendulo_doble": (
+        '<path d="M18 51 C29 64 38 62 47 56 '
+        'S68 40 71 49 C73 60 62 64 53 61" '
+        'fill="none" stroke="#BFA2FA" '
+        'stroke-width="2.2" stroke-dasharray="0.5 5" '
+        'stroke-linecap="round"/>'
         '<line x1="20" y1="8" x2="39" y2="33" '
-        'stroke="#7C3AED" stroke-width="4"/>'
+        'stroke="#7C3AED" stroke-width="3.6" '
+        'stroke-linecap="round"/>'
         '<line x1="39" y1="33" x2="56" y2="53" '
-        'stroke="#7C3AED" stroke-width="4"/>'
-        '<circle cx="20" cy="8" r="4" fill="#211D4E"/>'
-        '<circle cx="39" cy="33" r="7" fill="#AE92EE"/>'
-        '<circle cx="56" cy="53" r="10" fill="#7C3AED"/>'
+        'stroke="#7C3AED" stroke-width="3.6" '
+        'stroke-linecap="round"/>'
+        '<circle cx="20" cy="8" r="3.1" fill="#211D4E"/>'
+        '<circle cx="39" cy="33" r="4.4" fill="#AE92EE"/>'
+        '<circle cx="56" cy="53" r="5.2" fill="#7C3AED"/>'
+        '<circle cx="54.5" cy="51.7" r="1.2" fill="#DDD0FF"/>'
     ),
     "depredador_presa": (
         '<path d="M4 41 C15 42 16 12 29 13 '

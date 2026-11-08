@@ -311,3 +311,9 @@
 .lv-modal .modal-footer {
     display: none;
 }
+
+/* Subir solo las leyendas de ambos graficos */
+#lv-grafico-tiempo .legend,
+#lv-grafico-fases .legend {
+    translate: 0 -14px;
+}

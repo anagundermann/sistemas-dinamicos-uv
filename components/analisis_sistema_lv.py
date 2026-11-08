@@ -1,23 +1,19 @@
-"""Contenido compacto del modal «Análisis del sistema · Lotka–Volterra».
+"""Modal compacto de analisis del sistema Lotka-Volterra.
 
-Mantiene la interfaz acordada: puntos de equilibrio y estabilidad a la
-izquierda; interpretación de trayectorias e idea clave a la derecha.
-No añade callbacks ni altera los gráficos o el modelo matemático.
-
-La clasificación de estabilidad corresponde al Lotka–Volterra clásico,
-con alpha, beta, gamma y delta estrictamente positivos.
+Diseñado para conservar la altura de los modales Ecosistema y Modelo matematico
+sin perder el contenido principal. No modifica callbacks ni las ecuaciones.
 """
 
 from dash import dcc, html
 
 
 def formula(texto, clase=""):
-    """Renderiza LaTeX, incluido el utilizado dentro de frases."""
+    """Muestra expresiones matematicas con MathJax."""
     return dcc.Markdown(texto, mathjax=True, className=clase)
 
 
 def crear_equilibrio(tipo, titulo, expresion, descripcion, estabilidad):
-    """Muestra cada equilibrio junto con su clasificación, sin repeticiones."""
+    """Tarjeta para un punto de equilibrio."""
     return html.Section(
         className=f"lv-ana-equilibrio lv-ana-equilibrio-{tipo}",
         children=[
@@ -30,16 +26,16 @@ def crear_equilibrio(tipo, titulo, expresion, descripcion, estabilidad):
 
 
 def crear_contenido_analisis_sistema():
-    """Construye la ventana de análisis en dos columnas compactas."""
+    """Distribuye el contenido en dos columnas equilibradas y compactas."""
     return html.Div(
-        className="lv-ana",
+        className="lv-ana lv-ana-compacto",
         children=[
             html.Div(
                 className="lv-ana-columnas",
                 children=[
-                    # COLUMNA IZQUIERDA: equilibrios y valores propios.
+                    # COLUMNA IZQUIERDA: puntos de equilibrio y estabilidad.
                     html.Section(
-                        className="lv-ana-columna",
+                        className="lv-ana-columna lv-ana-columna-izquierda",
                         children=[
                             html.H3("Puntos de equilibrio"),
                             html.Div(
@@ -55,9 +51,9 @@ def crear_contenido_analisis_sistema():
                                     crear_equilibrio(
                                         "coexistencia",
                                         "Coexistencia",
-                                        r"$E_* = \left(\frac{\gamma}{\delta},\frac{\alpha}{\beta}\right)$",
-                                        "Centro estable",
-                                        "No asintótico",
+                                        r"$E_*=\left(\frac{\gamma}{\delta},\frac{\alpha}{\beta}\right)$",
+                                        "Centro",
+                                        "Estable, no asintótico",
                                     ),
                                 ],
                             ),
@@ -72,35 +68,72 @@ def crear_contenido_analisis_sistema():
                                         r"$\lambda_{\pm}=\pm i\sqrt{\alpha\gamma}$",
                                         "lv-ana-formula-autovalores",
                                     ),
-                                    html.P(
-                                        "Las soluciones cercanas oscilan sin converger al equilibrio."
+                                    html.Div(
+                                        className="lv-ana-estabilidad-definiciones",
+                                        children=[
+                                            html.Div(
+                                                children=[
+                                                    html.Strong("Estable (Lyapunov)"),
+                                                    html.P(
+                                                        "Las soluciones suficientemente "
+                                                        "cercanas permanecen cerca."
+                                                    ),
+                                                ],
+                                            ),
+                                            html.Div(
+                                                children=[
+                                                    html.Strong("No asintótico"),
+                                                    html.P(
+                                                        "Las soluciones próximas no "
+                                                        "convergen al equilibrio."
+                                                    ),
+                                                ],
+                                            ),
+                                        ],
                                     ),
                                 ],
                             ),
                         ],
                     ),
-                    # COLUMNA DERECHA: interpretación de los gráficos.
+                    # COLUMNA DERECHA: lectura de las trayectorias.
                     html.Section(
-                        className="lv-ana-columna",
+                        className="lv-ana-columna lv-ana-columna-derecha",
                         children=[
                             html.H3("Interpretación de las trayectorias"),
                             html.Section(
                                 className="lv-ana-trayectoria",
                                 children=[
-                                    html.H4("Evolución temporal"),
-                                    html.P(
-                                        "Las poblaciones oscilan; los máximos de zorros "
-                                        "ocurren después de los de conejos."
+                                    html.H4("Solución estacionaria"),
+                                    formula(
+                                        r"Si $(x_0,y_0)=E_*$, entonces "
+                                        r"$(x(t),y(t))=E_*$ para todo $t$.",
+                                        "lv-ana-texto-matematico",
                                     ),
                                 ],
                             ),
                             html.Section(
                                 className="lv-ana-trayectoria",
                                 children=[
-                                    html.H4("Plano de fases"),
+                                    html.H4("Oscilaciones y plano de fases"),
                                     formula(
-                                        r"Las trayectorias positivas no estacionarias "
-                                        r"forman órbitas cerradas alrededor de $E_*$. ",
+                                        r"Las soluciones positivas no estacionarias "
+                                        r"describen órbitas cerradas alrededor de $E_*$. "
+                                        r"Los máximos de zorros siguen a los de conejos.",
+                                        "lv-ana-texto-matematico",
+                                    ),
+                                ],
+                            ),
+                            html.Section(
+                                className="lv-ana-trayectoria lv-ana-integral",
+                                children=[
+                                    html.H4("Integral primera"),
+                                    formula(
+                                        r"$H(x,y)=\delta x-\gamma\ln x+\beta y-\alpha\ln y$",
+                                        "lv-ana-texto-matematico lv-ana-expresion-integral",
+                                    ),
+                                    formula(
+                                        r"Para $x,y>0$, se conserva: "
+                                        r"$\frac{dH}{dt}=0$.",
                                         "lv-ana-texto-matematico",
                                     ),
                                 ],
@@ -112,9 +145,6 @@ def crear_contenido_analisis_sistema():
                                         "IDEA CLAVE", className="lv-ana-idea-etiqueta"
                                     ),
                                     html.H4("Oscilar no significa converger."),
-                                    html.P(
-                                        "Las oscilaciones no se amortiguan en el modelo clásico."
-                                    ),
                                 ],
                             ),
                         ],

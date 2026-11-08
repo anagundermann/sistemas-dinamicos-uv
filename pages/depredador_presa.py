@@ -1,34 +1,34 @@
 """Laboratorio interactivo de depredador-presa (Lotka-Volterra).
-
 La presentacion de esta pagina se controla en assets/zz-depredador-presa.css.
 Se mantienen los seis parametros y los identificadores de los callbacks originales.
 """
 
-from components.barra_animacion_lv import crear_barra_animacion_vista_previa
-from dash import Input, Output, State, ctx, dcc, get_asset_url, html, no_update
+from components.barra_animacion_lv import (
+    crear_barra_animacion_vista_previa,
+    preparar_datos_animacion,
+    crear_formas_guia,
+    crear_anotaciones_guia,
+    _estado_visible,
+)
+from dash import Input, Output, Patch, State, ctx, dcc, get_asset_url, html, no_update
 import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
-
 from components.ecosistema_lv import (
     crear_contenido_ecosistema,
     registrar_callbacks_ecosistema,
 )
-
 from components.modelo_matematico_lv import crear_contenido_modelo_matematico
-
 from components.analisis_sistema_lv import crear_contenido_analisis_sistema
-
 from models.modelo_lotka_volterra import (
     calcular_equilibrio,
     simular_lotka_volterra,
 )
 
-
 COLOR_PRESAS = "#14B8A6"
 COLOR_DEPREDADORES = "#7C3AED"
 
-
 # Configuracion separada para editar los controles sin tocar el layout.
+
 CONTROLES = [
     ("α · Crecimiento de presas", "lv-alpha", 0.1, 1.2, 0.05, 0.65),
     ("β · Intensidad de depredación", "lv-beta", 0.005, 0.05, 0.001, 0.018),
@@ -76,11 +76,84 @@ def crear_grafico(titulo, grafico_id):
             dcc.Graph(
                 id=grafico_id,
                 className="lv-grafico",
+                figure={
+                    "data": [],
+                    "layout": {
+                        "xaxis": {"visible": False},
+                        "yaxis": {"visible": False},
+                        "paper_bgcolor": "white",
+                        "plot_bgcolor": "white",
+                    },
+                },
                 config={
                     "displayModeBar": False,
                     "scrollZoom": False,
                     "responsive": True,
                 },
+            ),
+        ],
+    )
+
+
+def crear_panel_estado():
+    """Lectura compacta de la solucion, dentro del panel de controles."""
+    return html.Div(
+        className="lv-estado-actual",
+        children=[
+            html.Div(
+                className="lv-estado-encabezado",
+                children=[
+                    html.Span(
+                        "Estado de las poblaciones",
+                        className="lv-estado-titulo",
+                    ),
+                    html.Div(
+                        className="lv-estado-herramientas",
+                        children=[
+                            dbc.Switch(
+                                id="lv-guia-vertical",
+                                label="Guía",
+                                value=False,
+                                class_name="lv-guia-interruptor",
+                            ),
+                            html.Span(
+                                "t = 0.0",
+                                id="lv-estado-tiempo",
+                                className="lv-estado-tiempo",
+                            ),
+                        ],
+                    ),
+                ],
+            ),
+            html.Div(
+                className="lv-estado-valores",
+                children=[
+                    html.Div(
+                        className="lv-estado-celda lv-estado-celda-presas",
+                        children=[
+                            html.Span("Presas · x(t)", className="lv-estado-etiqueta"),
+                            html.Strong(
+                                "60.0",
+                                id="lv-estado-presas",
+                                className="lv-estado-numero",
+                            ),
+                        ],
+                    ),
+                    html.Div(
+                        className="lv-estado-celda lv-estado-celda-depredadores",
+                        children=[
+                            html.Span(
+                                "Depredadores · y(t)",
+                                className="lv-estado-etiqueta",
+                            ),
+                            html.Strong(
+                                "20.0",
+                                id="lv-estado-depredadores",
+                                className="lv-estado-numero",
+                            ),
+                        ],
+                    ),
+                ],
             ),
         ],
     )
@@ -151,6 +224,7 @@ def crear_pagina():
                                 className="lv-lista-controles",
                                 children=[crear_control(*datos) for datos in CONTROLES],
                             ),
+                            crear_panel_estado(),
                         ],
                     ),
                     html.Div(
@@ -195,6 +269,16 @@ def crear_pagina():
                     ),
                 ],
             ),
+            html.Div(
+                "Integración numérica: RK45 (Dormand–Prince), paso adaptativo · SciPy (solve_ivp)",
+                style={
+                    "textAlign": "center",
+                    "fontSize": "11px",
+                    "color": "#64748B",
+                    "marginTop": "12px",
+                    "paddingBottom": "8px",
+                },
+            ),
         ],
     )
 
@@ -213,19 +297,27 @@ def registrar_callbacks(app):
         Output("lv-grafico-tiempo", "figure"),
         Output("lv-grafico-fases", "figure"),
         Output("lv-lectura", "children"),
+        Output("lv-estado-tiempo", "children"),
+        Output("lv-estado-presas", "children"),
+        Output("lv-estado-depredadores", "children"),
+        Output("lv-animacion-datos", "data"),
         Input("lv-alpha", "value"),
         Input("lv-beta", "value"),
         Input("lv-gamma", "value"),
         Input("lv-delta", "value"),
         Input("lv-presas-0", "value"),
         Input("lv-depredadores-0", "value"),
+        State("lv-guia-vertical", "value"),
     )
-    def actualizar_laboratorio(alpha, beta, gamma, delta, presas_0, depredadores_0):
+    def actualizar_laboratorio(
+        alpha, beta, gamma, delta, presas_0, depredadores_0, guia_activa
+    ):
         tiempos, presas, depredadores = simular_lotka_volterra(
             alpha, beta, gamma, delta, presas_0, depredadores_0
         )
+        # Mismos resultados y mismos rangos para el mouse y para Play.
+        datos = preparar_datos_animacion(tiempos, presas, depredadores)
         presas_eq, depredadores_eq = calcular_equilibrio(alpha, beta, gamma, delta)
-
         figura_tiempo = go.Figure()
         figura_tiempo.add_trace(
             go.Scatter(
@@ -233,6 +325,7 @@ def registrar_callbacks(app):
                 y=presas,
                 mode="lines",
                 name="Presas",
+                hoverinfo="none",  # Conserva hoverData sin mostrar recuadro flotante.
                 line={"color": COLOR_PRESAS, "width": 3},
             )
         )
@@ -242,6 +335,7 @@ def registrar_callbacks(app):
                 y=depredadores,
                 mode="lines",
                 name="Depredadores",
+                hoverinfo="none",
                 line={"color": COLOR_DEPREDADORES, "width": 3},
             )
         )
@@ -251,18 +345,27 @@ def registrar_callbacks(app):
             xaxis={
                 "title": {"text": "Tiempo", "standoff": 14},
                 "automargin": True,
+                "range": datos["rango_t"],
+                "autorange": False,
+                "fixedrange": True,
+                "zeroline": False,
+                # Guia dibujada como shape: sirve tanto con mouse como con Play.
+                "showspikes": False,
             },
             yaxis={
                 "title": {"text": "Población (unidades del modelo)", "standoff": 12},
                 "automargin": True,
+                "range": datos["rango_poblacion"],
+                "autorange": False,
+                "fixedrange": True,
+                "zeroline": False,
             },
-            hovermode="x unified",
+            hovermode="x" if guia_activa else "closest",
             dragmode=False,
             legend={"orientation": "h", "y": 1.12, "x": 0},
             paper_bgcolor="white",
             plot_bgcolor="white",
         )
-
         figura_fases = go.Figure()
         figura_fases.add_trace(
             go.Scatter(
@@ -296,15 +399,36 @@ def registrar_callbacks(app):
             xaxis={
                 "title": {"text": "Presas (x)", "standoff": 14},
                 "automargin": True,
+                "labelalias": {"0": ""},
+                "range": datos["rango_x_fases"],
+                "autorange": False,
+                "fixedrange": True,
+                "zeroline": False,
             },
             yaxis={
                 "title": {"text": "Depredadores (y)", "standoff": 12},
                 "automargin": True,
+                "labelalias": {"0": ""},
+                "range": datos["rango_y_fases"],
+                "autorange": False,
+                "fixedrange": True,
+                "zeroline": False,
             },
             dragmode=False,
             legend={"orientation": "h", "y": 1.12, "x": 0},
             paper_bgcolor="white",
             plot_bgcolor="white",
+        )
+        # Las dos guias usan la solucion ya calculada y nunca reescalan ejes.
+        formas_t, formas_f = crear_formas_guia(
+            tiempos[0], presas[0], depredadores[0], datos, guia_activa
+        )
+        figura_tiempo.update_layout(shapes=formas_t)
+        figura_fases.update_layout(shapes=formas_f)
+        figura_fases.update_layout(
+            annotations=crear_anotaciones_guia(
+                presas[0], depredadores[0], datos, guia_activa
+            )
         )
 
         lectura = html.Div(
@@ -369,7 +493,47 @@ def registrar_callbacks(app):
                 ),
             ],
         )
-        return figura_tiempo, figura_fases, lectura
+        return (
+            figura_tiempo,
+            figura_fases,
+            lectura,
+            f"t = {float(tiempos[0]):.1f}",
+            f"{float(presas[0]):.1f}",
+            f"{float(depredadores[0]):.1f}",
+            datos,
+        )
+
+    @app.callback(
+        Output("lv-grafico-tiempo", "figure", allow_duplicate=True),
+        Output("lv-grafico-fases", "figure", allow_duplicate=True),
+        Input("lv-guia-vertical", "value"),
+        State("lv-grafico-tiempo", "figure"),
+        State("lv-grafico-fases", "figure"),
+        State("lv-animacion-datos", "data"),
+        prevent_initial_call=True,
+    )
+    def alternar_guia_vertical(guia_activa, figura_tiempo, figura_fases, datos):
+        """Muestra guias sincronizadas, sin variar escalas ni recalcular ODE."""
+        temporal = Patch()
+        fases = Patch()
+        temporal["layout"]["hovermode"] = "x" if guia_activa else "closest"
+        temporal["layout"]["xaxis"]["showspikes"] = False
+
+        # No se muestran ejes fijos del origen: usamos proyecciones dinamicas.
+        estado = _estado_visible(figura_tiempo, datos)
+        if estado is not None:
+            formas_t, formas_f = crear_formas_guia(*estado, datos, guia_activa)
+        else:
+            formas_t, formas_f = [], []
+        temporal["layout"]["shapes"] = formas_t
+        fases["layout"]["shapes"] = formas_f
+        if estado is not None:
+            fases["layout"]["annotations"] = crear_anotaciones_guia(
+                estado[1], estado[2], datos, guia_activa
+            )
+        else:
+            fases["layout"]["annotations"] = []
+        return temporal, fases
 
     # Actualizar el valor visible junto al nombre de cada control.
     for _, control_id, _, _, _, _ in CONTROLES:

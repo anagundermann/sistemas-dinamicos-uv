@@ -1,14 +1,14 @@
 """Biblioteca matematica: un solo modal con navegacion lateral.
 
-Los textos y formulas se mantienen en conceptos_data.py.
+Los textos y formulas se mantienen en components/biblioteca_datos.py.
 Esta interfaz solo selecciona y presenta las fichas existentes.
 """
 
-from dash import ALL, Input, Output, ctx, dcc, html
+from dash import ALL, Input, Output, ctx, dcc, html, remount
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 
-from conceptos_data import CONCEPTOS
+from components.conceptos_biblioteca_datos import CONCEPTOS
 
 
 CLAVES_CONCEPTOS = tuple(CONCEPTOS)
@@ -120,19 +120,18 @@ def crear_consulta_conceptos():
                                                                 className="sd-modal-texto",
                                                             ),
                                                             html.Div(
+                                                                id="sd-concepto-formula-contenedor",
                                                                 className="sd-modal-formula",
-                                                                children=[
-                                                                    dcc.Markdown(
-                                                                        id="sd-concepto-formula",
-                                                                        children="$$\n"
-                                                                        + DATO_INICIAL[
-                                                                            "formula"
-                                                                        ]
-                                                                        + "\n$$",
-                                                                        mathjax=True,
-                                                                        className="sd-modal-mathjax",
-                                                                    ),
-                                                                ],
+                                                                children=dcc.Markdown(
+                                                                    id="sd-concepto-formula",
+                                                                    children="$$\n"
+                                                                    + DATO_INICIAL[
+                                                                        "formula"
+                                                                    ]
+                                                                    + "\n$$",
+                                                                    mathjax=True,
+                                                                    className="sd-modal-mathjax",
+                                                                ),
                                                             ),
                                                         ],
                                                     ),
@@ -146,13 +145,16 @@ def crear_consulta_conceptos():
                                                                 "Donde",
                                                                 className="sd-modal-seccion-titulo",
                                                             ),
-                                                            dcc.Markdown(
-                                                                id="sd-concepto-notacion",
-                                                                children=DATO_INICIAL.get(
-                                                                    "notacion", ""
+                                                            html.Div(
+                                                                id="sd-concepto-notacion-contenedor",
+                                                                children=dcc.Markdown(
+                                                                    id="sd-concepto-notacion",
+                                                                    children=DATO_INICIAL.get(
+                                                                        "notacion", ""
+                                                                    ),
+                                                                    mathjax=True,
+                                                                    className="sd-modal-notacion",
                                                                 ),
-                                                                mathjax=True,
-                                                                className="sd-modal-notacion",
                                                             ),
                                                         ],
                                                     ),
@@ -235,8 +237,8 @@ def registrar_callbacks_conceptos(app):
     @app.callback(
         Output("sd-concepto-titulo", "children"),
         Output("sd-concepto-descripcion", "children"),
-        Output("sd-concepto-formula", "children"),
-        Output("sd-concepto-notacion", "children"),
+        Output("sd-concepto-formula-contenedor", "children"),
+        Output("sd-concepto-notacion-contenedor", "children"),
         Output("sd-concepto-explicacion", "children"),
         Output("sd-concepto-propiedades", "children"),
         Output({"type": "sd-opcion-concepto", "index": ALL}, "className"),
@@ -266,8 +268,23 @@ def registrar_callbacks_conceptos(app):
         return (
             dato["titulo"],
             dato["definicion_texto"],
-            "$$\n" + dato["formula"] + "\n$$",
-            dato.get("notacion", ""),
+            # Remontar cada Markdown para que MathJax regenere sus simbolos.
+            remount(
+                dcc.Markdown(
+                    id="sd-concepto-formula",
+                    children="$$\n" + dato["formula"] + "\n$$",
+                    mathjax=True,
+                    className="sd-modal-mathjax",
+                )
+            ),
+            remount(
+                dcc.Markdown(
+                    id="sd-concepto-notacion",
+                    children=dato.get("notacion", ""),
+                    mathjax=True,
+                    className="sd-modal-notacion",
+                )
+            ),
             dato["explicacion"],
             dato["propiedades"],
             clases,
