@@ -11,8 +11,8 @@ import pandas as pd
 from dash import Input, Output, State, dash_table, dcc, html
 
 BG = "#FFFFFF"
-PANEL = "#c3c3ca"
-BORDER = "#000000"
+PANEL = "#f1f1f1"
+BORDER = "#2976E9"
 TEXT = "#000000"
 MUTED = "#000000"
 ACCENT = "#be00eefc"
@@ -24,13 +24,16 @@ CSS = f"""
     background:var(--bg-body);color:var(--text-main);
     font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
     padding:14px 18px;border-radius:14px;width:100%;max-width:1500px;margin:auto;
-    box-sizing:border-box;
+    box-sizing:border-box;position:relative;
 }}
 .pd-app-container *{{box-sizing:border-box}}
 .pd-app-container .header-bar{{
     display:flex;justify-content:space-between;align-items:center;
-    gap:16px;flex-wrap:wrap;margin-bottom:10px;border-bottom:1px solid var(--border);
+    gap:12px;flex-wrap:wrap;margin-bottom:10px;border-bottom:1px solid var(--border);
     padding-bottom:8px;
+}}
+.pd-app-container .header-right{{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
 }}
 .pd-app-container h1{{font-size:19px;font-weight:600;margin:0;color:var(--text-main)}}
 .pd-app-container .subtitle{{color:var(--text-muted);font-size:12px;margin:2px 0 0}}
@@ -44,6 +47,138 @@ CSS = f"""
     background:#25252d!important;color:var(--accent)!important;
     border:1px solid var(--accent)!important;font-weight:600!important;
 }}
+
+/* Botones disparadores de pestañas emergentes (Conceptos) */
+.pd-app-container .concept-triggers{{
+    display:flex;gap:6px;align-items:center;flex-wrap:wrap;
+}}
+.pd-app-container .concept-btn{{
+    background:var(--bg-panel);border:1px solid var(--border);color:var(--text-main);
+    padding:5px 12px;border-radius:20px;cursor:pointer;font-size:12px;
+    font-weight:500;transition:.15s;display:inline-flex;align-items:center;gap:5px;
+}}
+.pd-app-container .concept-btn:hover{{
+    border-color:var(--accent);color:var(--accent);background:var(--btn-bg);
+}}
+
+/* Ventana modal de pestañas emergentes con animación de emergencia y desvanecimiento */
+.pd-app-container .pd-modal-overlay{{
+    position:fixed;top:0;left:0;width:100vw;height:100vh;
+    background:rgba(0,0,0,0.65);backdrop-filter:blur(3px);
+    z-index:9999;display:flex;justify-content:center;align-items:center;
+    padding:20px;
+    opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity 0.22s ease, visibility 0.22s ease;
+}}
+.pd-app-container .pd-modal-overlay.is-open{{
+    opacity:1;visibility:visible;pointer-events:auto;
+}}
+.pd-app-container .pd-modal-card{{
+    background:var(--bg-body);color:var(--text-main);
+    border:1px solid var(--border);border-radius:16px;
+    width:100%;max-width:920px;max-height:88vh;
+    display:flex;flex-direction:column;
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);overflow:hidden;
+    transform:translateY(22px) scale(0.95);opacity:0;
+    transition:transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}}
+.pd-app-container .pd-modal-overlay.is-open .pd-modal-card{{
+    transform:translateY(0) scale(1);opacity:1;
+}}
+.pd-app-container .pd-modal-header{{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 20px;background:var(--bg-panel);
+    border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;
+}}
+.pd-app-container .pd-modal-tabs{{
+    display:flex;gap:8px;flex-wrap:wrap;
+}}
+.pd-app-container .pd-modal-tab{{
+    background:transparent;border:1px solid var(--border);color:var(--text-muted);
+    padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12.5px;
+    font-weight:500;transition:background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+}}
+.pd-app-container .pd-modal-tab.active{{
+    background:var(--btn-bg);color:var(--accent);
+    border-color:var(--accent);font-weight:600;
+}}
+.pd-app-container .pd-modal-close{{
+    background:transparent;border:1px solid var(--border);color:var(--text-muted);
+    width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:15px;
+    display:flex;align-items:center;justify-content:center;transition:.15s;
+}}
+.pd-app-container .pd-modal-close:hover{{
+    border-color:var(--accent);color:var(--accent);
+}}
+.pd-app-container .pd-modal-body{{
+    padding:20px 24px;overflow-y:auto;overflow-x:hidden;line-height:1.65;font-size:13.5px;
+}}
+.pd-app-container .pd-modal-body a{{
+    color:#0066cc!important;text-decoration:underline;font-weight:600;cursor:pointer;
+}}
+.pd-app-container .pd-modal-body a:hover{{
+    color:#004499!important;
+}}
+
+/* Animaciones horizontales al cambiar entre pestañas de conceptos */
+@keyframes pdSlideFromRight{{
+    0%{{opacity:0;transform:translateX(48px)}}
+    100%{{opacity:1;transform:translateX(0)}}
+}}
+@keyframes pdSlideFromLeft{{
+    0%{{opacity:0;transform:translateX(-48px)}}
+    100%{{opacity:1;transform:translateX(0)}}
+}}
+@keyframes pdBodyEmerge{{
+    0%{{opacity:0;transform:translateY(8px)}}
+    100%{{opacity:1;transform:translateY(0)}}
+}}
+.pd-app-container .pd-modal-body.anim-right{{
+    animation:pdSlideFromRight 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}}
+.pd-app-container .pd-modal-body.anim-left{{
+    animation:pdSlideFromLeft 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}}
+.pd-app-container .pd-modal-body.anim-emerge{{
+    animation:pdBodyEmerge 0.22s ease-out forwards;
+}}
+
+.pd-app-container .pd-modal-body h3{{
+    margin:0 0 10px;color:var(--accent);font-size:17px;font-weight:600;
+}}
+.pd-app-container .pd-modal-body h4{{
+    margin:12px 0 6px;color:var(--text-main);font-size:14px;font-weight:600;
+}}
+.pd-app-container .pd-modal-body p{{
+    margin:0 0 10px;
+}}
+.pd-app-container .pd-modal-body ul{{
+    margin:0 0 8px;padding-left:20px;
+}}
+.pd-app-container .pd-modal-body li{{
+    margin-bottom:6px;
+}}
+.pd-app-container .pd-formula-box{{
+    background:var(--bg-panel);border:1px solid var(--border);
+    border-left:3px solid var(--accent);border-radius:8px;
+    padding:10px 16px;margin:10px 0;font-size:14px;
+    color:var(--text-main);overflow-x:auto;
+    display:flex;flex-direction:column;gap:6px;
+}}
+.pd-app-container .pd-formula-box p{{
+    margin:0!important;
+}}
+.pd-app-container .pd-concept-grid{{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;
+}}
+.pd-app-container .pd-concept-box{{
+    background:var(--bg-panel);border:1px solid var(--border);
+    border-radius:10px;padding:12px 14px;
+}}
+.pd-app-container .pd-concept-box h4{{
+    margin-top:0;
+}}
+
 .pd-app-container .top-controls{{
     display:flex;justify-content:space-between;align-items:center;
     gap:10px;flex-wrap:wrap;margin-bottom:10px;
@@ -88,9 +223,9 @@ CSS = f"""
 /* Panel de Sliders compacto a la derecha */
 .pd-app-container .sliders-panel{{
     background:var(--bg-panel);border:1px solid var(--border);
-    border-radius:10px;padding:12px 14px;
+    border-radius:10px;padding:10px 14px;
     display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:12px 16px;align-content:space-between;
+    gap:8px 16px;align-content:space-between;
 }}
 .pd-app-container .slider-group{{min-width:0}}
 .pd-app-container .slider-group.full-span{{grid-column:1 / -1}}
@@ -112,8 +247,23 @@ CSS = f"""
     border-radius:4px;cursor:pointer;font:10px monospace;padding:1px 5px;
 }}
 .pd-app-container .info-card{{line-height:1.5;font-size:13px;margin-bottom:12px;color:var(--text-main)}}
-.pd-app-container .info-card h3{{margin:0 0 6px;color:var(--accent);font-size:16px}}
+.pd-app-container .info-card h3{{margin:0 0 6px;color:var(--text-main);font-size:16px;font-weight:700}}
 .pd-app-container .note{{color:var(--text-muted);font-size:11px;line-height:1.4}}
+
+/* Botón inferior de transición rápida entre Péndulo Simple y Péndulo Doble */
+.pd-app-container .switch-lab-row{{
+    display:flex;justify-content:flex-start;align-items:center;margin-top:10px;
+}}
+.pd-app-container .switch-lab-btn{{
+    background:var(--bg-panel);border:1px solid var(--border);color:var(--text-main);
+    padding:6px 16px;border-radius:6px 20px 20px 6px;cursor:pointer;
+    font:12.5px monospace;font-weight:600;display:inline-flex;align-items:center;
+    gap:8px;transition:.15s;
+}}
+.pd-app-container .switch-lab-btn:hover{{
+    border-color:var(--accent);color:var(--accent);background:var(--btn-bg);
+}}
+
 @media(max-width:1100px){{
     .pd-app-container .workspace-grid{{grid-template-columns:1fr 1fr}}
     .pd-app-container .sliders-panel{{grid-column:1 / -1;grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -121,6 +271,7 @@ CSS = f"""
 @media(max-width:720px){{
     .pd-app-container .workspace-grid{{grid-template-columns:1fr}}
     .pd-app-container .sliders-panel{{grid-template-columns:1fr}}
+    .pd-app-container .pd-concept-grid{{grid-template-columns:1fr}}
 }}
 """
 
@@ -162,14 +313,283 @@ def slider(label, sid, minimum, maximum, step, value, value_id, display, full_sp
     )
 
 
+def crear_modal_conceptos_simple():
+    """Construye la ventana emergente con las 3 pestañas de conceptos del Péndulo Simple en LaTeX."""
+    return html.Div(
+        id="ps-modal-overlay",
+        className="pd-modal-overlay",
+        children=[
+            html.Div(
+                className="pd-modal-card",
+                children=[
+                    html.Div(
+                        className="pd-modal-header",
+                        children=[
+                            html.Div(
+                                className="pd-modal-tabs",
+                                children=[
+                                    html.Button(
+                                        "¿Qué es el péndulo simple?",
+                                        id="ps-tab-modal-fisico",
+                                        n_clicks=0,
+                                        className="pd-modal-tab active",
+                                    ),
+                                    html.Button(
+                                        "Modelo matemático",
+                                        id="ps-tab-modal-modelo",
+                                        n_clicks=0,
+                                        className="pd-modal-tab",
+                                    ),
+                                    html.Button(
+                                        "Análisis del sistema",
+                                        id="ps-tab-modal-analisis",
+                                        n_clicks=0,
+                                        className="pd-modal-tab",
+                                    ),
+                                ],
+                            ),
+                            html.Button("✕", id="ps-btn-modal-cerrar", n_clicks=0, className="pd-modal-close", title="Cerrar"),
+                        ],
+                    ),
+                    # Contenido 1: ¿Qué es el péndulo simple? / Supuestos y Período
+                    html.Div(
+                        id="ps-modal-body-fisico",
+                        className="pd-modal-body",
+                        style={"display": "block"},
+                        children=[
+                            dcc.Markdown(
+                                r"""
+### ¿Qué es el Péndulo Simple?
+El **péndulo simple** es un sistema mecánico idealizado de un único grado de libertad cuya [variedad de configuración](https://es.wikipedia.org/wiki/Espacio_de_configuraci%C3%B3n) es el círculo unitario $Q = S^1$. Consiste en una masa puntual $m_1$ suspendida de un pivote fijo mediante una varilla rígida e inextensible de longitud $L_1$ y masa despreciable, sometida a un campo gravitacional uniforme $g$ y a un coeficiente de amortiguamiento viscoso $b$.
+
+En coordenadas cartesianas respecto al pivote, la posición y rapidez instantáneas de la partícula quedan restringidas a la circunferencia de radio $L_1$:
+                                """,
+                                mathjax=True,
+                                link_target="_blank",
+                            ),
+                            html.Div(
+                                className="pd-formula-box",
+                                children=[
+                                    dcc.Markdown(
+                                        r"$$x(t) = L_1 \sin\theta_1(t), \qquad y(t) = -L_1 \cos\theta_1(t), \qquad v(t) = L_1 |\dot{\theta}_1(t)|$$",
+                                        mathjax=True,
+                                    ),
+                                ],
+                            ),
+                            html.Div(
+                                className="pd-concept-grid",
+                                children=[
+                                    html.Div(
+                                        className="pd-concept-box",
+                                        children=dcc.Markdown(
+                                            r"""
+#### Supuestos físicos e idealizaciones
+* **Masa puntual ajustable:** Toda la inercia reside en la esfera de masa $m_1$ ($0.2\text{ a }5.0\text{ kg}$), con momento de inercia $I = m_1 L_1^2$. Por equivalencia gravitatoria-inercial, el período libre no depende de $m_1$, pero la energía mecánica total escala linealmente con ella.
+* **Vínculo holónomo rígido:** La barra no experimenta flexión ni elongación elástica ($r(t) \equiv L_1$).
+* **Disipación lineal:** El medio produce una desaceleración viscosa proporcional a la velocidad angular $\omega_1 = \dot{\theta}_1$.
+* **Ensamble $N$-cuerpo:** Se integran en paralelo $N$ copias independientes con perturbaciones iniciales $\theta_1^{(k)}(0) = \theta_1(0) + k\Delta\theta_0$.
+                                            """,
+                                            mathjax=True,
+                                            link_target="_blank",
+                                        ),
+                                    ),
+                                    html.Div(
+                                        className="pd-concept-box",
+                                        children=dcc.Markdown(
+                                            r"""
+#### Régimen lineal vs. No lineal (Anarmonicidad)
+* **Ángulos pequeños ($|\theta_1| \ll 1\text{ rad}$):** Mediante el desarrollo de Taylor $\sin\theta_1 \approx \theta_1 - \frac{1}{6}\theta_1^3$, el sistema se reduce a un [oscilador armónico](https://es.wikipedia.org/wiki/Oscilador_arm%C3%B3nico) con frecuencia natural $\omega_0 = \sqrt{g/L_1}$ y período isócrono $T_0 = 2\pi\sqrt{L_1/g}$.
+* **Grandes amplitudes:** La fuerza restauradora crece más lento que $\theta_1$ y el período exacto depende de la amplitud inicial $\theta_0$ mediante la integral elíptica completa de primera especie $K(k)$, con $k = \sin(\theta_0/2)$:
+                                            """,
+                                            mathjax=True,
+                                            link_target="_blank",
+                                        ),
+                                    ),
+                                ],
+                            ),
+                            html.Div(
+                                className="pd-formula-box",
+                                children=[
+                                    dcc.Markdown(
+                                        r"$$T(\theta_0) = 4\sqrt{\frac{L_1}{g}}\int_0^{\pi/2}\frac{d\phi}{\sqrt{1 - \sin^2(\theta_0/2)\sin^2\phi}} = T_0\left(1 + \frac{1}{16}\theta_0^2 + \frac{11}{3072}\theta_0^4 + \mathcal{O}(\theta_0^6)\right)$$",
+                                        mathjax=True,
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    # Contenido 2: Modelo matemático
+                    html.Div(
+                        id="ps-modal-body-modelo",
+                        className="pd-modal-body",
+                        style={"display": "none"},
+                        children=[
+                            dcc.Markdown(
+                                r"""
+### Modelo Matemático y Formulación Lagrangiana
+Definimos la energía cinética $T(\dot{\theta}_1)$, la energía potencial gravitatoria $V(\theta_1)$ (tomando $V=0$ en el equilibrio inferior $\theta_1 = 0$), el [Lagrangiano](https://es.wikipedia.org/wiki/Lagrangiano) $\mathcal{L} = T - V$ y la [función de disipación de Rayleigh](https://en.wikipedia.org/wiki/Rayleigh_dissipation_function) $\mathcal{R}(\dot{\theta}_1)$:
+                                """,
+                                mathjax=True,
+                                link_target="_blank",
+                            ),
+                            html.Div(
+                                className="pd-formula-box",
+                                children=[
+                                    dcc.Markdown(
+                                        r"$$\mathcal{L}(\theta_1, \dot{\theta}_1) = \frac{1}{2}m_1 L_1^2 \dot{\theta}_1^2 - m_1 g L_1 (1 - \cos\theta_1), \qquad \mathcal{R}(\dot{\theta}_1) = \frac{1}{2}b m_1 L_1^2 \dot{\theta}_1^2$$",
+                                        mathjax=True,
+                                    ),
+                                ],
+                            ),
+                            dcc.Markdown(
+                                r"""
+Aplicando la [ecuación de Euler-Lagrange](https://es.wikipedia.org/wiki/Ecuaciones_de_Euler-Lagrange) con fuerzas disipativas generalizadas se obtiene la ecuación diferencial ordinaria no lineal de segundo orden:
+                                """,
+                                mathjax=True,
+                                link_target="_blank",
+                            ),
+                            html.Div(
+                                className="pd-formula-box",
+                                children=[
+                                    dcc.Markdown(
+                                        r"$$\frac{d}{dt}\left(\frac{\partial \mathcal{L}}{\partial \dot{\theta}_1}\right) - \frac{\partial \mathcal{L}}{\partial \theta_1} + \frac{\partial \mathcal{R}}{\partial \dot{\theta}_1} = 0 \quad \Longrightarrow \quad \ddot{\theta}_1(t) + b\dot{\theta}_1(t) + \frac{g}{L_1}\sin\theta_1(t) = 0$$",
+                                        mathjax=True,
+                                    ),
+                                ],
+                            ),
+                            html.Div(
+                                className="pd-concept-grid",
+                                children=[
+                                    html.Div(
+                                        className="pd-concept-box",
+                                        children=[
+                                            dcc.Markdown(
+                                                r"""
+#### Sistema autónomo en el espacio de estados
+Introduciendo el vector de estado $x = (\theta_1, \omega_1)^\top \in S^1 \times \mathbb{R}$, la ecuación de segundo orden equivale al campo vectorial suave $\dot{x} = F(x)$:
+                                                """,
+                                                mathjax=True,
+                                            ),
+                                            dcc.Markdown(
+                                                r"$$\dot{\theta}_1 = \omega_1, \qquad \dot{\omega}_1 = -\frac{g}{L_1}\sin\theta_1 - b\omega_1$$",
+                                                mathjax=True,
+                                            ),
+                                            dcc.Markdown(
+                                                r"El motor numérico avanza con paso $\Delta t = 10^{-3}\text{ s}$ mediante **Runge-Kutta de 4.º orden (RK4)** con error global $\mathcal{O}(\Delta t^4)$.",
+                                                mathjax=True,
+                                            ),
+                                        ],
+                                    ),
+                                    html.Div(
+                                        className="pd-concept-box",
+                                        children=[
+                                            dcc.Markdown(
+                                                r"""
+#### Balance de energía mecánica
+La energía mecánica total instantánea y su tasa de disipación a lo largo de las trayectorias son:
+                                                """,
+                                                mathjax=True,
+                                            ),
+                                            dcc.Markdown(
+                                                r"$$E(\theta_1, \omega_1) = \frac{1}{2}m_1 L_1^2 \omega_1^2 + m_1 g L_1(1 - \cos\theta_1)$$",
+                                                mathjax=True,
+                                            ),
+                                            dcc.Markdown(
+                                                r"$$\frac{dE}{dt} = \nabla E \cdot F(x) = -b m_1 L_1^2 \omega_1^2 \le 0$$",
+                                                mathjax=True,
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                    # Contenido 3: Análisis del sistema
+                    html.Div(
+                        id="ps-modal-body-analisis",
+                        className="pd-modal-body",
+                        style={"display": "none"},
+                        children=[
+                            dcc.Markdown(
+                                r"""
+### Análisis Cualitativo, Estabilidad y Espacio de Fases
+Los puntos de equilibrio satisfacen $F(\theta_1^*, \omega_1^*) = (0,0)^\top$, lo que implica $\omega_1^* = 0$ y $\sin\theta_1^* = 0$. La estabilidad local se determina mediante la traza, el determinante y el polinomio característico de la matriz Jacobiana $J = DF(\theta_1, \omega_1)$:
+                                """,
+                                mathjax=True,
+                                link_target="_blank",
+                            ),
+                            html.Div(
+                                className="pd-formula-box",
+                                children=[
+                                    dcc.Markdown(
+                                        r"$$\operatorname{tr}(J) = -b, \qquad \det(J) = \frac{g}{L_1}\cos\theta_1, \qquad P(\lambda) = \lambda^2 + b\lambda + \frac{g}{L_1}\cos\theta_1 = 0$$",
+                                        mathjax=True,
+                                    ),
+                                ],
+                            ),
+                            html.Div(
+                                className="pd-concept-grid",
+                                children=[
+                                    html.Div(
+                                        className="pd-concept-box",
+                                        children=dcc.Markdown(
+                                            r"""
+#### Clasificación de Puntos de Equilibrio
+* **Equilibrio inferior $x_s = (0, 0)$:** Mínimo de potencial ($E = 0$) con autovalores $\lambda_{\pm} = \frac{1}{2}\left(-b \pm \sqrt{b^2 - 4\omega_0^2}\right)$:
+  1. Si $b = 0$: $\lambda_{\pm} = \pm i\omega_0$ (**centro no lineal** Lyapunov-estable rodeado de órbitas periódicas).
+  2. Si $0 < b < 2\omega_0$: **foco espiral asintóticamente estable** (régimen subamortiguado).
+  3. Si $b \ge 2\omega_0$: **nodo asintóticamente estable** (régimen sobreamortiguado).
+* **Equilibrio invertido $x_u = (\pm\pi, 0)$:** Máximo de potencial ($E = 2m_1 g L_1$) con $\det(J) = -\omega_0^2 < 0$ y autovalores reales $\lambda_- < 0 < \lambda_+$, formando un **punto de silla hiperbólico** inestable.
+                                            """,
+                                            mathjax=True,
+                                            link_target="_blank",
+                                        ),
+                                    ),
+                                    html.Div(
+                                        className="pd-concept-box",
+                                        children=[
+                                            dcc.Markdown(
+                                                r"""
+#### Topología del Retrato de Fases y Ausencia de Caos
+* **Libración ($E < 2m_1 g L_1$):** Órbitas cerradas acotadas donde el péndulo oscila entre $[-\theta_{\max}, \theta_{\max}]$.
+* **Separatriz heteroclínica ($E = 2m_1 g L_1$):** Curva invariante que conecta las sillas $(-\pi, 0)$ y $(\pi, 0)$ en tiempo infinito:
+                                                """,
+                                                mathjax=True,
+                                            ),
+                                            dcc.Markdown(
+                                                r"$$\omega_1(\theta_1) = \pm 2\sqrt{\frac{g}{L_1}}\cos\left(\frac{\theta_1}{2}\right)$$",
+                                                mathjax=True,
+                                            ),
+                                            dcc.Markdown(
+                                                r"""
+* [**Teorema de Poincaré-Bendixson**](https://en.wikipedia.org/wiki/Poincar%C3%A9%E2%80%93Bendixson_theorem): En un flujo autónomo bidimensional ($S^1 \times \mathbb{R}$) no existen atractores extraños. Por tanto, **el péndulo simple es integrable y no puede exhibir caos determinista** ($\lambda_{\max} = 0$).
+                                                """,
+                                                mathjax=True,
+                                                link_target="_blank",
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+            )
+        ],
+    )
+
+
 def crear_pagina():
     return html.Div(
         className="pd-app-container",
+        style={"--border": BORDER},
         children=[
             dcc.Store(id="ps-client-sync", data=0),
             dcc.Store(id="ps-analysis-store", data=None),
             dcc.Download(id="ps-download-csv"),
-            # Cabecera + Pestañas en una sola línea
+            # Ventana emergente de conceptos (oculta por defecto con opacidad 0)
+            crear_modal_conceptos_simple(),
+            # Cabecera + Botones emergentes de conceptos + Pestañas en una sola línea
             html.Div(
                 className="header-bar",
                 children=[
@@ -180,24 +600,52 @@ def crear_pagina():
                             className="subtitle",
                         ),
                     ]),
-                    dcc.Tabs(
-                        id="ps-tabs-navigation",
-                        value="tab-simulador",
-                        className="custom-tabs",
-                        persistence=True,
-                        persistence_type="memory",
+                    html.Div(
+                        className="header-right",
                         children=[
-                            dcc.Tab(
-                                label="1. Simulador",
-                                value="tab-simulador",
-                                className="custom-tab",
-                                selected_className="custom-tab--selected",
+                            html.Div(
+                                className="concept-triggers",
+                                children=[
+                                    html.Button(
+                                        "¿Qué es el péndulo simple?",
+                                        id="ps-btn-modal-fisico",
+                                        n_clicks=0,
+                                        className="concept-btn",
+                                    ),
+                                    html.Button(
+                                        "Modelo matemático",
+                                        id="ps-btn-modal-modelo",
+                                        n_clicks=0,
+                                        className="concept-btn",
+                                    ),
+                                    html.Button(
+                                        "Análisis del sistema",
+                                        id="ps-btn-modal-analisis",
+                                        n_clicks=0,
+                                        className="concept-btn",
+                                    ),
+                                ],
                             ),
-                            dcc.Tab(
-                                label="2. Mediciones y guía teórica",
-                                value="tab-datos",
-                                className="custom-tab",
-                                selected_className="custom-tab--selected",
+                            dcc.Tabs(
+                                id="ps-tabs-navigation",
+                                value="tab-simulador",
+                                className="custom-tabs",
+                                persistence=True,
+                                persistence_type="memory",
+                                children=[
+                                    dcc.Tab(
+                                        label="1. Simulador",
+                                        value="tab-simulador",
+                                        className="custom-tab",
+                                        selected_className="custom-tab--selected",
+                                    ),
+                                    dcc.Tab(
+                                        label="2. Mediciones y guía teórica",
+                                        value="tab-datos",
+                                        className="custom-tab",
+                                        selected_className="custom-tab--selected",
+                                    ),
+                                ],
                             ),
                         ],
                     ),
@@ -208,7 +656,6 @@ def crear_pagina():
                 id="ps-panel-simulador",
                 style={"display": "block"},
                 children=[
-                    # Barra unificada: Indicadores a la izquierda, Botones a la derecha
                     html.Div(
                         className="top-controls",
                         children=[
@@ -232,11 +679,9 @@ def crear_pagina():
                             ),
                         ],
                     ),
-                    # Espacio de trabajo en 3 columnas: Vista Física | Gráficas | Sliders
                     html.Div(
                         className="workspace-grid",
                         children=[
-                            # Columna 1: Vista física
                             html.Div(
                                 className="panel",
                                 children=[
@@ -244,7 +689,6 @@ def crear_pagina():
                                     html.Div(id="ps-canvas-physics-host", className="canvas-host canvas-physics-size"),
                                 ],
                             ),
-                            # Columna 2: Divergencia y Espacio de Fases
                             html.Div(
                                 className="right-column",
                                 children=[
@@ -264,7 +708,6 @@ def crear_pagina():
                                     ),
                                 ],
                             ),
-                            # Columna 3: Panel de Parámetros (Sliders)
                             html.Div(
                                 className="sliders-panel",
                                 children=[
@@ -274,6 +717,7 @@ def crear_pagina():
                                     slider("Longitud L₁ (m)", "ps-sl-l1", 0.5, 3, 0.1, 2, "ps-val-l1", "2.0 m"),
                                     slider("Gravedad g (m/s²)", "ps-sl-g", 0, 25, 0.1, 9.8, "ps-val-g", "9.8 m/s²"),
                                     slider("Amortiguamiento b (s⁻¹)", "ps-sl-b", 0, 0.5, 0.01, 0, "ps-val-b", "0.00"),
+                                    slider("Masa m₁ (kg)", "ps-sl-m1", 0.2, 5.0, 0.1, 1.0, "ps-val-m1", "1.0 kg"),
                                     html.Div(
                                         className="slider-group full-span",
                                         children=[
@@ -309,6 +753,19 @@ def crear_pagina():
                             ),
                         ],
                     ),
+                    # Botón inferior izquierdo para ir inmediatamente a Péndulo Doble
+                    html.Div(
+                        className="switch-lab-row",
+                        children=[
+                            html.Button(
+                                "Péndulo doble ▶",
+                                id="ps-btn-ir-doble",
+                                n_clicks=0,
+                                className="switch-lab-btn",
+                                title="Ir al simulador de Péndulo Doble",
+                            ),
+                        ],
+                    ),
                 ],
             ),
             # CONTENEDOR PERSISTENTE 2: MEDICIONES Y GUÍA TEÓRICA
@@ -320,8 +777,15 @@ def crear_pagina():
                         className="info-card",
                         children=[
                             html.H3("Motivación, supuestos y uso (Péndulo Simple)"),
-                            html.P("El péndulo simple ideal consta de una masa puntual m₁ suspendida de un hilo inextensible de longitud L₁ sin masa. Su ecuación diferencial es θ̈₁ + bθ̇₁ + (g/L₁)sin(θ₁) = 0."),
-                            html.P("Por tener un único grado de libertad (espacio de fases bidimensional θ₁ vs ω₁), el Teorema de Poincaré-Bendixson garantiza que este sistema autónomo es integrable y no puede presentar caos: sus trayectorias forman órbitas cerradas periódicas (si b=0) o espirales convergentes hacia el equilibrio estable (si b>0)."),
+                            dcc.Markdown(
+                                r"""
+El péndulo simple ideal consta de una masa puntual $m_1$ suspendida de un hilo inextensible de longitud $L_1$ sin masa. Su ecuación diferencial de movimiento es $\ddot{\theta}_1 + b\dot{\theta}_1 + (g/L_1)\sin\theta_1 = 0$.
+
+Por poseer un único grado de libertad (espacio de fases bidimensional $\theta_1$ vs $\omega_1$), el [**Teorema de Poincaré-Bendixson**](https://en.wikipedia.org/wiki/Poincar%C3%A9%E2%80%93Bendixson_theorem) garantiza que este sistema autónomo es integrable y no puede presentar caos: sus trayectorias forman órbitas cerradas periódicas (si $b=0$) o espirales convergentes hacia el equilibrio estable (si $b>0$).
+                                """,
+                                mathjax=True,
+                                link_target="_blank",
+                            ),
                             html.Div(
                                 style={"marginTop": "12px", "display": "flex", "gap": "10px", "alignItems": "center", "flexWrap": "wrap"},
                                 children=[
@@ -342,9 +806,9 @@ def crear_pagina():
                                 data=[],
                                 page_size=10,
                                 style_table={"overflowX": "auto"},
-                                style_header={"backgroundColor": "#25252d", "color": ACCENT, "fontWeight": "bold", "border": f"1px solid {BORDER}"},
+                                style_header={"backgroundColor": "#a2a2a7", "color": TEXT, "fontWeight": "bold", "border": f"1px solid {BORDER}"},
                                 style_cell={"backgroundColor": PANEL, "color": TEXT, "border": f"1px solid {BORDER}", "fontFamily": "monospace", "textAlign": "center", "padding": "6px", "minWidth": "100px"},
-                                style_data_conditional=[{"if": {"row_index": "odd"}, "backgroundColor": "#202027"}],
+                                style_data_conditional=[{"if": {"row_index": "odd"}, "backgroundColor": "#a2a2a7"}],
                             ),
                         ],
                     ),
@@ -355,10 +819,98 @@ def crear_pagina():
 
 
 def registrar_callbacks(app):
-    if "</head>" in app.index_string and "pd-scoped-styles" not in app.index_string:
+    if "</head>" in app.index_string and "ps-scoped-styles" not in app.index_string:
         app.index_string = app.index_string.replace(
-            "</head>", f'<style id="pd-scoped-styles">{CSS}</style></head>'
+            "</head>", f'<style id="ps-scoped-styles">{CSS}</style></head>'
         )
+
+    # Transición inmediata hacia Péndulo Doble
+    app.clientside_callback(
+        """function(nClicks) {
+            if (!nClicks) return window.dash_clientside.no_update;
+            const navBtn = document.getElementById('sd-nav-pendulo_doble');
+            if (navBtn) navBtn.click();
+            return window.dash_clientside.no_update;
+        }""",
+        Output("ps-btn-ir-doble", "n_clicks"),
+        Input("ps-btn-ir-doble", "n_clicks"),
+        prevent_initial_call=True,
+    )
+
+    # Control animado de las pestañas emergentes
+    app.clientside_callback(
+        """function(bFis, bMod, bAna, tFis, tMod, tAna, bClose) {
+            const trig = window.dash_clientside.callback_context.triggered_id;
+            const prevIdx = (typeof window._psModalTabIdx === 'number') ? window._psModalTabIdx : 0;
+            const wasOpen = Boolean(window._psModalOpen);
+
+            if (!trig || trig === 'ps-btn-modal-cerrar') {
+                window._psModalOpen = false;
+                return [
+                    'pd-modal-overlay',
+                    window.dash_clientside.no_update,
+                    window.dash_clientside.no_update,
+                    window.dash_clientside.no_update,
+                    window.dash_clientside.no_update,
+                    window.dash_clientside.no_update,
+                    window.dash_clientside.no_update,
+                    window.dash_clientside.no_update,
+                    window.dash_clientside.no_update,
+                    window.dash_clientside.no_update
+                ];
+            }
+
+            let targetIdx = 0;
+            if (trig === 'ps-btn-modal-fisico' || trig === 'ps-tab-modal-fisico') targetIdx = 0;
+            else if (trig === 'ps-btn-modal-modelo' || trig === 'ps-tab-modal-modelo') targetIdx = 1;
+            else if (trig === 'ps-btn-modal-analisis' || trig === 'ps-tab-modal-analisis') targetIdx = 2;
+
+            let animClass = 'pd-modal-body anim-emerge';
+            if (wasOpen && targetIdx !== prevIdx) {
+                animClass = (targetIdx > prevIdx) ? 'pd-modal-body anim-right' : 'pd-modal-body anim-left';
+            }
+
+            window._psModalOpen = true;
+            window._psModalTabIdx = targetIdx;
+
+            setTimeout(function() {
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise();
+                }
+            }, 30);
+
+            return [
+                'pd-modal-overlay is-open',
+                {display: targetIdx === 0 ? 'block' : 'none'},
+                {display: targetIdx === 1 ? 'block' : 'none'},
+                {display: targetIdx === 2 ? 'block' : 'none'},
+                targetIdx === 0 ? animClass : 'pd-modal-body',
+                targetIdx === 1 ? animClass : 'pd-modal-body',
+                targetIdx === 2 ? animClass : 'pd-modal-body',
+                targetIdx === 0 ? 'pd-modal-tab active' : 'pd-modal-tab',
+                targetIdx === 1 ? 'pd-modal-tab active' : 'pd-modal-tab',
+                targetIdx === 2 ? 'pd-modal-tab active' : 'pd-modal-tab'
+            ];
+        }""",
+        Output("ps-modal-overlay", "className"),
+        Output("ps-modal-body-fisico", "style"),
+        Output("ps-modal-body-modelo", "style"),
+        Output("ps-modal-body-analisis", "style"),
+        Output("ps-modal-body-fisico", "className"),
+        Output("ps-modal-body-modelo", "className"),
+        Output("ps-modal-body-analisis", "className"),
+        Output("ps-tab-modal-fisico", "className"),
+        Output("ps-tab-modal-modelo", "className"),
+        Output("ps-tab-modal-analisis", "className"),
+        Input("ps-btn-modal-fisico", "n_clicks"),
+        Input("ps-btn-modal-modelo", "n_clicks"),
+        Input("ps-btn-modal-analisis", "n_clicks"),
+        Input("ps-tab-modal-fisico", "n_clicks"),
+        Input("ps-tab-modal-modelo", "n_clicks"),
+        Input("ps-tab-modal-analisis", "n_clicks"),
+        Input("ps-btn-modal-cerrar", "n_clicks"),
+        prevent_initial_call=True,
+    )
 
     app.clientside_callback(
         """function(tabValue) {
@@ -378,9 +930,9 @@ def registrar_callbacks(app):
     )
 
     app.clientside_callback(
-        """function(t1,n,logdt,l1,g,b,speed,cStart,cReset,cClear,cFix) {
+        """function(t1,n,logdt,l1,g,b,m1,speed,cStart,cReset,cClear,cFix) {
             if (!window.PendulumSimpleApp) return window.dash_clientside.no_update;
-            window.PendulumSimpleApp.sync({t1,t2:0,n,logdt,l1,l2:1.0,g,b,speed,cStart,cReset,cClear,cFix});
+            window.PendulumSimpleApp.sync({t1,t2:0,n,logdt,l1,l2:1.0,g,b,m1,m2:1.0,speed,cStart,cReset,cClear,cFix});
             return (window.PendulumSimpleApp.syncCount || 0);
         }""",
         Output("ps-client-sync", "data"),
@@ -390,6 +942,7 @@ def registrar_callbacks(app):
         Input("ps-sl-l1", "value"),
         Input("ps-sl-g", "value"),
         Input("ps-sl-b", "value"),
+        Input("ps-sl-m1", "value"),
         Input("ps-sl-speed", "value"),
         Input("ps-btn-iniciar", "n_clicks"),
         Input("ps-btn-reiniciar", "n_clicks"),

@@ -42,6 +42,11 @@
             if (node && node.innerText !== text) node.innerText = text;
         }
 
+        function massToRadius(m) {
+            const val = Math.max(0.1, Number(m) || 1.0);
+            return 3.0 + 4.0 * Math.pow(val, 0.6);
+        }
+
         // --- AUTO-RECONEXIÓN DE LIENZOS (CANVAS) EN DASH ---
         function ensureCanvas() {
             const hostSim = el('canvas-physics-host');
@@ -276,6 +281,8 @@
             setText('val-l2', `${Number(L2).toFixed(1)} m`);
             setText('val-g', `${Number(g).toFixed(1)} m/s²`);
             setText('val-b', `${Number(b).toFixed(2)}`);
+            setText('val-m1', `${Number(m1).toFixed(1)} kg`);
+            setText('val-m2', `${Number(m2).toFixed(1)} kg`);
             setText('val-speed', `${Number(simSpeed).toFixed(1)}x`);
 
             const btnIni = el('btn-iniciar');
@@ -313,6 +320,9 @@
             let cy = canSim.height / 2;
             let maxR = mode === 'Simple' ? L1 * 1.2 : (L1 + L2) * 1.15;
             let scale = Math.min(cx, cy) / maxR;
+
+            const r1 = massToRadius(m1);
+            const r2 = massToRadius(m2);
 
             ctxSim.strokeStyle = '#2a2a32';
             ctxSim.lineWidth = 1;
@@ -360,7 +370,7 @@
                 if (mode === 'Simple') {
                     ctxSim.fillStyle = palette[i % palette.length];
                     ctxSim.beginPath();
-                    ctxSim.arc(px1, py1, 7, 0, Math.PI * 2);
+                    ctxSim.arc(px1, py1, r1, 0, Math.PI * 2);
                     ctxSim.fill();
                 } else {
                     let x2 = x1 + L2 * Math.sin(s[2]);
@@ -370,13 +380,17 @@
                     ctxSim.moveTo(px1, py1);
                     ctxSim.lineTo(px2, py2);
                     ctxSim.stroke();
+
+                    // Esfera Masa 1 (articulación intermedia) con radio variable r1
                     ctxSim.fillStyle = palette[i % palette.length];
                     ctxSim.beginPath();
-                    ctxSim.arc(px2, py2, 7, 0, Math.PI * 2);
+                    ctxSim.arc(px1, py1, r1, 0, Math.PI * 2);
                     ctxSim.fill();
-                    ctxSim.fillStyle = '#fff';
+
+                    // Esfera Masa 2 (extremo libre) con radio variable r2
+                    ctxSim.fillStyle = palette[i % palette.length];
                     ctxSim.beginPath();
-                    ctxSim.arc(px1, py1, 4, 0, Math.PI * 2);
+                    ctxSim.arc(px2, py2, r2, 0, Math.PI * 2);
                     ctxSim.fill();
                 }
             }
@@ -478,6 +492,9 @@
                 const currentBtnIniciar = el('btn-iniciar');
                 const isRemount = (currentBtnIniciar && currentBtnIniciar !== boundBtnIniciar);
 
+                const newM1 = config.m1 !== undefined ? Number(config.m1) : 1.0;
+                const newM2 = config.m2 !== undefined ? Number(config.m2) : 1.0;
+
                 if (isRemount) {
                     boundBtnIniciar = currentBtnIniciar;
                     this._lastStart = config.cStart || 0;
@@ -494,10 +511,14 @@
                         L2 = config.l2 !== undefined ? config.l2 : 1.0;
                         g = config.g;
                         b = config.b;
+                        m1 = newM1;
+                        m2 = newM2;
                         simSpeed = config.speed;
                         initStates();
                         initialized = true;
                     } else {
+                        m1 = newM1;
+                        m2 = newM2;
                         ensureCanvas();
                         updateUIFromState();
                         updateIndicators();
@@ -547,11 +568,13 @@
                     needReset = true;
                 }
 
-                if (L1 !== config.l1 || L2 !== newL2 || g !== config.g || b !== config.b) {
+                if (L1 !== config.l1 || L2 !== newL2 || g !== config.g || b !== config.b || m1 !== newM1 || m2 !== newM2) {
                     L1 = config.l1;
                     L2 = newL2;
                     g = config.g;
                     b = config.b;
+                    m1 = newM1;
+                    m2 = newM2;
                     if (!isRunning && time === 0.0) needReset = true;
                 }
 
