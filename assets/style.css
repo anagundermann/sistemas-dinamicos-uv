@@ -71,8 +71,8 @@ select {
     gap: 12px 22px;
     padding: 12px clamp(16px, 1.8vw, 32px);
     background: var(--sd-blanco);
-    border-bottom: 1px solid var(--sd-borde);
-    box-shadow: 0 3px 12px rgba(30, 27, 75, 0.035);
+    border-bottom: 1px solid #DCE4ED;
+    box-shadow: 0 3px 12px rgba(11, 35, 69, 0.04);
     overflow: visible;
 }
 
@@ -93,7 +93,7 @@ select {
 
 .sd-titulo-app {
     margin: 0;
-    color: #7C3AED;
+    color: #0B2345;
     font-size: 1.75rem;
     font-weight: 800;
     line-height: 1.2;
@@ -126,6 +126,43 @@ select {
 
 .sd-inicio:hover {
     background: #EDE2FF;
+}
+
+/* ----------------------------------------------------------
+   ENCABEZADO GLOBAL: azul pizarra en las cinco paginas.
+   Selectores exclusivos del header compartido.
+   NO cambian los botones .sd-inicio internos del laboratorio SIR.
+   ---------------------------------------------------------- */
+
+/* Biblioteca matematica: boton blanco con borde azul grisaceo. */
+.sd-encabezado .sd-conceptos-control .sd-consultar-boton {
+    color: #0B2345;
+    background: #FFFFFF;
+    border-color: #B2C6DA;
+}
+
+.sd-encabezado .sd-conceptos-control .sd-consultar-boton:hover {
+    background: #F2F6FB;
+}
+
+/* Inicio: mismo azul solido en portada y en todos los laboratorios. */
+.sd-encabezado #sd-ir-inicio,
+.sd-encabezado #sd-ir-inicio.activo {
+    color: #FFFFFF;
+    background: #355F89;
+    border-color: #355F89;
+}
+
+.sd-encabezado #sd-ir-inicio:hover,
+.sd-encabezado #sd-ir-inicio.activo:hover {
+    color: #FFFFFF;
+    background: #2D5276;
+    border-color: #2D5276;
+}
+
+.sd-encabezado #sd-ir-inicio:focus-visible {
+    outline: 3px solid #8CB6DD;
+    outline-offset: 2px;
 }
 
 /* 3. DISTRIBUCION — una columna lateral de tamano intermedio */

@@ -52,8 +52,46 @@ def crear_parametro(simbolo, titulo, descripcion):
     )
 
 
-def crear_contenido_modelo_matematico():
-    """Cuerpo del modal: EDO lado a lado, condiciones iniciales y parámetros."""
+def crear_contenido_modelo_matematico(modelo="clasico"):
+    """Conserva la misma distribucion para ambos sistemas depredador-presa."""
+    modelo_logistico = modelo == "logistico"
+
+    ecuacion_presas = (
+        r"$$\frac{dx}{dt}=\alpha x\left(1-\frac{x}{K}\right)-\beta xy$$"
+        if modelo_logistico
+        else r"$$\frac{dx}{dt}=\alpha x-\beta xy$$"
+    )
+    nota_presas = (
+        "Crecimiento limitado por recursos − depredación"
+        if modelo_logistico
+        else "Crecimiento − depredación"
+    )
+    nota_interaccion = (
+        r"El factor $\left(1-\frac{x}{K}\right)$ limita el crecimiento natural "
+        r"de las presas; $K$ es la capacidad de carga sin depredadores. "
+        r"El producto $xy$ representa la interacción entre ambas poblaciones."
+        if modelo_logistico
+        else r"El producto $xy$ representa la interacción entre presas y depredadores."
+    )
+    nota_parametros = (
+        r"$t$: tiempo. $\alpha$, $\beta$, $\gamma$, $\delta$ y $K$ son positivos."
+        if modelo_logistico
+        else r"$t$: tiempo. Los parámetros $\alpha$, $\beta$, $\gamma$ y $\delta$ son positivos."
+    )
+
+    parametros = [
+        crear_parametro(r"\alpha", "Crecimiento", "Crecimiento natural de presas"),
+        crear_parametro(r"\beta", "Depredación", "Pérdidas de presas"),
+        crear_parametro(r"\gamma", "Mortalidad", "Mortalidad natural de zorros"),
+        crear_parametro(r"\delta", "Reproducción", "Aumento debido a las presas"),
+    ]
+    if modelo_logistico:
+        parametros.append(
+            crear_parametro(
+                r"K", "Capacidad de carga", "Límite de presas sin depredadores"
+            )
+        )
+
     return html.Div(
         className="lv-mat",
         children=[
@@ -71,8 +109,8 @@ def crear_contenido_modelo_matematico():
                                     crear_tarjeta_ecuacion(
                                         "presas",
                                         "Presas · Conejos",
-                                        r"$$\frac{dx}{dt}=\alpha x-\beta xy$$",
-                                        "Crecimiento − depredación",
+                                        ecuacion_presas,
+                                        nota_presas,
                                     ),
                                     crear_tarjeta_ecuacion(
                                         "depredadores",
@@ -108,7 +146,7 @@ def crear_contenido_modelo_matematico():
                                 className="lv-mat-idea",
                                 children=[
                                     texto_matematico(
-                                        r"El producto $xy$ representa la interacción entre presas y depredadores.",
+                                        nota_interaccion,
                                         "lv-mat-idea-texto",
                                     ),
                                 ],
@@ -132,33 +170,12 @@ def crear_contenido_modelo_matematico():
                                 ],
                             ),
                             texto_matematico(
-                                r"$t$: tiempo. Los parámetros $\alpha$, $\beta$, $\gamma$ y $\delta$ son positivos.",
+                                nota_parametros,
                                 "lv-mat-tiempo",
                             ),
                             html.Div(
                                 className="lv-mat-parametros",
-                                children=[
-                                    crear_parametro(
-                                        r"\alpha",
-                                        "Crecimiento",
-                                        "Crecimiento natural de presas",
-                                    ),
-                                    crear_parametro(
-                                        r"\beta",
-                                        "Depredación",
-                                        "Pérdidas de presas",
-                                    ),
-                                    crear_parametro(
-                                        r"\gamma",
-                                        "Mortalidad",
-                                        "Mortalidad natural de zorros",
-                                    ),
-                                    crear_parametro(
-                                        r"\delta",
-                                        "Reproducción",
-                                        "Aumento debido a las presas",
-                                    ),
-                                ],
+                                children=parametros,
                             ),
                         ],
                     ),

@@ -127,11 +127,26 @@ El archivo procesado organiza la información por **16 regiones y 84 fechas**, c
 - SciPy, `solve_ivp`: [https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html)
 - NetworkX: [https://networkx.org/documentation/stable/](https://networkx.org/documentation/stable/)
 
-### Datos
+### Datos y fuentes
 
-- Ministerio de Ciencia, Tecnología, Conocimiento e Innovación de Chile. *Base de Datos COVID-19*. [Sitio institucional de MinCiencia](https://www.minciencia.gob.cl/areas/minciencia-covid19/submesa-de-datos-covid19/).
-- MinCiencia. *Datos-COVID19, Producto 1: `Covid-19_std.csv`*. Copia histórica del conjunto de datos, alojada por terceros en Zenodo: [https://doi.org/10.5281/zenodo.18773580](https://doi.org/10.5281/zenodo.18773580). Período de los registros: 30-03-2020 a 08-01-2021.
-- Procesamiento para el proyecto: `analisis_datos/limpieza_covid.R` y `analisis_datos/covid_chile_regional_limpio.csv`.
+#### Datos epidemiológicos de COVID-19
+
+- **Ministerio de Ciencia, Tecnología, Conocimiento e Innovación de Chile.** *Base de Datos COVID-19*. [Sitio institucional de MinCiencia](https://www.minciencia.gob.cl/areas/minciencia-covid19/submesa-de-datos-covid19/).
+- **MinCiencia.** *Datos-COVID19, Producto 1: `Covid-19_std.csv`*. Copia histórica del conjunto de datos, alojada por terceros en Zenodo: [https://doi.org/10.5281/zenodo.18773580](https://doi.org/10.5281/zenodo.18773580). Período de los registros: **30-03-2020 al 08-01-2021**.
+- **Procesamiento para el proyecto:** limpieza y preparación de los datos mediante `analisis_datos/limpieza_covid.R`, con resultados almacenados en `analisis_datos/covid_chile_regional_limpio.csv`.
+
+#### Datos geográficos para el grafo SIR
+
+El archivo `capitales_regionales.csv` contiene las coordenadas geográficas aproximadas de las capitales de las **16 regiones de Chile**, utilizadas para representar espacialmente los nodos del grafo del modelo SIR.
+
+El conjunto contiene 16 registros, uno por región, identificados mediante los mismos nombres utilizados en `covid_chile_regional_limpio.csv`. Sus columnas son `Region`, `Capital`, `Longitud` y `Latitud`. Las coordenadas están expresadas en grados decimales bajo el sistema de referencia **WGS84 (EPSG:4326)**.
+
+**Fuentes y licencia:**
+
+- **GeoNames.** Coordenadas geográficas de las capitales regionales, consultadas en noviembre de 2026: [Búsqueda avanzada de Chile](https://www.geonames.org/advanced-search.html?country=CL) y [registros adicionales, incluido Coyhaique](https://www.geonames.org/search.html?country=CL&startRow=100).
+- **Licencia:** datos geográficos © GeoNames, distribuidos bajo **Creative Commons Attribution 4.0 (CC BY 4.0)**. Véanse los [términos y condiciones de GeoNames](https://www.geonames.org/export/). El archivo CSV corresponde a una selección de registros cuyas coordenadas fueron redondeadas a cinco decimales.
+- **División administrativa:** la identificación de una capital por región se apoya en la [división administrativa de Chile de GeoNames](https://www.geonames.org/CL/administrative-division-chile.html), incluida la Región de Ñuble, cuya capital es Chillán.
+- **Referencia cartográfica complementaria:** [IDE Chile – Capitales](https://geoportal.cl/index.php/geoportal/catalog/34996/Capitales). Esta capa cartográfica corresponde a 2013 y, por sí sola, no contempla las modificaciones administrativas posteriores.
 
 ## Uso de inteligencia artificial
 

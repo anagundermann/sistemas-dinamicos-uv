@@ -1,6 +1,10 @@
 """Laboratorio interactivo de depredador-presa (Lotka-Volterra).
+
 La presentacion de esta pagina se controla en assets/zz-depredador-presa.css.
-Se mantienen los seis parametros y los identificadores de los callbacks originales.
+
+Se conservan los seis parametros originales y la animacion compartida.
+El selector alterna entre el modelo clasico y el de crecimiento logistico.
+
 """
 
 from components.barra_animacion_lv import (
@@ -10,24 +14,41 @@ from components.barra_animacion_lv import (
     crear_anotaciones_guia,
     _estado_visible,
 )
+
 from dash import Input, Output, Patch, State, ctx, dcc, get_asset_url, html, no_update
+
 import dash_bootstrap_components as dbc
+
 import plotly.graph_objects as go
+
 from components.ecosistema_lv import (
     crear_contenido_ecosistema,
     registrar_callbacks_ecosistema,
 )
+
 from components.modelo_matematico_lv import crear_contenido_modelo_matematico
-from components.analisis_sistema_lv import crear_contenido_analisis_sistema
+
+from components.equilibrios_estabilidad_lv import crear_contenido_analisis_sistema
+
+from components.trayectorias_oscilaciones_lv import crear_contenido_ciclos_periodo
+
 from models.modelo_lotka_volterra import (
     calcular_equilibrio,
     simular_lotka_volterra,
 )
+from models.modelo_lotka_logistico import (
+    calcular_equilibrio_logistico,
+    simular_lotka_logistico,
+)
+
 
 COLOR_PRESAS = "#14B8A6"
+
 COLOR_DEPREDADORES = "#7C3AED"
 
+
 # Configuracion separada para editar los controles sin tocar el layout.
+
 
 CONTROLES = [
     ("α · Crecimiento de presas", "lv-alpha", 0.1, 1.2, 0.05, 0.65),
@@ -38,9 +59,13 @@ CONTROLES = [
     ("Depredadores iniciales", "lv-depredadores-0", 2, 100, 1, 20),
 ]
 
+# Control adicional del segundo modelo: siempre reserva su altura.
+CONTROL_K = ("K · Capacidad de carga", "lv-k", 50, 300, 10, 120)
+
 
 def crear_control(titulo, control_id, minimo, maximo, paso, valor):
     """Control compacto: etiqueta y valor arriba, deslizador debajo."""
+
     return html.Div(
         className="lv-control",
         children=[
@@ -69,6 +94,7 @@ def crear_control(titulo, control_id, minimo, maximo, paso, valor):
 
 
 def crear_grafico(titulo, grafico_id):
+
     return html.Section(
         className="sd-tarjeta sd-tarjeta-grafico lv-tarjeta-grafico",
         children=[
@@ -97,6 +123,7 @@ def crear_grafico(titulo, grafico_id):
 
 def crear_panel_estado():
     """Lectura compacta de la solucion, dentro del panel de controles."""
+
     return html.Div(
         className="lv-estado-actual",
         children=[
@@ -160,30 +187,19 @@ def crear_panel_estado():
 
 
 def crear_pagina():
+
     return html.Div(
         className="lv-pagina",
         children=[
+            # Modelo activo: se usa en la simulacion y en el selector.
+            dcc.Store(id="lv-modelo-seleccionado", data="clasico"),
             html.Header(
                 className="lv-cabecera",
                 children=[
                     html.H2(
                         "Depredador–Presa · Lotka–Volterra",
-                        className="sd-titulo-seccion lv-titulo",
-                    ),
-                    html.Div(
-                        className="lv-cabecera-siluetas",
-                        children=[
-                            html.Img(
-                                src=get_asset_url("zorro-lineal.svg"),
-                                alt="",
-                                className="lv-silueta-zorro",
-                            ),
-                            html.Img(
-                                src=get_asset_url("conejo-lineal.svg"),
-                                alt="",
-                                className="lv-silueta-conejo",
-                            ),
-                        ],
+                        id="lv-titulo-modelo",
+                        className="sd-titulo-seccion lv-titulo lv-titulo-clasico",
                     ),
                     html.Div(
                         className="lv-botones-info",
@@ -201,8 +217,14 @@ def crear_pagina():
                                 n_clicks=0,
                             ),
                             dbc.Button(
-                                "Análisis del sistema",
+                                "Equilibrios y estabilidad",
                                 id="lv-boton-variables",
+                                className="lv-boton-info",
+                                n_clicks=0,
+                            ),
+                            dbc.Button(
+                                "Trayectorias y oscilaciones",
+                                id="lv-boton-ciclos",
                                 className="lv-boton-info",
                                 n_clicks=0,
                             ),
@@ -217,12 +239,18 @@ def crear_pagina():
                         className="sd-tarjeta sd-tarjeta-controles lv-panel-controles",
                         children=[
                             html.H3(
-                                "Experimenta con los parámetros",
+                                "Parámetros del modelo",
                                 className="sd-titulo-tarjeta",
                             ),
                             html.Div(
                                 className="lv-lista-controles",
                                 children=[crear_control(*datos) for datos in CONTROLES],
+                            ),
+                            html.Div(
+                                id="lv-control-k-contenedor",
+                                className="lv-control-extra",
+                                style={"visibility": "hidden", "opacity": 0},
+                                children=crear_control(*CONTROL_K),
                             ),
                             crear_panel_estado(),
                         ],
@@ -247,6 +275,64 @@ def crear_pagina():
                                         id="lv-lectura", className="sd-modal-texto"
                                     ),
                                     crear_barra_animacion_vista_previa(),
+                                ],
+                            ),
+                            # Selector compartido: la animacion usa la solucion activa.
+                            html.Div(
+                                className="lv-selector-modelo",
+                                children=[
+                                    html.Div(
+                                        className="lv-selector-modelo-fila",
+                                        children=[
+                                            html.Div(
+                                                className="lv-modelo-siluetas",
+                                                children=[
+                                                    html.Img(
+                                                        src=get_asset_url(
+                                                            "zorro-lineal.svg"
+                                                        ),
+                                                        alt="",
+                                                        className="lv-modelo-zorro",
+                                                    ),
+                                                    html.Img(
+                                                        src=get_asset_url(
+                                                            "conejo-lineal.svg"
+                                                        ),
+                                                        alt="",
+                                                        className="lv-modelo-conejo",
+                                                    ),
+                                                ],
+                                            ),
+                                            html.Div(
+                                                className="lv-selector-modelo-botones",
+                                                children=[
+                                                    html.Span(
+                                                        "Modelo:",
+                                                        className="lv-selector-modelo-etiqueta",
+                                                    ),
+                                                    html.Button(
+                                                        "Lotka–Volterra clásico",
+                                                        id="lv-boton-clasico",
+                                                        className="lv-modelo-boton lv-modelo-boton-activo",
+                                                        n_clicks=0,
+                                                        type="button",
+                                                    ),
+                                                    html.Button(
+                                                        "Crecimiento logístico",
+                                                        id="lv-boton-logistico",
+                                                        className="lv-modelo-boton",
+                                                        n_clicks=0,
+                                                        type="button",
+                                                    ),
+                                                ],
+                                            ),
+                                        ],
+                                    ),
+                                    html.Span(
+                                        "",
+                                        id="lv-modelo-aviso",
+                                        className="lv-modelo-aviso",
+                                    ),
                                 ],
                             ),
                         ],
@@ -283,16 +369,44 @@ def crear_pagina():
     )
 
 
-def contenido_modal(seccion):
-    """Contenido de ayuda sin ocupar espacio en el laboratorio."""
+def contenido_modal(seccion, modelo_seleccionado, alpha, beta, gamma, delta, k):
+    """Contenido educativo correspondiente al modelo activo."""
+
     if seccion == "modelo":
         return "Ecosistema · Zorros y conejos", crear_contenido_ecosistema()
+
     if seccion == "ecuaciones":
-        return "Modelo matemático · Lotka–Volterra", crear_contenido_modelo_matematico()
-    return "Análisis del sistema · Lotka–Volterra", crear_contenido_analisis_sistema()
+        titulo = (
+            "Modelo matemático · Lotka–Volterra logístico"
+            if modelo_seleccionado == "logistico"
+            else "Modelo matemático · Lotka–Volterra"
+        )
+        return titulo, crear_contenido_modelo_matematico(modelo_seleccionado)
+
+    if seccion == "ciclos":
+        titulo = (
+            "Trayectorias y oscilaciones · Lotka–Volterra logístico"
+            if modelo_seleccionado == "logistico"
+            else "Trayectorias y oscilaciones · Lotka–Volterra"
+        )
+
+        return titulo, crear_contenido_ciclos_periodo(
+            modelo_seleccionado, alpha, beta, gamma, delta, k
+        )
+
+    titulo = (
+        "Equilibrios y estabilidad · Lotka–Volterra logístico"
+        if modelo_seleccionado == "logistico"
+        else "Equilibrios y estabilidad · Lotka–Volterra"
+    )
+
+    return titulo, crear_contenido_analisis_sistema(
+        modelo_seleccionado, alpha, beta, gamma, delta, k
+    )
 
 
 def registrar_callbacks(app):
+
     @app.callback(
         Output("lv-grafico-tiempo", "figure"),
         Output("lv-grafico-fases", "figure"),
@@ -307,18 +421,63 @@ def registrar_callbacks(app):
         Input("lv-delta", "value"),
         Input("lv-presas-0", "value"),
         Input("lv-depredadores-0", "value"),
+        Input("lv-k", "value"),
+        Input("lv-modelo-seleccionado", "data"),
         State("lv-guia-vertical", "value"),
     )
     def actualizar_laboratorio(
-        alpha, beta, gamma, delta, presas_0, depredadores_0, guia_activa
+        alpha,
+        beta,
+        gamma,
+        delta,
+        presas_0,
+        depredadores_0,
+        k,
+        modelo_seleccionado,
+        guia_activa,
     ):
-        tiempos, presas, depredadores = simular_lotka_volterra(
-            alpha, beta, gamma, delta, presas_0, depredadores_0
-        )
-        # Mismos resultados y mismos rangos para el mouse y para Play.
+        """Resuelve solo el modelo seleccionado; reutiliza ambos graficos."""
+        modelo_logistico = modelo_seleccionado == "logistico"
+
+        if modelo_logistico:
+            tiempos, presas, depredadores = simular_lotka_logistico(
+                alpha, beta, gamma, delta, presas_0, depredadores_0, k
+            )
+            equilibrio_positivo = calcular_equilibrio_logistico(
+                alpha, beta, gamma, delta, k
+            )
+
+            if equilibrio_positivo is not None:
+                presas_eq, depredadores_eq = equilibrio_positivo
+                titulo_equilibrio = "Equilibrio de coexistencia"
+                texto_fases = (
+                    "La trayectoria puede aproximarse al equilibrio de "
+                    "coexistencia, con o sin oscilaciones amortiguadas."
+                )
+            else:
+                # Cuando K <= gamma/delta no hay coexistencia positiva.
+                presas_eq, depredadores_eq = float(k), 0.0
+                titulo_equilibrio = "Equilibrio sin depredadores"
+                texto_fases = (
+                    "No existe equilibrio positivo de coexistencia para "
+                    "este K. Los depredadores tienden a extinguirse y las "
+                    "presas tienden a K."
+                )
+        else:
+            tiempos, presas, depredadores = simular_lotka_volterra(
+                alpha, beta, gamma, delta, presas_0, depredadores_0
+            )
+            presas_eq, depredadores_eq = calcular_equilibrio(alpha, beta, gamma, delta)
+            titulo_equilibrio = "Equilibrio de coexistencia"
+            texto_fases = (
+                "Muestra la trayectoria (x(t), y(t)) alrededor del equilibrio."
+            )
+
+        # Una unica solucion alimenta los graficos, el mouse y la animacion.
         datos = preparar_datos_animacion(tiempos, presas, depredadores)
-        presas_eq, depredadores_eq = calcular_equilibrio(alpha, beta, gamma, delta)
+
         figura_tiempo = go.Figure()
+
         figura_tiempo.add_trace(
             go.Scatter(
                 x=tiempos,
@@ -329,6 +488,7 @@ def registrar_callbacks(app):
                 line={"color": COLOR_PRESAS, "width": 3},
             )
         )
+
         figura_tiempo.add_trace(
             go.Scatter(
                 x=tiempos,
@@ -339,6 +499,7 @@ def registrar_callbacks(app):
                 line={"color": COLOR_DEPREDADORES, "width": 3},
             )
         )
+
         figura_tiempo.update_layout(
             # Espacio real para titulos y numeros de los dos ejes.
             margin={"l": 70, "r": 18, "t": 35, "b": 78},
@@ -366,7 +527,9 @@ def registrar_callbacks(app):
             paper_bgcolor="white",
             plot_bgcolor="white",
         )
+
         figura_fases = go.Figure()
+
         figura_fases.add_trace(
             go.Scatter(
                 x=presas,
@@ -376,6 +539,7 @@ def registrar_callbacks(app):
                 line={"color": COLOR_DEPREDADORES, "width": 3},
             )
         )
+
         figura_fases.add_trace(
             go.Scatter(
                 x=[presas_0],
@@ -385,6 +549,7 @@ def registrar_callbacks(app):
                 marker={"color": COLOR_PRESAS, "size": 11},
             )
         )
+
         figura_fases.add_trace(
             go.Scatter(
                 x=[presas_eq],
@@ -394,6 +559,7 @@ def registrar_callbacks(app):
                 marker={"color": "#F59E0B", "symbol": "x", "size": 12},
             )
         )
+
         figura_fases.update_layout(
             margin={"l": 70, "r": 18, "t": 35, "b": 78},
             xaxis={
@@ -419,12 +585,17 @@ def registrar_callbacks(app):
             paper_bgcolor="white",
             plot_bgcolor="white",
         )
+
         # Las dos guias usan la solucion ya calculada y nunca reescalan ejes.
+
         formas_t, formas_f = crear_formas_guia(
             tiempos[0], presas[0], depredadores[0], datos, guia_activa
         )
+
         figura_tiempo.update_layout(shapes=formas_t)
+
         figura_fases.update_layout(shapes=formas_f)
+
         figura_fases.update_layout(
             annotations=crear_anotaciones_guia(
                 presas[0], depredadores[0], datos, guia_activa
@@ -438,7 +609,7 @@ def registrar_callbacks(app):
                     className="lv-equilibrio-recuadro",
                     children=[
                         html.Div(
-                            "Equilibrio de coexistencia",
+                            titulo_equilibrio,
                             className="lv-equilibrio-titulo",
                         ),
                         html.Div(
@@ -486,13 +657,14 @@ def registrar_callbacks(app):
                         html.P(
                             [
                                 html.Strong("Plano de fases. "),
-                                "Muestra la trayectoria (x(t), y(t)) alrededor del equilibrio.",
+                                texto_fases,
                             ]
                         ),
                     ],
                 ),
             ],
         )
+
         return (
             figura_tiempo,
             figura_fases,
@@ -514,29 +686,42 @@ def registrar_callbacks(app):
     )
     def alternar_guia_vertical(guia_activa, figura_tiempo, figura_fases, datos):
         """Muestra guias sincronizadas, sin variar escalas ni recalcular ODE."""
+
         temporal = Patch()
+
         fases = Patch()
+
         temporal["layout"]["hovermode"] = "x" if guia_activa else "closest"
+
         temporal["layout"]["xaxis"]["showspikes"] = False
 
         # No se muestran ejes fijos del origen: usamos proyecciones dinamicas.
+
         estado = _estado_visible(figura_tiempo, datos)
+
         if estado is not None:
             formas_t, formas_f = crear_formas_guia(*estado, datos, guia_activa)
+
         else:
             formas_t, formas_f = [], []
+
         temporal["layout"]["shapes"] = formas_t
+
         fases["layout"]["shapes"] = formas_f
+
         if estado is not None:
             fases["layout"]["annotations"] = crear_anotaciones_guia(
                 estado[1], estado[2], datos, guia_activa
             )
+
         else:
             fases["layout"]["annotations"] = []
+
         return temporal, fases
 
     # Actualizar el valor visible junto al nombre de cada control.
-    for _, control_id, _, _, _, _ in CONTROLES:
+
+    for _, control_id, _, _, _, _ in [*CONTROLES, CONTROL_K]:
         app.clientside_callback(
             "function(valor) { return valor == null ? '—' : String(valor); }",
             Output(f"{control_id}-valor", "children"),
@@ -550,26 +735,96 @@ def registrar_callbacks(app):
         Input("lv-boton-modelo", "n_clicks"),
         Input("lv-boton-ecuaciones", "n_clicks"),
         Input("lv-boton-variables", "n_clicks"),
+        Input("lv-boton-ciclos", "n_clicks"),
         Input("lv-cerrar-modal", "n_clicks"),
         State("lv-modal-titulo", "children"),
         State("lv-modal-cuerpo", "children"),
+        State("lv-modelo-seleccionado", "data"),
+        State("lv-alpha", "value"),
+        State("lv-beta", "value"),
+        State("lv-gamma", "value"),
+        State("lv-delta", "value"),
+        State("lv-k", "value"),
         prevent_initial_call=True,
     )
     def mostrar_informacion(
-        n_modelo, n_ecuaciones, n_variables, n_cerrar, titulo, cuerpo
+        n_modelo,
+        n_ecuaciones,
+        n_variables,
+        n_ciclos,
+        n_cerrar,
+        titulo,
+        cuerpo,
+        modelo_seleccionado,
+        alpha,
+        beta,
+        gamma,
+        delta,
+        k,
     ):
+
         accion = ctx.triggered_id
+
         if accion == "lv-cerrar-modal":
             return False, titulo, cuerpo
+
         secciones = {
             "lv-boton-modelo": "modelo",
             "lv-boton-ecuaciones": "ecuaciones",
             "lv-boton-variables": "variables",
+            "lv-boton-ciclos": "ciclos",
         }
+
         if accion in secciones:
-            nuevo_titulo, nuevo_cuerpo = contenido_modal(secciones[accion])
+            nuevo_titulo, nuevo_cuerpo = contenido_modal(
+                secciones[accion],
+                modelo_seleccionado,
+                alpha,
+                beta,
+                gamma,
+                delta,
+                k,
+            )
+
             return True, nuevo_titulo, nuevo_cuerpo
+
         return False, no_update, no_update
 
+    @app.callback(
+        Output("lv-modelo-seleccionado", "data"),
+        Output("lv-control-k-contenedor", "style"),
+        Output("lv-boton-clasico", "className"),
+        Output("lv-boton-logistico", "className"),
+        Output("lv-modelo-aviso", "children"),
+        Output("lv-titulo-modelo", "children"),
+        Output("lv-titulo-modelo", "className"),
+        Input("lv-boton-clasico", "n_clicks"),
+        Input("lv-boton-logistico", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def seleccionar_modelo(n_clasico, n_logistico):
+        """Alterna entre ambos sistemas conservando alturas y colores."""
+        if ctx.triggered_id == "lv-boton-logistico":
+            return (
+                "logistico",
+                {"visibility": "visible", "opacity": 1},
+                "lv-modelo-boton",
+                "lv-modelo-boton lv-modelo-boton-activo",
+                "",
+                "Depredador–Presa · Lotka–Volterra logístico",
+                "sd-titulo-seccion lv-titulo lv-titulo-logistico",
+            )
+
+        return (
+            "clasico",
+            {"visibility": "hidden", "opacity": 0},
+            "lv-modelo-boton lv-modelo-boton-activo",
+            "lv-modelo-boton",
+            "",
+            "Depredador–Presa · Lotka–Volterra",
+            "sd-titulo-seccion lv-titulo lv-titulo-clasico",
+        )
+
     # Callback del ciclo biologico (solo modal Ecosistema).
+
     registrar_callbacks_ecosistema(app)

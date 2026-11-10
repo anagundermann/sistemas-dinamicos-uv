@@ -10,12 +10,12 @@ import numpy as np
 import pandas as pd
 from dash import Input, Output, State, dash_table, dcc, html
 
-BG = "#FFFFFF"
-PANEL = "#f1f1f1"
-BORDER = "#6C00D1"
+BG = "#FCFCFD"
+PANEL = "#f5f5f7"
+BORDER = "#2563C9"
 TEXT = "#000000"
 MUTED = "#000000"
-ACCENT = "#be00eefc"
+ACCENT = "#B000F0"
 
 CSS = f"""
 .pd-app-container{{
@@ -35,13 +35,15 @@ CSS = f"""
 .pd-app-container .header-right{{
     display:flex;align-items:center;gap:10px;flex-wrap:wrap;
 }}
-.pd-app-container h1{{font-size:19px;font-weight:600;margin:0;color:var(--text-main)}}
-.pd-app-container .subtitle{{color:var(--text-muted);font-size:12px;margin:2px 0 0}}
+.pd-app-container h1{{font-size:19px;font-weight:700;margin:0;color:var(--text-main);letter-spacing:0.2px}}
+.pd-app-container .subtitle{{color:#333333;font-size:13px;margin:4px 0 0}}
 .pd-app-container .custom-tabs{{border-bottom:none!important;margin:0!important}}
 .pd-app-container .custom-tab{{
     background:var(--bg-panel)!important;color:var(--text-muted)!important;
     border:1px solid var(--border)!important;padding:6px 14px!important;
     font-size:12px!important;margin-left:6px;border-radius:8px!important;
+    text-align:center!important;display:flex!important;align-items:center!important;
+    justify-content:center!important
 }}
 .pd-app-container .custom-tab--selected{{
     background:#25252d!important;color:var(--accent)!important;
@@ -192,11 +194,27 @@ CSS = f"""
 }}
 .pd-app-container .pill span{{color:var(--text-main);font-weight:bold}}
 .pd-app-container .action-btn{{
-    background:var(--bg-panel);border:1px solid var(--border);color:var(--text-main);
-    padding:5px 14px;border-radius:18px;cursor:pointer;font-size:12px;transition:.15s;
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    color:var(--text-main);
+    padding:7px 16px;
+    border-radius:20px;
+    cursor:pointer;
+    font-size:12.5px;
+    transition:.15s;
+    font-weight:500;
 }}
-.pd-app-container .action-btn:hover{{background:var(--btn-bg)}}
-.pd-app-container .action-btn.primary{{border-color:var(--text-main)}}
+.pd-app-container .action-btn:hover{{
+    background:var(--btn-bg);
+    color:var(--accent);
+    border-color:var(--accent);
+}}
+.pd-app-container .action-btn,
+.pd-app-container .concept-btn,
+.pd-app-container .switch-lab-btn{{
+    box-shadow:0 1px 4px rgba(0,0,0,0.04);
+}}
+.pd-app-container .action-btn.primary{{border-color:#2563C9}}
 .pd-app-container .action-btn.accent-active{{border-color:var(--accent);color:var(--accent)}}
 
 /* Grilla principal en 3 columnas para caber sin scroll vertical */
@@ -208,12 +226,20 @@ CSS = f"""
 }}
 .pd-app-container .right-column{{display:flex;flex-direction:column;gap:12px}}
 .pd-app-container .panel,.pd-app-container .info-card{{
-    background:var(--bg-panel);border:1px solid var(--border);
-    border-radius:10px;padding:10px 12px;min-width:0;
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:10px 12px;
+    min-width:0;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
 }}
 .pd-app-container .panel-title{{
-    font-size:10px;text-transform:uppercase;letter-spacing:0.8px;
-    color:var(--text-muted);margin-bottom:6px;
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:0.9px;
+    color:#333333;
+    margin-bottom:8px;
+    font-weight:600;
 }}
 .pd-app-container .canvas-host{{position:relative;width:100%}}
 .pd-app-container .canvas-host canvas{{display:block;width:100%;height:100%}}
@@ -286,7 +312,9 @@ initial_table_columns = [
 ]
 
 
-def slider(label, sid, minimum, maximum, step, value, value_id, display, full_span=False):
+def slider(
+    label, sid, minimum, maximum, step, value, value_id, display, full_span=False
+):
     cls = "slider-group full-span" if full_span else "slider-group"
     return html.Div(
         className=cls,
@@ -348,7 +376,13 @@ def crear_modal_conceptos_doble():
                                     ),
                                 ],
                             ),
-                            html.Button("✕", id="pd-btn-modal-cerrar", n_clicks=0, className="pd-modal-close", title="Cerrar"),
+                            html.Button(
+                                "✕",
+                                id="pd-btn-modal-cerrar",
+                                n_clicks=0,
+                                className="pd-modal-close",
+                                title="Cerrar",
+                            ),
                         ],
                     ),
                     # Contenido 1: ¿Qué es el péndulo doble?
@@ -542,13 +576,15 @@ def crear_pagina():
             html.Div(
                 className="header-bar",
                 children=[
-                    html.Div([
-                        html.H1("Simulador Interactivo de Péndulo Doble N-Cuerpo"),
-                        html.Div(
-                            "Dinámica no lineal, sensibilidad a condiciones iniciales y caos determinista mediante RK4",
-                            className="subtitle",
-                        ),
-                    ]),
+                    html.Div(
+                        [
+                            html.H1("Simulador Interactivo de Péndulo Doble N-Cuerpo"),
+                            html.Div(
+                                "Dinámica no lineal, sensibilidad a condiciones iniciales y caos determinista mediante RK4",
+                                className="subtitle",
+                            ),
+                        ]
+                    ),
                     html.Div(
                         className="header-right",
                         children=[
@@ -611,19 +647,63 @@ def crear_pagina():
                             html.Div(
                                 className="indicators",
                                 children=[
-                                    html.Div(className="pill", children=["Tiempo t: ", html.Span("0.000 s", id="pd-ind-time")]),
-                                    html.Div(className="pill", children=["Δθ máx: ", html.Span("0.00e+0 rad", id="pd-ind-div")]),
-                                    html.Div(className="pill", children=["Energía E: ", html.Span("0.00 J", id="pd-ind-energy")]),
-                                    html.Div(className="pill", children=["FPS: ", html.Span("—", id="pd-ind-fps")]),
+                                    html.Div(
+                                        className="pill",
+                                        children=[
+                                            "Tiempo t: ",
+                                            html.Span("0.000 s", id="pd-ind-time"),
+                                        ],
+                                    ),
+                                    html.Div(
+                                        className="pill",
+                                        children=[
+                                            "Δθ máx: ",
+                                            html.Span("0.00e+0 rad", id="pd-ind-div"),
+                                        ],
+                                    ),
+                                    html.Div(
+                                        className="pill",
+                                        children=[
+                                            "Energía E: ",
+                                            html.Span("0.00 J", id="pd-ind-energy"),
+                                        ],
+                                    ),
+                                    html.Div(
+                                        className="pill",
+                                        children=[
+                                            "FPS: ",
+                                            html.Span("—", id="pd-ind-fps"),
+                                        ],
+                                    ),
                                 ],
                             ),
                             html.Div(
                                 className="action-row",
                                 children=[
-                                    html.Button("Iniciar", id="pd-btn-iniciar", n_clicks=0, className="action-btn primary"),
-                                    html.Button("Reiniciar a t=0", id="pd-btn-reiniciar", n_clicks=0, className="action-btn"),
-                                    html.Button("Limpiar Estelas", id="pd-btn-limpiar", n_clicks=0, className="action-btn"),
-                                    html.Button("Fijar Estelas", id="pd-btn-fijar", n_clicks=0, className="action-btn"),
+                                    html.Button(
+                                        "Iniciar",
+                                        id="pd-btn-iniciar",
+                                        n_clicks=0,
+                                        className="action-btn primary",
+                                    ),
+                                    html.Button(
+                                        "Reiniciar a t=0",
+                                        id="pd-btn-reiniciar",
+                                        n_clicks=0,
+                                        className="action-btn",
+                                    ),
+                                    html.Button(
+                                        "Limpiar Estelas",
+                                        id="pd-btn-limpiar",
+                                        n_clicks=0,
+                                        className="action-btn",
+                                    ),
+                                    html.Button(
+                                        "Fijar Estelas",
+                                        id="pd-btn-fijar",
+                                        n_clicks=0,
+                                        className="action-btn",
+                                    ),
                                 ],
                             ),
                         ],
@@ -634,8 +714,15 @@ def crear_pagina():
                             html.Div(
                                 className="panel",
                                 children=[
-                                    html.Div("VISTA FÍSICA (PÉNDULO DOBLE)", id="pd-title-fisica", className="panel-title"),
-                                    html.Div(id="pd-canvas-physics-host", className="canvas-host canvas-physics-size"),
+                                    html.Div(
+                                        "VISTA FÍSICA (PÉNDULO DOBLE)",
+                                        id="pd-title-fisica",
+                                        className="panel-title",
+                                    ),
+                                    html.Div(
+                                        id="pd-canvas-physics-host",
+                                        className="canvas-host canvas-physics-size",
+                                    ),
                                 ],
                             ),
                             html.Div(
@@ -644,15 +731,28 @@ def crear_pagina():
                                     html.Div(
                                         className="panel",
                                         children=[
-                                            html.Div("DIVERGENCIA DE TRAYECTORIAS log₁₀(Δθ)", className="panel-title"),
-                                            html.Div(id="pd-canvas-div-host", className="canvas-host canvas-chart-size"),
+                                            html.Div(
+                                                "DIVERGENCIA DE TRAYECTORIAS log₁₀(Δθ)",
+                                                className="panel-title",
+                                            ),
+                                            html.Div(
+                                                id="pd-canvas-div-host",
+                                                className="canvas-host canvas-chart-size",
+                                            ),
                                         ],
                                     ),
                                     html.Div(
                                         className="panel",
                                         children=[
-                                            html.Div("ESPACIO DE CONFIGURACIÓN (θ₁ vs θ₂)", id="pd-title-fase", className="panel-title"),
-                                            html.Div(id="pd-canvas-phase-host", className="canvas-host canvas-chart-size"),
+                                            html.Div(
+                                                "ESPACIO DE CONFIGURACIÓN (θ₁ vs θ₂)",
+                                                id="pd-title-fase",
+                                                className="panel-title",
+                                            ),
+                                            html.Div(
+                                                id="pd-canvas-phase-host",
+                                                className="canvas-host canvas-chart-size",
+                                            ),
                                         ],
                                     ),
                                 ],
@@ -660,30 +760,141 @@ def crear_pagina():
                             html.Div(
                                 className="sliders-panel",
                                 children=[
-                                    slider("θ₁ Inicial (°)", "pd-sl-t1", -180, 180, 1, 180, "pd-val-t1", "180°"),
-                                    slider("θ₂ Inicial (°)", "pd-sl-t2", -180, 180, 1, -10, "pd-val-t2", "-10°"),
-                                    slider("N.º péndulos (N)", "pd-sl-n", 1, 12, 1, 5, "pd-val-n", "5"),
-                                    slider("Perturbación log₁₀(Δθ₀)", "pd-sl-dt", -6, 0, 0.1, -3, "pd-val-dt", "-3.0"),
-                                    slider("Longitud L₁ (m)", "pd-sl-l1", 0.5, 3, 0.1, 2, "pd-val-l1", "2.0 m"),
-                                    slider("Longitud L₂ (m)", "pd-sl-l2", 0.5, 3, 0.1, 1, "pd-val-l2", "1.0 m"),
-                                    slider("Gravedad g (m/s²)", "pd-sl-g", 0, 25, 0.1, 9.8, "pd-val-g", "9.8 m/s²"),
-                                    slider("Amortiguamiento b (s⁻¹)", "pd-sl-b", 0, 0.5, 0.01, 0, "pd-val-b", "0.00"),
-                                    slider("Masa 1 m₁ (kg)", "pd-sl-m1", 0.1, 10.0, 0.1, 1.0, "pd-val-m1", "1.0 kg"),
-                                    slider("Masa 2 m₂ (kg)", "pd-sl-m2", 0.1, 10.0, 0.1, 1.0, "pd-val-m2", "1.0 kg"),
+                                    slider(
+                                        "θ₁ Inicial (°)",
+                                        "pd-sl-t1",
+                                        -180,
+                                        180,
+                                        1,
+                                        180,
+                                        "pd-val-t1",
+                                        "180°",
+                                    ),
+                                    slider(
+                                        "θ₂ Inicial (°)",
+                                        "pd-sl-t2",
+                                        -180,
+                                        180,
+                                        1,
+                                        -10,
+                                        "pd-val-t2",
+                                        "-10°",
+                                    ),
+                                    slider(
+                                        "N.º péndulos (N)",
+                                        "pd-sl-n",
+                                        1,
+                                        12,
+                                        1,
+                                        5,
+                                        "pd-val-n",
+                                        "5",
+                                    ),
+                                    slider(
+                                        "Perturbación log₁₀(Δθ₀)",
+                                        "pd-sl-dt",
+                                        -6,
+                                        0,
+                                        0.1,
+                                        -3,
+                                        "pd-val-dt",
+                                        "-3.0",
+                                    ),
+                                    slider(
+                                        "Longitud L₁ (m)",
+                                        "pd-sl-l1",
+                                        0.5,
+                                        3,
+                                        0.1,
+                                        2,
+                                        "pd-val-l1",
+                                        "2.0 m",
+                                    ),
+                                    slider(
+                                        "Longitud L₂ (m)",
+                                        "pd-sl-l2",
+                                        0.5,
+                                        3,
+                                        0.1,
+                                        1,
+                                        "pd-val-l2",
+                                        "1.0 m",
+                                    ),
+                                    slider(
+                                        "Gravedad g (m/s²)",
+                                        "pd-sl-g",
+                                        0,
+                                        25,
+                                        0.1,
+                                        9.8,
+                                        "pd-val-g",
+                                        "9.8 m/s²",
+                                    ),
+                                    slider(
+                                        "Amortiguamiento b (s⁻¹)",
+                                        "pd-sl-b",
+                                        0,
+                                        0.5,
+                                        0.01,
+                                        0,
+                                        "pd-val-b",
+                                        "0.00",
+                                    ),
+                                    slider(
+                                        "Masa 1 m₁ (kg)",
+                                        "pd-sl-m1",
+                                        0.1,
+                                        10.0,
+                                        0.1,
+                                        1.0,
+                                        "pd-val-m1",
+                                        "1.0 kg",
+                                    ),
+                                    slider(
+                                        "Masa 2 m₂ (kg)",
+                                        "pd-sl-m2",
+                                        0.1,
+                                        10.0,
+                                        0.1,
+                                        1.0,
+                                        "pd-val-m2",
+                                        "1.0 kg",
+                                    ),
                                     html.Div(
                                         className="slider-group full-span",
                                         children=[
                                             html.Div(
                                                 className="slider-header",
                                                 children=[
-                                                    html.Span("Velocidad de simulación"),
+                                                    html.Span(
+                                                        "Velocidad de simulación"
+                                                    ),
                                                     html.Div(
                                                         className="speed-buttons",
                                                         children=[
-                                                            html.Span("1.0x", id="pd-val-speed", className="val"),
-                                                            html.Button("x0.5", id="pd-btn-half", n_clicks=0, className="btn-small"),
-                                                            html.Button("x2", id="pd-btn-x2", n_clicks=0, className="btn-small"),
-                                                            html.Button("↺", id="pd-btn-reset-speed", n_clicks=0, className="btn-small"),
+                                                            html.Span(
+                                                                "1.0x",
+                                                                id="pd-val-speed",
+                                                                className="val",
+                                                            ),
+                                                            html.Button(
+                                                                "x0.5",
+                                                                id="pd-btn-half",
+                                                                n_clicks=0,
+                                                                className="btn-small",
+                                                            ),
+                                                            html.Button(
+                                                                "x2",
+                                                                id="pd-btn-x2",
+                                                                n_clicks=0,
+                                                                className="btn-small",
+                                                            ),
+                                                            html.Button(
+                                                                "↺",
+                                                                id="pd-btn-reset-speed",
+                                                                n_clicks=0,
+                                                                className="btn-small",
+                                                            ),
                                                         ],
                                                     ),
                                                 ],
@@ -738,11 +949,31 @@ Este simulador permite explorar la sensibilidad extrema a las condiciones inicia
                                 mathjax=True,
                             ),
                             html.Div(
-                                style={"marginTop": "12px", "display": "flex", "gap": "10px", "alignItems": "center", "flexWrap": "wrap"},
+                                style={
+                                    "marginTop": "12px",
+                                    "display": "flex",
+                                    "gap": "10px",
+                                    "alignItems": "center",
+                                    "flexWrap": "wrap",
+                                },
                                 children=[
-                                    html.Button("Actualizar tabla con estado actual", id="pd-btn-capturar", n_clicks=0, className="action-btn primary"),
-                                    html.Button("⬇ Descargar CSV", id="pd-btn-download-csv", n_clicks=0, className="action-btn"),
-                                    html.Span(id="pd-analysis-status", className="note", style={"marginLeft": "10px"}),
+                                    html.Button(
+                                        "Actualizar tabla con estado actual",
+                                        id="pd-btn-capturar",
+                                        n_clicks=0,
+                                        className="action-btn primary",
+                                    ),
+                                    html.Button(
+                                        "⬇ Descargar CSV",
+                                        id="pd-btn-download-csv",
+                                        n_clicks=0,
+                                        className="action-btn",
+                                    ),
+                                    html.Span(
+                                        id="pd-analysis-status",
+                                        className="note",
+                                        style={"marginLeft": "10px"},
+                                    ),
                                 ],
                             ),
                         ],
@@ -750,16 +981,37 @@ Este simulador permite explorar la sensibilidad extrema a las condiciones inicia
                     html.Div(
                         className="panel",
                         children=[
-                            html.Div("REGISTRO HISTÓRICO DE LA CAPTURA (PÉNDULO DOBLE)", className="panel-title"),
+                            html.Div(
+                                "REGISTRO HISTÓRICO DE LA CAPTURA (PÉNDULO DOBLE)",
+                                className="panel-title",
+                            ),
                             dash_table.DataTable(
                                 id="pd-tabla-mediciones",
                                 columns=initial_table_columns,
                                 data=[],
                                 page_size=10,
                                 style_table={"overflowX": "auto"},
-                                style_header={"backgroundColor": "#a2a2a7", "color": TEXT, "fontWeight": "bold", "border": f"1px solid {BORDER}"},
-                                style_cell={"backgroundColor": PANEL, "color": TEXT, "border": f"1px solid {BORDER}", "fontFamily": "monospace", "textAlign": "center", "padding": "6px", "minWidth": "100px"},
-                                style_data_conditional=[{"if": {"row_index": "odd"}, "backgroundColor": "#a2a2a7"}],
+                                style_header={
+                                    "backgroundColor": "#a2a2a7",
+                                    "color": TEXT,
+                                    "fontWeight": "bold",
+                                    "border": f"1px solid {BORDER}",
+                                },
+                                style_cell={
+                                    "backgroundColor": PANEL,
+                                    "color": TEXT,
+                                    "border": f"1px solid {BORDER}",
+                                    "fontFamily": "monospace",
+                                    "textAlign": "center",
+                                    "padding": "6px",
+                                    "minWidth": "100px",
+                                },
+                                style_data_conditional=[
+                                    {
+                                        "if": {"row_index": "odd"},
+                                        "backgroundColor": "#a2a2a7",
+                                    }
+                                ],
                             ),
                         ],
                     ),
@@ -964,14 +1216,22 @@ def registrar_callbacks(app):
         if n == 0:
             return [], "La captura no contiene muestras."
 
-        rows = [{
-            "tiempo": round(float(ti), 6), "divergencia": round(float(di), 8),
-            "fase_x": round(float(xi), 8), "fase_y": round(float(yi), 8),
-            "energia_cinetica": round(float(kti), 8), "energia_potencial": round(float(kvi), 8),
-            "energia_total": round(float(kei), 8),
-        } for ti, di, xi, yi, kti, kvi, kei in zip(t, div, px, py, et, ev, ee)][::-1]
+        rows = [
+            {
+                "tiempo": round(float(ti), 6),
+                "divergencia": round(float(di), 8),
+                "fase_x": round(float(xi), 8),
+                "fase_y": round(float(yi), 8),
+                "energia_cinetica": round(float(kti), 8),
+                "energia_potencial": round(float(kvi), 8),
+                "energia_total": round(float(kei), 8),
+            }
+            for ti, di, xi, yi, kti, kvi, kei in zip(t, div, px, py, et, ev, ee)
+        ][::-1]
 
-        status = f"Captura actualizada: {n} muestras registradas (hasta t = {t[-1]:.3f} s)."
+        status = (
+            f"Captura actualizada: {n} muestras registradas (hasta t = {t[-1]:.3f} s)."
+        )
         return rows, status
 
     @app.callback(
@@ -983,12 +1243,29 @@ def registrar_callbacks(app):
     def download_csv_double(_clicks, data):
         if not data or not data.get("time"):
             return None
-        n = min(len(data.get(k, [])) for k in ("time", "div", "phase_x", "phase_y", "energy_t", "energy_v", "energy_total"))
-        df = pd.DataFrame({
-            "tiempo_s": data["time"][:n], "log10_divergencia": data["div"][:n],
-            "theta1_rad": data["phase_x"][:n], "theta2_rad": data["phase_y"][:n],
-            "energia_cinetica_J": data["energy_t"][:n],
-            "energia_potencial_J": data["energy_v"][:n],
-            "energia_total_J": data["energy_total"][:n],
-        })
-        return dcc.send_data_frame(df.to_csv, "mediciones_pendulo_doble.csv", index=False)
+        n = min(
+            len(data.get(k, []))
+            for k in (
+                "time",
+                "div",
+                "phase_x",
+                "phase_y",
+                "energy_t",
+                "energy_v",
+                "energy_total",
+            )
+        )
+        df = pd.DataFrame(
+            {
+                "tiempo_s": data["time"][:n],
+                "log10_divergencia": data["div"][:n],
+                "theta1_rad": data["phase_x"][:n],
+                "theta2_rad": data["phase_y"][:n],
+                "energia_cinetica_J": data["energy_t"][:n],
+                "energia_potencial_J": data["energy_v"][:n],
+                "energia_total_J": data["energy_total"][:n],
+            }
+        )
+        return dcc.send_data_frame(
+            df.to_csv, "mediciones_pendulo_doble.csv", index=False
+        )

@@ -4,26 +4,34 @@
    VERSION COMPACTA
    ========================================================== */
 
-/* COLORES */
+/* COLORES DE ACCESO - cada tarjeta identifica a su laboratorio. */
 
 .sd-lab-azul {
-    --sd-color-lab: var(--sd-azul);
-    --sd-fondo-icono: var(--sd-azul-suave);
+    --sd-color-lab: #4274AA;
+    --sd-fondo-icono: #F3F8FC;
+    --sd-boton-color: #0B3F73;
+    --sd-boton-fondo: #DEEBF9;
 }
 
 .sd-lab-violeta {
-    --sd-color-lab: var(--sd-violeta);
-    --sd-fondo-icono: var(--sd-lavanda);
+    --sd-color-lab: #3A5573;
+    --sd-fondo-icono: #F5F8FB;
+    --sd-boton-color: #163F6A;
+    --sd-boton-fondo: #E6EDF5;
 }
 
 .sd-lab-turquesa {
-    --sd-color-lab: var(--sd-turquesa);
-    --sd-fondo-icono: var(--sd-turquesa-suave);
+    --sd-color-lab: #18B996;
+    --sd-fondo-icono: #F7FCFB;
+    --sd-boton-color: #079C88;
+    --sd-boton-fondo: #DDF8F1;
 }
 
-.sd-lab-rosa {
-    --sd-color-lab: var(--sd-rosa);
-    --sd-fondo-icono: var(--sd-rosa-suave);
+.sd-lab-sir {
+    --sd-color-lab: #7246B5;
+    --sd-fondo-icono: #FAF7FD;
+    --sd-boton-color: #6336B3;
+    --sd-boton-fondo: #EEE6FC;
 }
 
 /* TARJETA COMPLETA */
@@ -44,10 +52,12 @@
     color: var(--sd-indigo);
     background: #FFFFFF;
 
-    border: 1.5px solid var(--sd-color-lab);
-    border-radius: 14px;
+    /* Borde fino neutro y franja lateral de color de la referencia. */
+    border: 1px solid #C9D8E6;
+    border-left: 9px solid var(--sd-color-lab);
+    border-radius: 16px;
 
-    box-shadow: var(--sd-sombra);
+    box-shadow: 0 4px 13px rgba(11, 35, 69, 0.09);
     cursor: pointer;
 
     transition:
@@ -127,11 +137,9 @@
     margin: 5px 0 0;
     padding: 5px 9px;
 
-    color: var(--sd-color-lab);
+    color: var(--sd-boton-color, var(--sd-color-lab));
 
-    background: color-mix(in srgb,
-            var(--sd-color-lab) 14%,
-            white);
+    background: var(--sd-boton-fondo, #E9F0F7);
 
     border-radius: 999px;
 

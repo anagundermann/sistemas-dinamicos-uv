@@ -125,13 +125,15 @@
     opacity: 1;
 }
 
-/* El panel derecho apila dos graficos y lectura en el espacio disponible. */
+/* El panel derecho llega hasta la misma altura que los controles.
+   El selector ocupa y centra el espacio libre bajo la tarjeta azul. */
 .lv-pagina .lv-panel-derecho {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    align-content: start;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     gap: 12px;
     min-width: 0;
+    min-height: 0;
 }
 
 /* Dos graficos simultaneos, en paralelo dentro del panel derecho. */
@@ -316,4 +318,226 @@
 #lv-grafico-tiempo .legend,
 #lv-grafico-fases .legend {
     translate: 0 -14px;
+}
+
+/* ==========================================================
+   SELECTOR DE MODELOS · ETAPA 1
+   Botones independientes, con la misma paleta azul suave del encabezado.
+   Paleta centralizada para editarla mas adelante.
+   ========================================================== */
+.lv-pagina {
+    --lv-modelo-fondo: #eaf3ff;
+    --lv-modelo-borde: #bdd8f2;
+    --lv-modelo-texto: #245d91;
+    --lv-modelo-activo-fondo: #d4e6fa;
+    --lv-modelo-activo-borde: #76a7d5;
+    --lv-modelo-activo-texto: #194d7c;
+    --lv-modelo-aviso-texto: #67778d;
+}
+
+/* La altura de K permanece reservada en ambos modelos.
+   En el clasico, visibility:hidden oculta el control pero no su espacio. */
+.lv-pagina .lv-control-extra {
+    min-width: 0;
+    margin-top: 4px;
+    padding-top: 7px;
+    border-top: 1px solid var(--lv-modelo-borde);
+    transition: opacity 300ms ease, visibility 300ms ease;
+}
+
+/* Selector en la franja inferior, con siluetas a la izquierda
+   y botones alineados a centro. */
+.lv-pagina .lv-selector-modelo {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    padding: 0 4px;
+    transform: translateY(10px);
+    /* Posicion ajustada por la usuaria en F11. */
+}
+
+.lv-pagina .lv-selector-modelo-botones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.lv-pagina .lv-selector-modelo-etiqueta {
+    color: var(--sd-secundario);
+    font-size: 0.78rem;
+    font-weight: 650;
+    margin-right: 5px;
+}
+
+.lv-pagina .lv-modelo-boton,
+.lv-pagina .lv-modelo-boton:focus {
+    background: var(--lv-modelo-fondo);
+    border: 1px solid var(--lv-modelo-borde);
+    border-radius: 9px;
+    color: var(--lv-modelo-texto);
+    box-shadow: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 650;
+    line-height: 1.25;
+    padding: 7px 14px;
+    transition: background-color 300ms ease, border-color 300ms ease,
+        color 300ms ease;
+}
+
+.lv-pagina .lv-modelo-boton:hover {
+    background: var(--lv-modelo-activo-fondo);
+    border-color: var(--lv-modelo-activo-borde);
+    color: var(--lv-modelo-activo-texto);
+}
+
+.lv-pagina .lv-modelo-boton-activo,
+.lv-pagina .lv-modelo-boton-activo:focus,
+.lv-pagina .lv-modelo-boton-activo:hover {
+    background: var(--lv-modelo-activo-fondo);
+    border-color: var(--lv-modelo-activo-borde);
+    color: var(--lv-modelo-activo-texto);
+}
+
+/* Indicador de teclado sin alterar el estado normal. */
+.lv-pagina .lv-modelo-boton:focus-visible {
+    outline: 2px solid #76a7d5;
+    outline-offset: 3px;
+}
+
+/* Reservar la misma franja del aviso en los dos modelos.
+   Sin ella los botones subirian al desaparecer el texto en el clasico. */
+.lv-pagina .lv-modelo-aviso {
+    color: var(--lv-modelo-aviso-texto);
+    font-size: 0.71rem;
+    line-height: 1.3;
+    text-align: center;
+    min-height: 1.3em;
+}
+
+/* ==========================================================
+   TRANSICION ENTRE LOS DOS MODELOS
+   El titulo cambia sin alterar las alturas de las tarjetas.
+   Dos nombres de animacion permiten repetir el efecto en ambos sentidos.
+   ========================================================== */
+/* En la vista amplia F11, reservar el ancho del nombre mas largo.
+   Asi las siluetas y los cuatro botones educativos no se desplazan. */
+@media (min-width: 1600px) {
+    .lv-pagina .lv-titulo {
+        flex: 0 0 560px;
+        white-space: nowrap;
+    }
+}
+
+.lv-pagina .lv-titulo-clasico {
+    animation: lv-entrada-titulo-clasico 320ms ease-out both;
+}
+
+.lv-pagina .lv-titulo-logistico {
+    animation: lv-entrada-titulo-logistico 320ms ease-out both;
+}
+
+@keyframes lv-entrada-titulo-clasico {
+    from {
+        opacity: 0.5;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes lv-entrada-titulo-logistico {
+    from {
+        opacity: 0.5;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Evitar animaciones cuando la persona solicita movimiento reducido. */
+@media (prefers-reduced-motion: reduce) {
+
+    .lv-pagina .lv-titulo-clasico,
+    .lv-pagina .lv-titulo-logistico {
+        animation: none;
+    }
+
+    .lv-pagina .lv-control-extra,
+    .lv-pagina .lv-modelo-boton {
+        transition: none;
+    }
+}
+
+/* ==========================================================
+   LOTKA-VOLTERRA - BORDES NEUTROS (OPCION B)
+   No cambia los bordes de las tarjetas internas de poblaciones.
+   ========================================================== */
+.lv-pagina .lv-panel-controles,
+.lv-pagina .lv-tarjeta-grafico,
+.lv-pagina .lv-panel-resultados {
+    border: 1px solid #D9DDE8;
+    border-radius: 16px;
+}
+
+.lv-pagina .lv-equilibrio-recuadro {
+    border: 1px solid #D9DDE8;
+    border-radius: 14px;
+}
+
+/* ==========================================================
+   LOTKA-VOLTERRA - SILUETAS DEL SELECTOR INFERIOR
+   Reutiliza los SVG de la cabecera sin modificar sus estilos.
+   ========================================================== */
+.lv-pagina .lv-selector-modelo-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+    min-width: 0;
+}
+
+.lv-pagina .lv-modelo-siluetas {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 45px;
+    padding-left: 28px;
+    flex-shrink: 0;
+    pointer-events: none;
+    transform: translateX(30px);
+}
+
+.lv-pagina .lv-modelo-siluetas img {
+    display: block;
+    width: auto;
+    height: 38px;
+    max-width: 90px;
+    object-fit: contain;
+    opacity: 0.75;
+}
+
+.lv-pagina .lv-selector-modelo-fila .lv-selector-modelo-botones {
+    margin-left: auto;
+    justify-content: flex-end;
+}
+
+@media (max-width: 1050px) {
+    .lv-pagina .lv-modelo-siluetas {
+        display: none;
+    }
 }

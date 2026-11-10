@@ -274,3 +274,121 @@
         overflow: visible;
     }
 }
+
+
+/* =============================================================
+   PALETA NEUTRA DE INICIO - azul pizarra / azul acero
+   Regla de alcance: solamente cuando Introduccion esta visible.
+   No modifica :root, la distribucion ni las paginas de laboratorio.
+   ============================================================= */
+
+/* La identidad general es neutra; las tarjetas conservan sus acentos. */
+.sd-app:has(.sd-intro) {
+    background: #F4F6F8;
+}
+
+.sd-app:has(.sd-intro) .sd-encabezado {
+    background: #FFFFFF;
+    border-bottom-color: #DCE4ED;
+    box-shadow: 0 3px 12px rgba(11, 35, 69, 0.04);
+}
+
+.sd-app:has(.sd-intro) .sd-titulo-app,
+.sd-layout:has(.sd-intro) .sd-laboratorios-titulo,
+.sd-intro .sd-portada-titulo,
+.sd-intro .sd-info-titulo {
+    color: #0B2345;
+}
+
+/* La biblioteca es un boton de contorno, Inicio es azul solido. */
+.sd-app:has(.sd-intro) .sd-conceptos-control .sd-consultar-boton {
+    color: #0B2345;
+    background: #FFFFFF;
+    border-color: #B2C6DA;
+}
+
+.sd-app:has(.sd-intro) .sd-conceptos-control .sd-consultar-boton:hover {
+    background: #F2F6FB;
+}
+
+.sd-app:has(.sd-intro) .sd-inicio {
+    color: #315E8D;
+    background: #E9F0F7;
+    border-color: #C7D6E6;
+}
+
+.sd-app:has(.sd-intro) .sd-inicio:hover {
+    background: #DDEAF7;
+}
+
+.sd-app:has(.sd-intro) .sd-inicio.activo {
+    color: #FFFFFF;
+    background: #355F89;
+    border-color: #355F89;
+}
+
+/* Bordes y textos de las cuatro tarjetas informativas de Inicio. */
+.sd-intro .sd-tarjeta {
+    color: #26394D;
+    background: #FFFFFF;
+    border-color: #CCD8E5;
+    box-shadow: 0 5px 17px rgba(11, 35, 69, 0.055);
+}
+
+.sd-intro .sd-portada-descripcion,
+.sd-intro .sd-info-card p,
+.sd-intro .sd-portada-pregunta p,
+.sd-intro .sd-pasos li {
+    color: #52677E;
+}
+
+.sd-intro .sd-sobretitulo {
+    color: #315E8D;
+    background: #E4EEF8;
+}
+
+.sd-intro-central .sd-portada-preguntas {
+    border-color: #CCD8E5;
+}
+
+.sd-intro-central .sd-portada-pregunta span {
+    color: #315E8D;
+    background: #E4EEF8;
+}
+
+.sd-intro .sd-info-matematica .sd-formula {
+    color: #0B2345;
+    background: #E4EEF8;
+}
+
+.sd-intro .sd-pasos li::before {
+    color: #FFFFFF;
+    background: #3D6FA0;
+}
+
+/* Las cuatro tarjetas identifican cada laboratorio, no el tema global. */
+.sd-layout:has(.sd-intro) .sd-lab-card .sd-lab-titulo {
+    color: #0B2345;
+}
+
+.sd-layout:has(.sd-intro) .sd-lab-card .sd-lab-detalle {
+    color: #52677E;
+}
+
+/* Footer neutro solo en la portada. */
+.sd-app:has(.sd-intro) .sd-footer {
+    border-top-color: #D9E1EA;
+}
+
+.sd-app:has(.sd-intro) .sd-footer-titulo,
+.sd-app:has(.sd-intro) .sd-footer-subtitulo {
+    color: #0B2345;
+}
+
+.sd-app:has(.sd-intro) .sd-footer-texto {
+    color: #52677E;
+}
+
+.sd-app:has(.sd-intro) .sd-footer-anio {
+    color: #3D6FA0;
+}

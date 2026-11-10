@@ -38,7 +38,7 @@ LABORATORIOS = [
     ("pendulo_simple", "Péndulo simple", "Oscilaciones", "azul"),
     ("pendulo_doble", "Péndulo doble", "Dinámica no lineal", "violeta"),
     ("depredador_presa", "Depredador-presa", "Lotka-Volterra", "turquesa"),
-    ("sir", "Modelo SIR", "Epidemias", "rosa"),
+    ("sir", "Modelo SIR", "Epidemias", "sir"),
 ]
 
 
@@ -55,26 +55,26 @@ TRAZOS = {
         '<line x1="24" y1="8" x2="47" y2="49" '
         'stroke="#3B82F6" stroke-width="3.6" '
         'stroke-linecap="round"/>'
-        '<circle cx="24" cy="8" r="3.2" fill="#211D4E"/>'
+        '<circle cx="24" cy="8" r="3.2" fill="#243A57"/>'
         '<circle cx="47" cy="49" r="5.2" fill="#3B82F6"/>'
         '<circle cx="45" cy="47" r="1.3" fill="#A8CCFF"/>'
     ),
     "pendulo_doble": (
         '<path d="M18 51 C29 64 38 62 47 56 '
         'S68 40 71 49 C73 60 62 64 53 61" '
-        'fill="none" stroke="#BFA2FA" '
+        'fill="none" stroke="#B9D0E6" '
         'stroke-width="2.2" stroke-dasharray="0.5 5" '
         'stroke-linecap="round"/>'
         '<line x1="20" y1="8" x2="39" y2="33" '
-        'stroke="#7C3AED" stroke-width="3.6" '
+        'stroke="#3E6D99" stroke-width="3.6" '
         'stroke-linecap="round"/>'
         '<line x1="39" y1="33" x2="56" y2="53" '
-        'stroke="#7C3AED" stroke-width="3.6" '
+        'stroke="#3E6D99" stroke-width="3.6" '
         'stroke-linecap="round"/>'
-        '<circle cx="20" cy="8" r="3.1" fill="#211D4E"/>'
-        '<circle cx="39" cy="33" r="4.4" fill="#AE92EE"/>'
-        '<circle cx="56" cy="53" r="5.2" fill="#7C3AED"/>'
-        '<circle cx="54.5" cy="51.7" r="1.2" fill="#DDD0FF"/>'
+        '<circle cx="20" cy="8" r="3.1" fill="#243A57"/>'
+        '<circle cx="39" cy="33" r="4.4" fill="#91B1CF"/>'
+        '<circle cx="56" cy="53" r="5.2" fill="#3E6D99"/>'
+        '<circle cx="54.5" cy="51.7" r="1.2" fill="#E8F2FA"/>'
     ),
     "depredador_presa": (
         '<path d="M4 41 C15 42 16 12 29 13 '
@@ -82,15 +82,15 @@ TRAZOS = {
         'stroke="#14B8A6" fill="none" stroke-width="4"/>'
         '<path d="M4 54 C15 53 21 31 32 35 '
         'S48 58 60 48 S69 34 73 39" '
-        'stroke="#7C3AED" fill="none" stroke-width="4"/>'
+        'stroke="#EC4899" fill="none" stroke-width="4"/>'
     ),
     "sir": (
         '<path d="M4 13 Q23 13 35 44 T73 54" '
-        'stroke="#3B82F6" fill="none" stroke-width="3"/>'
+        'stroke="#694BC2" fill="none" stroke-width="3"/>'
         '<path d="M4 54 Q18 54 31 25 T73 54" '
         'stroke="#EC4899" fill="none" stroke-width="3"/>'
         '<path d="M4 57 Q35 55 47 34 T73 10" '
-        'stroke="#14B8A6" fill="none" stroke-width="3"/>'
+        'stroke="#784CD4" fill="none" stroke-width="3"/>'
     ),
 }
 

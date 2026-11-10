@@ -15,36 +15,36 @@ ORBIPLOT = """
 
   <!-- Circunferencia de referencia -->
   <circle cx="230" cy="170" r="102"
-    fill="none" stroke="#DDD4FE" stroke-width="2"
+    fill="none" stroke="#D8E9F9" stroke-width="2"
     stroke-dasharray="7 8"/>
 
-  <!-- Trayectoria violeta original -->
+  <!-- Trayectoria azul acero -->
   <g transform="rotate(-26 230 170)">
     <ellipse cx="230" cy="170" rx="169" ry="70"
-      fill="none" stroke="#8C79D4" stroke-width="3"/>
+      fill="none" stroke="#3D6FA0" stroke-width="3"/>
 
-    <!-- Punto violeta -->
+    <!-- Punto rosado -->
     <circle cx="399" cy="170" r="9"
-      fill="#7C3AED" stroke="#FFFFFF" stroke-width="2"/>
-
-    <!-- Punto rosado sobre la misma trayectoria -->
-    <circle cx="61" cy="170" r="9"
       fill="#EC4899" stroke="#FFFFFF" stroke-width="2"/>
+
+    <!-- Punto turquesa sobre la misma trayectoria -->
+    <circle cx="61" cy="170" r="9"
+      fill="#14B8A6" stroke="#FFFFFF" stroke-width="2"/>
   </g>
 
-  <!-- Trayectoria turquesa original -->
+  <!-- Trayectoria turquesa -->
   <g transform="rotate(26 230 170)">
     <ellipse cx="230" cy="170" rx="164" ry="68"
       fill="none" stroke="#14B8A6" stroke-width="3"/>
 
-    <!-- Punto turquesa -->
-    <circle cx="230" cy="238" r="9"
-      fill="#14B8A6" stroke="#FFFFFF" stroke-width="2"/>
+    <!-- Punto violeta -->
+    <circle cx="394" cy="170" r="9"
+      fill="#7448C8" stroke="#FFFFFF" stroke-width="2"/>
   </g>
 
   <!-- Centro fijo de referencia -->
-  <circle cx="230" cy="170" r="34" fill="#F3EFFF"/>
-  <circle cx="230" cy="170" r="16" fill="#7C3AED"/>
+  <circle cx="230" cy="170" r="34" fill="#EAF1F8"/>
+  <circle cx="230" cy="170" r="16" fill="#126FE8"/>
 
 </svg>
 """
@@ -52,36 +52,36 @@ ORBIPLOT = """
 GRAFICO_TIEMPO = """
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 125">
   <path d="M24 10 V105 H345" fill="none"
-    stroke="#B9B1D3" stroke-width="2"/>
+    stroke="#9FB0C2" stroke-width="2"/>
   <path d="M24 35 H345 M24 70 H345"
-    stroke="#EBE7F6" stroke-dasharray="4 6"/>
+    stroke="#E6EDF5" stroke-dasharray="4 6"/>
   <path d="M25 60 C50 15 75 18 100 60
     S150 105 175 60 S225 15 250 60
     S300 105 345 55"
-    fill="none" stroke="#7C3AED"
+    fill="none" stroke="#3D6FA0"
     stroke-width="4" stroke-linecap="round"/>
   <path d="M25 86 C58 96 78 32 112 40
     S161 105 194 88 S245 27 277 40
     S319 98 345 89"
     fill="none" stroke="#14B8A6"
     stroke-width="4" stroke-linecap="round"/>
-  <text x="11" y="17" font-size="12" fill="#62617D">x</text>
-  <text x="342" y="121" font-size="12" fill="#62617D">t</text>
+  <text x="11" y="17" font-size="12" fill="#52677E">x</text>
+  <text x="342" y="121" font-size="12" fill="#52677E">t</text>
 </svg>
 """
 
 GRAFICO_PARAMETROS = """
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 110">
   <rect x="16" y="15" width="325" height="80" rx="15"
-    fill="#FAF9FF" stroke="#E4DDFC"/>
+    fill="#F5F8FC" stroke="#D8E2ED"/>
   <path d="M46 40 H311 M46 72 H311"
-    stroke="#D6C9F5" stroke-width="5"
+    stroke="#CBD8E6" stroke-width="5"
     stroke-linecap="round"/>
-  <path d="M46 40 H193" stroke="#7C3AED"
+  <path d="M46 40 H193" stroke="#3D6FA0"
     stroke-width="5" stroke-linecap="round"/>
   <path d="M46 72 H252" stroke="#14B8A6"
     stroke-width="5" stroke-linecap="round"/>
-  <circle cx="193" cy="40" r="12" fill="#7C3AED"/>
+  <circle cx="193" cy="40" r="12" fill="#3D6FA0"/>
   <circle cx="252" cy="72" r="12" fill="#14B8A6"/>
 </svg>
 """
