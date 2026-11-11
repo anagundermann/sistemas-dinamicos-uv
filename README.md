@@ -118,6 +118,40 @@ El archivo procesado organiza la información por **16 regiones y 84 fechas**, c
 
 ### Fundamentos matemáticos
 
+#### Depredador–Presa (Lotka–Volterra clásico y logístico)
+
+- [Lotka (1920): oscilaciones en sistemas biológicos](https://doi.org/10.1073/pnas.6.7.410)
+- [Volterra (1926): fluctuaciones de poblaciones](https://doi.org/10.1038/118558a0)
+- [Murray: *Mathematical Biology I* — modelos de poblaciones](https://doi.org/10.1007/b98868)
+- [Becker y Leopold-Wildburger (2020): modelos depredador–presa con crecimiento logístico](https://doi.org/10.1007/s10100-019-00656-7)
+- [Strogatz: *Nonlinear Dynamics and Chaos* — equilibrios, estabilidad y plano de fases](https://www.routledge.com/Nonlinear-Dynamics-and-Chaos/Strogatz/p/book/9780367026509)
+
+#### Péndulo doble
+
+- [Espacio de configuración](https://es.wikipedia.org/wiki/Espacio_de_configuraci%C3%B3n)
+- [Lagrangiano](https://es.wikipedia.org/wiki/Lagrangiano)
+- [Teorema de Liouville–Arnold](https://en.wikipedia.org/wiki/Liouville%E2%80%93Arnold_theorem)
+- [Mecánica hamiltoniana](https://es.wikipedia.org/wiki/Hamiltoniano_%28mec%C3%A1nica_cl%C3%A1sica%29)
+- [Exponente de Lyapunov](https://en.wikipedia.org/wiki/Lyapunov_exponent)
+- [Teorema de Kolmogórov–Arnold–Moser (KAM)](https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Arnold%E2%80%93Moser_theorem)
+
+
+#### Depredador–Presa (Lotka–Volterra)
+
+- [Modelo clásico de Lotka–Volterra — Lotka (1920)](https://doi.org/10.1073/pnas.6.7.410)
+- [Modelo depredador–presa — Volterra (1926)](https://doi.org/10.1038/118558a0)
+- [Modelo clásico y crecimiento logístico — Becker y Leopold-Wildburger (2020)](https://doi.org/10.1007/s10100-019-00656-7)
+- [Modelos poblacionales, equilibrios y oscilaciones — Murray (2002)](https://doi.org/10.1007/b98868)
+- [Estabilidad, jacobiano, autovalores y plano de fases — Strogatz (2024)](https://www.routledge.com/Nonlinear-Dynamics-and-Chaos/Strogatz/p/book/9780367026509)
+- [Ciclos poblacionales y dinámica depredador–presa — Kot (2001)](https://doi.org/10.1017/CBO9780511608520)
+
+
+#### Modelo SIR
+
+- [Modelo epidemiológico SIR — Kermack y McKendrick (1927)](https://doi.org/10.1098/rspa.1927.0118)
+- [Modelos epidemiológicos y teoría de redes — Keeling y Eames (2005)](https://doi.org/10.1098/rsif.2005.0051)
+- [Dinámica de epidemias en redes complejas — Pastor-Satorras y Vespignani (2001)](https://doi.org/10.1103/PhysRevE.63.066117)
+- [Integración numérica de ecuaciones diferenciales — SciPy, solve_ivp](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html)
 
 
 ### Documentación técnica
