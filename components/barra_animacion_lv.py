@@ -185,7 +185,7 @@ def crear_formas_guia(t, x, y, datos, activa):
     t, x, y = float(t), float(x), float(y)
     x_min = float(datos["rango_x_fases"][0])
     y_min = float(datos["rango_y_fases"][0])
-    estilo = {"color": "rgba(234, 88, 12, 0.72)", "width": 1.5, "dash": "dot"}
+    estilo = {"color": "rgba(100, 116, 139, 0.75)", "width": 1.5, "dash": "dot"}
 
     guia_tiempo = [
         {
@@ -252,9 +252,9 @@ def crear_anotaciones_guia(x, y, datos, activa):
 
     estilo = {
         "showarrow": False,
-        "font": {"family": "Arial, sans-serif", "size": 11, "color": "#C2410C"},
-        "bgcolor": "rgba(255, 241, 229, 0.97)",
-        "bordercolor": "rgba(251, 146, 60, 0.50)",
+        "font": {"family": "Arial, sans-serif", "size": 11, "color": "#334155"},
+        "bgcolor": "rgba(243, 246, 250, 0.97)",
+        "bordercolor": "rgba(203, 213, 225, 0.90)",
         "borderwidth": 1,
         "borderpad": 3,
         "captureevents": False,
@@ -483,6 +483,7 @@ def _crear_parches(datos, n, figura_fases, figura_tiempo=None, guia_activa=False
     Input("lv-depredadores-0", "value"),
     Input(ID_DATOS, "data"),
     State(ID_RELOJ, "n_intervals"),
+    State(ID_RELOJ, "disabled"),
     prevent_initial_call=True,
 )
 def controlar_animacion(
@@ -498,6 +499,7 @@ def controlar_animacion(
     depredadores_0,
     datos,
     posicion,
+    esta_pausado,
 ):
     accion = ctx.triggered_id
     intervalo = _intervalo(velocidad)
@@ -506,7 +508,9 @@ def controlar_animacion(
         # Una solucion nueva reemplaza la anterior: detener y volver a t=0.
         return True, intervalo, 0
     if accion == ID_PAUSA:
-        return True, no_update, no_update
+        if not datos or not datos.get("t"):
+            raise PreventUpdate
+        return not esta_pausado, no_update, no_update
     if accion == ID_REINICIAR:
         return True, no_update, 0
     if accion == ID_VELOCIDAD:

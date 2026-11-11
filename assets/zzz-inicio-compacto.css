@@ -392,3 +392,116 @@
 .sd-app:has(.sd-intro) .sd-footer-anio {
     color: #3D6FA0;
 }
+
+/* =============================================================
+   PERFILES DE LOS LABORATORIOS - SOLO PORTADA
+   Los subtitulos anticipan el enfoque de cada laboratorio.
+   El agrupamiento no afecta los IDs de navegacion ni las paginas.
+   ============================================================= */
+
+.sd-layout:has(.sd-intro) .sd-laboratorios-grupos {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.sd-layout:has(.sd-intro) .sd-lab-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.sd-layout:has(.sd-intro) .sd-lab-grupo-titulo {
+    margin: 0;
+    padding: 0 0 0 10px;
+    color: #3B5877;
+    font-size: 0.71rem;
+    font-weight: 800;
+    letter-spacing: 0.075em;
+    line-height: 1.25;
+    text-transform: uppercase;
+}
+
+/* En escritorio la ultima tarjeta termina al mismo nivel que
+   las tarjetas inferiores de las columnas central y derecha. */
+@media (min-width: 1250px) {
+    .sd-layout:has(.sd-intro) .sd-laboratorios {
+        align-self: stretch;
+        height: 100%;
+    }
+
+    .sd-layout:has(.sd-intro) .sd-laboratorios-grupos {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: grid;
+        grid-template-rows: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+        gap: clamp(12px, 2.5vh, 24px);
+    }
+
+    .sd-layout:has(.sd-intro) .sd-lab-grupo {
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        align-content: stretch;
+        gap: 6px;
+        min-height: 0;
+    }
+
+    .sd-layout:has(.sd-intro) .sd-lab-grupo-doble {
+        grid-template-rows: auto repeat(2, minmax(0, 1fr));
+    }
+
+    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-card {
+        height: 100%;
+        min-height: 105px;
+    }
+}
+
+/* =============================================================
+   PORTADA EN PANTALLA COMPLETA (F11) - ALTURA ADAPTABLE
+   Solo Introduccion en escritorio de tres columnas.
+
+   La altura se distribuye entre las tarjetas sin recortar texto.
+   Si la pantalla es demasiado pequena, se conserva el scroll
+   natural en lugar de ocultar contenido.
+   No altera el header, los laboratorios ni el estilo del footer.
+   ============================================================= */
+@media (min-width: 1250px) {
+    .sd-app:has(.sd-intro) {
+        min-height: 100vh;
+        /* Respaldo para navegadores antiguos. */
+        min-height: 100dvh;
+    }
+
+    .sd-layout:has(.sd-intro) {
+        min-height: 0;
+        padding-top: clamp(8px, 1.2dvh, 12px);
+        padding-bottom: clamp(4px, 0.7dvh, 8px);
+    }
+
+    .sd-layout:has(.sd-intro) .sd-laboratorios-grupos {
+        gap: clamp(8px, 1.5dvh, 16px);
+    }
+
+    .sd-layout:has(.sd-intro) .sd-lab-grupo {
+        gap: clamp(4px, 0.7dvh, 6px);
+    }
+
+    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-card {
+        min-height: clamp(92px, 12.8dvh, 105px);
+        padding: clamp(5px, 0.9dvh, 8px);
+    }
+
+    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-dibujo {
+        max-height: min(116px, 12.5dvh);
+    }
+
+    .sd-layout:has(.sd-intro) .sd-portada-ilustracion {
+        max-height: min(180px, 22dvh);
+    }
+
+    .sd-layout:has(.sd-intro) .sd-info-ilustracion {
+        max-height: min(78px, 9.5dvh);
+    }
+}

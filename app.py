@@ -193,7 +193,45 @@ app.layout = html.Div(
                             "Laboratorios",
                             className="sd-laboratorios-titulo",
                         ),
-                        *[crear_tarjeta_navegacion(*modelo) for modelo in LABORATORIOS],
+                        # Agrupacion por perfil de experiencia (solo portada).
+                        html.Div(
+                            className="sd-laboratorios-grupos",
+                            children=[
+                                html.Section(
+                                    className="sd-lab-grupo sd-lab-grupo-doble",
+                                    children=[
+                                        html.H3(
+                                            "EXPERIMENTACIÓN CIENTÍFICA",
+                                            className="sd-lab-grupo-titulo",
+                                        ),
+                                        *[
+                                            crear_tarjeta_navegacion(*modelo)
+                                            for modelo in LABORATORIOS[:2]
+                                        ],
+                                    ],
+                                ),
+                                html.Section(
+                                    className="sd-lab-grupo",
+                                    children=[
+                                        html.H3(
+                                            "EXPLORACIÓN EDUCATIVA",
+                                            className="sd-lab-grupo-titulo",
+                                        ),
+                                        crear_tarjeta_navegacion(*LABORATORIOS[2]),
+                                    ],
+                                ),
+                                html.Section(
+                                    className="sd-lab-grupo",
+                                    children=[
+                                        html.H3(
+                                            "MODELACIÓN APLICADA",
+                                            className="sd-lab-grupo-titulo",
+                                        ),
+                                        crear_tarjeta_navegacion(*LABORATORIOS[3]),
+                                    ],
+                                ),
+                            ],
+                        ),
                     ],
                 ),
                 html.Main(

@@ -61,9 +61,11 @@ select {
 }
 
 /* 2. ENCABEZADO — escala compacta y consistente */
+/* Encabezado fijo al desplazarse, sin superponer el contenido. */
 .sd-encabezado {
-    position: relative;
-    z-index: 20;
+    position: sticky;
+    top: 0;
+    z-index: 200;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -519,11 +521,13 @@ select {
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
     align-items: center;
     gap: 12px;
-    width: auto;
-    margin: 20px clamp(16px, 1.8vw, 32px) 0;
-    padding: 15px 4px;
-    background: transparent;
-    border-top: 1px solid var(--sd-borde-violeta);
+    width: 100%;
+    /* Banda completa blanca, como el encabezado compartido. */
+    margin: 10px 0 0;
+    padding: 11px clamp(16px, 1.8vw, 32px);
+    background: var(--sd-blanco);
+    border-top: 1px solid #DCE4ED;
+    box-shadow: 0 -2px 8px rgba(11, 35, 69, 0.025);
 }
 
 .sd-footer-bloque {
@@ -535,14 +539,14 @@ select {
 
 .sd-footer-titulo,
 .sd-footer-subtitulo {
-    color: var(--sd-indigo);
+    color: #0B2345;
     font-size: 0.98rem;
     font-weight: 750;
     line-height: 1.35;
 }
 
 .sd-footer-texto {
-    color: var(--sd-secundario);
+    color: #52677E;
     font-size: 0.93rem;
     line-height: 1.4;
 }
@@ -562,7 +566,7 @@ select {
 }
 
 .sd-footer-anio {
-    color: var(--sd-violeta);
+    color: #52677E;
     font-size: 0.96rem;
     font-weight: 750;
 }
@@ -657,8 +661,8 @@ select {
     }
 
     .sd-footer {
-        margin: 18px 12px 0;
-        padding: 16px 4px;
+        margin: 10px 0 0;
+        padding: 12px 16px;
     }
 }
 

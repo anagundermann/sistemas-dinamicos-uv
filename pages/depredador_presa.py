@@ -7,6 +7,12 @@ El selector alterna entre el modelo clasico y el de crecimiento logistico.
 
 """
 
+from components.analisis_cuantitativo_lv import (
+    crear_boton_analisis_lv,
+    crear_modal_analisis_lv,
+    registrar_callbacks_analisis_lv,
+)
+
 from components.barra_animacion_lv import (
     crear_barra_animacion_vista_previa,
     preparar_datos_animacion,
@@ -20,6 +26,8 @@ from dash import Input, Output, Patch, State, ctx, dcc, get_asset_url, html, no_
 import dash_bootstrap_components as dbc
 
 import plotly.graph_objects as go
+import numpy as np
+from scipy.signal import find_peaks
 
 from components.ecosistema_lv import (
     crear_contenido_ecosistema,
@@ -61,6 +69,68 @@ CONTROLES = [
 
 # Control adicional del segundo modelo: siempre reserva su altura.
 CONTROL_K = ("K · Capacidad de carga", "lv-k", 50, 300, 10, 120)
+
+
+# Los indices de las trazas de tiempo son fijos para respetar
+# barra_animacion_lv.py: 0=presas, 1=depredadores,
+# 2/3=cursor de animacion, 4/5=extremos locales.
+
+
+def _traza_cursor_vacia(nombre, color):
+    """Reserva el indice del cursor sin dibujar puntos antes de Play."""
+    return go.Scatter(
+        x=[],
+        y=[],
+        mode="markers",
+        name=nombre,
+        showlegend=False,
+        hoverinfo="skip",
+        marker={
+            "size": 10,
+            "color": color,
+            "line": {"color": "#FFFFFF", "width": 1.8},
+        },
+    )
+
+
+def _traza_extremos(tiempos, valores, nombre, color, guia_activa):
+    """Maximos y minimos locales interiores de toda la solucion.
+
+    Se ignoran ondulaciones insignificantes debidas a redondeo numerico.
+    Los extremos en t=0 y t=T no se clasifican como locales.
+    """
+    tiempos = np.asarray(tiempos, dtype=float)
+    valores = np.asarray(valores, dtype=float)
+    prominencia = max(0.001 * float(np.ptp(valores)), 1e-7)
+    indices_max, _ = find_peaks(valores, prominence=prominencia)
+    indices_min, _ = find_peaks(-valores, prominence=prominencia)
+
+    # Un trace por poblacion permite marcar ambos tipos sin agregar
+    # entradas en la leyenda ni cambiar el codigo de la animacion.
+    indices = sorted([int(i) for i in indices_max] + [int(i) for i in indices_min])
+    maximos = set(int(i) for i in indices_max)
+    etiquetas = ["Máx" if i in maximos else "Mín" for i in indices]
+
+    return go.Scatter(
+        x=tiempos[indices],
+        y=valores[indices],
+        customdata=etiquetas,
+        mode="markers",
+        name=f"Extremos · {nombre}",
+        visible=bool(guia_activa),
+        showlegend=False,
+        marker={
+            "size": 8,
+            "color": color,
+            "line": {"color": "#FFFFFF", "width": 1.5},
+        },
+        hovertemplate="%{customdata} · t=%{x:.1f} · %{y:.1f}<extra></extra>",
+        hoverlabel={
+            "bgcolor": "#F3F6FA",
+            "bordercolor": "#CBD5E1",
+            "font": {"family": "Arial, sans-serif", "size": 11, "color": "#334155"},
+        },
+    )
 
 
 def crear_control(titulo, control_id, minimo, maximo, paso, valor):
@@ -301,6 +371,7 @@ def crear_pagina():
                                                         alt="",
                                                         className="lv-modelo-conejo",
                                                     ),
+                                                    crear_boton_analisis_lv(),
                                                 ],
                                             ),
                                             html.Div(
@@ -339,6 +410,7 @@ def crear_pagina():
                     ),
                 ],
             ),
+            crear_modal_analisis_lv(),
             dbc.Modal(
                 id="lv-modal-informacion",
                 is_open=False,
@@ -497,6 +569,25 @@ def registrar_callbacks(app):
                 name="Depredadores",
                 hoverinfo="none",
                 line={"color": COLOR_DEPREDADORES, "width": 3},
+            )
+        )
+
+        # Reservar los indices 2 y 3 para los marcadores que mueve Play.
+        # Los indices 4 y 5 son los extremos fijos (visibles solo con Guia).
+        figura_tiempo.add_trace(_traza_cursor_vacia("Cursor · Presas", COLOR_PRESAS))
+        figura_tiempo.add_trace(
+            _traza_cursor_vacia("Cursor · Depredadores", COLOR_DEPREDADORES)
+        )
+        figura_tiempo.add_trace(
+            _traza_extremos(tiempos, presas, "Presas", COLOR_PRESAS, guia_activa)
+        )
+        figura_tiempo.add_trace(
+            _traza_extremos(
+                tiempos,
+                depredadores,
+                "Depredadores",
+                COLOR_DEPREDADORES,
+                guia_activa,
             )
         )
 
@@ -695,6 +786,12 @@ def registrar_callbacks(app):
 
         temporal["layout"]["xaxis"]["showspikes"] = False
 
+        # Los indices 4 y 5 contienen extremos de presas y depredadores.
+        # Se muestran/ocultan sin alterar las curvas ni recalcular la solucion.
+        if figura_tiempo and len(figura_tiempo.get("data", [])) >= 6:
+            temporal["data"][4]["visible"] = bool(guia_activa)
+            temporal["data"][5]["visible"] = bool(guia_activa)
+
         # No se muestran ejes fijos del origen: usamos proyecciones dinamicas.
 
         estado = _estado_visible(figura_tiempo, datos)
@@ -828,3 +925,4 @@ def registrar_callbacks(app):
     # Callback del ciclo biologico (solo modal Ecosistema).
 
     registrar_callbacks_ecosistema(app)
+    registrar_callbacks_analisis_lv(app)

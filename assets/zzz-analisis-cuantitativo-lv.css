@@ -1,0 +1,36 @@
+/* Acceso al analisis LV: bajo el selector existente, sin tocar hojas globales. */
+.lv-modelo-siluetas .lv-boton-analisis-inferior {
+    align-self: center;
+    flex-shrink: 0;
+    margin-left: 0;
+    padding: 7px 11px;
+    border: 1px solid #B9D2EA;
+    border-radius: 10px;
+    background: #EAF3FF;
+    color: #245D91;
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    /* Las siluetas tienen pointer-events: none; reactivamos solo este boton. */
+    pointer-events: auto;
+}
+
+.lv-modelo-siluetas .lv-boton-analisis-inferior:hover {
+    background: #DCEBFC;
+    border-color: #8DB7DC;
+}
+
+.lv-modelo-siluetas .lv-boton-analisis-inferior:focus-visible {
+    outline: 3px solid #9EC5EB;
+    outline-offset: 2px;
+}
+
+@media (max-width: 1120px) {
+    .lv-modelo-siluetas .lv-boton-analisis-inferior {
+        font-size: 0.78rem;
+        margin-left: 8px;
+        padding: 6px 8px;
+    }
+}

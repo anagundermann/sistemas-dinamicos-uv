@@ -519,7 +519,7 @@
     padding-left: 28px;
     flex-shrink: 0;
     pointer-events: none;
-    transform: translateX(30px);
+    transform: translateX(20px);
 }
 
 .lv-pagina .lv-modelo-siluetas img {
