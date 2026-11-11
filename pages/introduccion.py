@@ -113,7 +113,7 @@ def crear_pagina():
                                 className="sd-sobretitulo",
                             ),
                             html.H2(
-                                "Explora cómo evolucionan los sistemas",
+                                "Explora como evolucionan los sistemas",
                                 className="sd-portada-titulo",
                             ),
                             html.P(
@@ -199,7 +199,7 @@ def crear_pagina():
                                 className="sd-formula",
                             ),
                             html.P(
-                                "Todos describen cómo evoluciona el estado de un "
+                                "Todos describen como evoluciona el estado de un "
                                 "sistema a partir de una ley matemática."
                             ),
                             html.Img(
