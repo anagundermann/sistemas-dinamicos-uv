@@ -1,288 +1,12 @@
 /* =============================================================
-   INICIO / OPCION 2 - portada compacta de Sistemas Dinamicos UV
-   Este archivo se carga al final de assets/ (prefijo zzz-).
-   No modifica la distribucion de las paginas de laboratorio.
+   SISTEMAS DINAMICOS UV · PORTADA "LA MATEMATICA EN MOVIMIENTO"
+
+   Se modifica exclusivamente la portada (solo donde existe .sd-intro).
+   Los laboratorios individuales, su logica, el header y el footer
+   permanecen definidos en sus archivos originales.
    ============================================================= */
 
-/* Las preguntas ahora son una tarjeta propia, fuera del hero. */
-.sd-intro-central {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-width: 0;
-}
-
-.sd-intro-central .sd-portada-preguntas {
-    margin: 0;
-    padding: 14px;
-    border: 1.5px solid var(--sd-borde-violeta);
-    border-radius: var(--sd-radio);
-}
-
-.sd-intro-central .sd-portada-preguntas .sd-info-titulo {
-    margin-bottom: 9px;
-}
-
-.sd-intro-derecha {
-    grid-template-rows: auto auto;
-}
-
-/* Lista informativa de Inicio: cuatro pasos sin apariencia de botones. */
-.sd-intro-central .sd-portada-preguntas-grid {
-    gap: 8px;
-}
-
-.sd-intro-central .sd-portada-pregunta {
-    min-height: 30px;
-    gap: 10px;
-    padding: 2px 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    cursor: default;
-}
-
-.sd-intro-central .sd-portada-pregunta span {
-    flex: 0 0 28px;
-    width: 28px;
-    min-height: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--sd-lavanda);
-    color: var(--sd-violeta);
-    font-size: 0.83rem;
-    font-weight: 800;
-}
-
-.sd-intro-central .sd-portada-pregunta p {
-    font-size: 0.89rem;
-    line-height: 1.3;
-}
-
-/* Solo en Inicio y en escritorio con tres columnas visibles. */
-@media (min-width: 1250px) {
-    .sd-layout:has(.sd-intro) {
-        grid-template-columns: minmax(300px, 27%) minmax(0, 1fr);
-        align-items: stretch;
-        gap: 16px;
-        padding-top: 12px;
-        padding-bottom: 8px;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-contenido {
-        display: flex;
-        min-width: 0;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-laboratorios {
-        gap: 8px;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-laboratorios-titulo {
-        margin: 0 0 2px;
-        font-size: 1.27rem;
-        line-height: 1.25;
-    }
-
-    /* Ajuste exclusivo de los 4 accesos de la portada. */
-    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-card {
-        display: grid;
-        grid-template-columns: 125px minmax(0, 1fr);
-        align-items: center;
-        gap: 11px;
-        width: 100%;
-        height: clamp(112px, 15.5vh, 132px);
-        min-height: 0;
-        padding: 8px;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-dibujo {
-        display: block;
-        width: 100%;
-        height: 100%;
-        max-height: 116px;
-        min-height: 0;
-        padding: 2px;
-        object-fit: contain;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-textos {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        justify-content: center;
-        gap: 4px;
-        min-width: 0;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-titulo,
-    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-textos> :first-child {
-        font-size: 1.11rem;
-        line-height: 1.2;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-detalle,
-    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-textos> :nth-child(2):not(.sd-lab-explorar) {
-        font-size: 0.97rem;
-        line-height: 1.25;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-explorar {
-        display: inline-flex;
-        align-self: flex-end;
-        margin: 6px 0 0;
-        padding: 5px 10px;
-        font-size: 0.93rem;
-    }
-
-    /* Centro y derecha comparten una altura y quedan alineados. */
-    .sd-layout:has(.sd-intro) .sd-intro {
-        width: 100%;
-        height: 100%;
-        min-height: 0;
-        grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-        gap: 12px;
-        align-items: stretch;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-intro-central {
-        display: grid;
-        grid-template-rows: minmax(0, 1.68fr) minmax(0, 1fr);
-        gap: 12px;
-        min-height: 0;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-portada-central {
-        min-height: 0;
-        padding: 14px 17px;
-        overflow: hidden;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-portada-titulo {
-        margin: 7px 0 6px;
-        font-size: clamp(1.55rem, 1.85vw, 2.0rem);
-        line-height: 1.13;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-portada-descripcion {
-        font-size: 0.94rem;
-        line-height: 1.34;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-portada-ilustracion {
-        flex: 1 1 auto;
-        width: 100%;
-        max-width: 310px;
-        max-height: 180px;
-        min-height: 0;
-        margin: 7px auto 0;
-        object-fit: contain;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-portada-preguntas {
-        min-height: 0;
-        padding: 12px 14px;
-        overflow: hidden;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-portada-preguntas .sd-info-titulo {
-        margin-bottom: 8px;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-portada-preguntas-grid {
-        gap: 8px;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-portada-pregunta {
-        min-height: 30px;
-        gap: 10px;
-        padding: 2px 0;
-        border: 0;
-        border-radius: 0;
-        background: transparent;
-        box-shadow: none;
-        cursor: default;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-portada-pregunta span {
-        flex: 0 0 28px;
-        width: 28px;
-        min-height: 28px;
-        height: 28px;
-        border-radius: 50%;
-        font-size: 0.83rem;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-portada-pregunta p {
-        font-size: 0.89rem;
-        line-height: 1.2;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-intro-derecha {
-        grid-template-rows: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-        min-height: 0;
-        align-content: stretch;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-info-card {
-        min-height: 0;
-        gap: 6px;
-        justify-content: space-between;
-        padding: 12px 15px;
-        overflow: hidden;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-info-card p,
-    .sd-layout:has(.sd-intro) .sd-pasos li {
-        font-size: 0.92rem;
-        line-height: 1.35;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-pasos li {
-        margin: 4px 0;
-        gap: 9px;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-info-ilustracion {
-        width: 100%;
-        max-width: 280px;
-        max-height: 78px;
-        min-height: 0;
-        margin: 0 auto;
-        object-fit: contain;
-    }
-
-    /* El footer compartido sigue intacto en las otras paginas. */
-    .sd-app:has(.sd-intro) .sd-footer {
-        margin-top: 8px;
-        padding-top: 8px;
-        padding-bottom: 8px;
-    }
-}
-
-/* En pantallas medianas y celulares: no forzar un alto fijo.
-   Se conserva el scroll natural para evitar cortes de contenido. */
-@media (max-width: 1249px) {
-    .sd-intro-central {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .sd-intro-central .sd-portada-preguntas {
-        overflow: visible;
-    }
-}
-
-
-/* =============================================================
-   PALETA NEUTRA DE INICIO - azul pizarra / azul acero
-   Regla de alcance: solamente cuando Introduccion esta visible.
-   No modifica :root, la distribucion ni las paginas de laboratorio.
-   ============================================================= */
-
-/* La identidad general es neutra; las tarjetas conservan sus acentos. */
+/* 1. Paleta general de la portada. */
 .sd-app:has(.sd-intro) {
     background: #F4F6F8;
 }
@@ -294,31 +18,8 @@
 }
 
 .sd-app:has(.sd-intro) .sd-titulo-app,
-.sd-layout:has(.sd-intro) .sd-laboratorios-titulo,
-.sd-intro .sd-portada-titulo,
-.sd-intro .sd-info-titulo {
+.sd-layout:has(.sd-intro) .sd-laboratorios-titulo {
     color: #0B2345;
-}
-
-/* La biblioteca es un boton de contorno, Inicio es azul solido. */
-.sd-app:has(.sd-intro) .sd-conceptos-control .sd-consultar-boton {
-    color: #0B2345;
-    background: #FFFFFF;
-    border-color: #B2C6DA;
-}
-
-.sd-app:has(.sd-intro) .sd-conceptos-control .sd-consultar-boton:hover {
-    background: #F2F6FB;
-}
-
-.sd-app:has(.sd-intro) .sd-inicio {
-    color: #315E8D;
-    background: #E9F0F7;
-    border-color: #C7D6E6;
-}
-
-.sd-app:has(.sd-intro) .sd-inicio:hover {
-    background: #DDEAF7;
 }
 
 .sd-app:has(.sd-intro) .sd-inicio.activo {
@@ -327,78 +28,27 @@
     border-color: #355F89;
 }
 
-/* Bordes y textos de las cuatro tarjetas informativas de Inicio. */
-.sd-intro .sd-tarjeta {
-    color: #26394D;
-    background: #FFFFFF;
-    border-color: #CCD8E5;
-    box-shadow: 0 5px 17px rgba(11, 35, 69, 0.055);
+/* 2. Presentacion izquierda; menu de laboratorios a la derecha. */
+@media (min-width: 761px) {
+    .sd-layout:has(.sd-intro) {
+        grid-template-columns: minmax(0, 1fr) minmax(315px, 27%);
+        gap: 16px;
+    }
+
+    .sd-layout:has(.sd-intro)>.sd-contenido {
+        grid-column: 1;
+        grid-row: 1;
+        min-width: 0;
+        display: flex;
+    }
+
+    .sd-layout:has(.sd-intro)>.sd-laboratorios {
+        grid-column: 2;
+        grid-row: 1;
+    }
 }
 
-.sd-intro .sd-portada-descripcion,
-.sd-intro .sd-info-card p,
-.sd-intro .sd-portada-pregunta p,
-.sd-intro .sd-pasos li {
-    color: #52677E;
-}
-
-.sd-intro .sd-sobretitulo {
-    color: #315E8D;
-    background: #E4EEF8;
-}
-
-.sd-intro-central .sd-portada-preguntas {
-    border-color: #CCD8E5;
-}
-
-.sd-intro-central .sd-portada-pregunta span {
-    color: #315E8D;
-    background: #E4EEF8;
-}
-
-.sd-intro .sd-info-matematica .sd-formula {
-    color: #0B2345;
-    background: #E4EEF8;
-}
-
-.sd-intro .sd-pasos li::before {
-    color: #FFFFFF;
-    background: #3D6FA0;
-}
-
-/* Las cuatro tarjetas identifican cada laboratorio, no el tema global. */
-.sd-layout:has(.sd-intro) .sd-lab-card .sd-lab-titulo {
-    color: #0B2345;
-}
-
-.sd-layout:has(.sd-intro) .sd-lab-card .sd-lab-detalle {
-    color: #52677E;
-}
-
-/* Footer neutro solo en la portada. */
-.sd-app:has(.sd-intro) .sd-footer {
-    border-top-color: #D9E1EA;
-}
-
-.sd-app:has(.sd-intro) .sd-footer-titulo,
-.sd-app:has(.sd-intro) .sd-footer-subtitulo {
-    color: #0B2345;
-}
-
-.sd-app:has(.sd-intro) .sd-footer-texto {
-    color: #52677E;
-}
-
-.sd-app:has(.sd-intro) .sd-footer-anio {
-    color: #3D6FA0;
-}
-
-/* =============================================================
-   PERFILES DE LOS LABORATORIOS - SOLO PORTADA
-   Los subtitulos anticipan el enfoque de cada laboratorio.
-   El agrupamiento no afecta los IDs de navegacion ni las paginas.
-   ============================================================= */
-
+/* 3. Menu de la derecha: estilo original, sin nuevos botones. */
 .sd-layout:has(.sd-intro) .sd-laboratorios-grupos {
     display: flex;
     flex-direction: column;
@@ -415,7 +65,7 @@
 
 .sd-layout:has(.sd-intro) .sd-lab-grupo-titulo {
     margin: 0;
-    padding: 0 0 0 10px;
+    padding-left: 10px;
     color: #3B5877;
     font-size: 0.71rem;
     font-weight: 800;
@@ -424,84 +74,419 @@
     text-transform: uppercase;
 }
 
-/* En escritorio la ultima tarjeta termina al mismo nivel que
-   las tarjetas inferiores de las columnas central y derecha. */
-@media (min-width: 1250px) {
-    .sd-layout:has(.sd-intro) .sd-laboratorios {
-        align-self: stretch;
-        height: 100%;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-laboratorios-grupos {
-        flex: 1 1 auto;
-        min-height: 0;
-        display: grid;
-        grid-template-rows: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
-        gap: clamp(12px, 2.5vh, 24px);
-    }
-
-    .sd-layout:has(.sd-intro) .sd-lab-grupo {
-        display: grid;
-        grid-template-rows: auto minmax(0, 1fr);
-        align-content: stretch;
-        gap: 6px;
-        min-height: 0;
-    }
-
-    .sd-layout:has(.sd-intro) .sd-lab-grupo-doble {
-        grid-template-rows: auto repeat(2, minmax(0, 1fr));
-    }
-
-    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-card {
-        height: 100%;
-        min-height: 105px;
-    }
+.sd-layout:has(.sd-intro) .sd-lab-card .sd-lab-titulo {
+    color: #0B2345;
 }
 
-/* =============================================================
-   PORTADA EN PANTALLA COMPLETA (F11) - ALTURA ADAPTABLE
-   Solo Introduccion en escritorio de tres columnas.
+.sd-layout:has(.sd-intro) .sd-lab-card .sd-lab-detalle {
+    color: #52677E;
+}
 
-   La altura se distribuye entre las tarjetas sin recortar texto.
-   Si la pantalla es demasiado pequena, se conserva el scroll
-   natural en lugar de ocultar contenido.
-   No altera el header, los laboratorios ni el estilo del footer.
-   ============================================================= */
 @media (min-width: 1250px) {
-    .sd-app:has(.sd-intro) {
-        min-height: 100vh;
-        /* Respaldo para navegadores antiguos. */
-        min-height: 100dvh;
-    }
-
     .sd-layout:has(.sd-intro) {
+        align-items: stretch;
         min-height: 0;
         padding-top: clamp(8px, 1.2dvh, 12px);
         padding-bottom: clamp(4px, 0.7dvh, 8px);
     }
 
-    .sd-layout:has(.sd-intro) .sd-laboratorios-grupos {
-        gap: clamp(8px, 1.5dvh, 16px);
+    .sd-layout:has(.sd-intro) .sd-laboratorios {
+        display: flex;
+        flex-direction: column;
+        align-self: stretch;
+        height: 100%;
+        gap: 8px;
     }
 
-    .sd-layout:has(.sd-intro) .sd-lab-grupo {
-        gap: clamp(4px, 0.7dvh, 6px);
+    .sd-layout:has(.sd-intro) .sd-laboratorios-titulo {
+        margin: 0 0 2px;
+        font-size: 1.27rem;
+        line-height: 1.25;
+    }
+
+    .sd-layout:has(.sd-intro) .sd-laboratorios-grupos {
+        flex: 1 1 auto;
+        min-height: 0;
+        justify-content: space-between;
+        gap: clamp(8px, 1.3dvh, 14px);
     }
 
     .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-card {
-        min-height: clamp(92px, 12.8dvh, 105px);
-        padding: clamp(5px, 0.9dvh, 8px);
+        display: grid;
+        grid-template-columns: minmax(0, 39%) minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        height: clamp(100px, 12.8dvh, 123px);
+        min-height: 100px;
+        padding: 7px;
     }
 
     .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-dibujo {
-        max-height: min(116px, 12.5dvh);
+        width: 100%;
+        height: 100%;
+        max-height: 108px;
+        min-height: 0;
+        object-fit: contain;
     }
 
-    .sd-layout:has(.sd-intro) .sd-portada-ilustracion {
-        max-height: min(180px, 22dvh);
+    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-titulo {
+        font-size: clamp(1rem, 1.15vw, 1.13rem);
     }
 
-    .sd-layout:has(.sd-intro) .sd-info-ilustracion {
-        max-height: min(78px, 9.5dvh);
+    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-detalle {
+        font-size: clamp(0.88rem, 1vw, 0.98rem);
+    }
+
+    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-explorar {
+        padding: 5px 9px;
+        margin-top: 5px;
+        font-size: 0.9rem;
+    }
+}
+
+/* 4. Presentacion editorial: una unica tarjeta blanca. */
+.sd-layout:has(.sd-intro) .sd-intro-editorial {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid #D3E2F0;
+    border-radius: 26px;
+    background: #FFFFFF;
+    box-shadow: 0 7px 24px rgba(24, 51, 82, 0.07);
+}
+
+.sd-editorial-onda-superior,
+.sd-editorial-onda-inferior {
+    position: absolute;
+    display: block;
+    z-index: -1;
+    pointer-events: none;
+    user-select: none;
+}
+
+.sd-editorial-onda-superior {
+    top: 0;
+    right: -1px;
+    width: min(59%, 610px);
+    height: clamp(135px, 25%, 248px);
+    opacity: 0.72;
+}
+
+.sd-editorial-onda-inferior {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: clamp(40px, 8%, 75px);
+}
+
+.sd-editorial-contenido {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    gap: clamp(19px, 3dvh, 38px);
+    padding: clamp(23px, 2.6dvh, 38px) clamp(24px, 3vw, 47px) clamp(30px, 4dvh, 56px);
+    min-width: 0;
+}
+
+.sd-editorial-encabezado {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    position: relative;
+}
+
+.sd-editorial-etiqueta {
+    display: inline-block;
+    padding: 7px 15px;
+    border-radius: 999px;
+    background: #E5F0FC;
+    color: #315E8D;
+    font-size: clamp(0.69rem, 0.8vw, 0.84rem);
+    line-height: 1.3;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+.sd-editorial-titulo {
+    margin: clamp(19px, 2.2dvh, 28px) 0 clamp(16px, 2dvh, 24px);
+    color: #0B2345;
+    font-size: clamp(2rem, 2.9vw, 3.2rem);
+    line-height: 1.12;
+    font-weight: 800;
+    letter-spacing: -0.037em;
+}
+
+.sd-editorial-la {
+    position: relative;
+    display: inline-block;
+}
+
+.sd-editorial-la::after {
+    content: "";
+    position: absolute;
+    height: 6px;
+    border-radius: 999px;
+    bottom: -13px;
+    left: 0;
+    width: 100%;
+    background: #2A85E5;
+}
+
+.sd-editorial-descripcion {
+    max-width: 900px;
+    margin: 0;
+    color: #3B5574;
+    font-size: clamp(1.03rem, 1.32vw, 1.3rem);
+    line-height: 1.44;
+}
+
+/* 5. Tres areas: icono circular, titulo y descripcion. */
+.sd-editorial-areas {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    justify-content: space-evenly;
+    min-width: 0;
+}
+
+.sd-editorial-fila {
+    --sd-editorial-color: #246FD1;
+    --sd-editorial-fondo-icono: #E4F1FE;
+    display: grid;
+    grid-template-columns: clamp(74px, 6.4vw, 106px) 4px minmax(160px, 230px) minmax(0, 1fr);
+    align-items: center;
+    column-gap: clamp(12px, 1.5vw, 23px);
+    min-width: 0;
+    padding: clamp(12px, 1.6dvh, 24px) 0;
+    border-bottom: 1px solid #DFE8F0;
+}
+
+.sd-editorial-fila:last-child {
+    border-bottom: 0;
+}
+
+.sd-editorial-fila-fisica {
+    --sd-editorial-color: #2279DC;
+    --sd-editorial-fondo-icono: #E4F1FE;
+}
+
+.sd-editorial-fila-ecologia {
+    --sd-editorial-color: #06A68B;
+    --sd-editorial-fondo-icono: #DFF8F1;
+}
+
+.sd-editorial-fila-salud {
+    --sd-editorial-color: #8E42D5;
+    --sd-editorial-fondo-icono: #F0E5FC;
+}
+
+.sd-editorial-circulo {
+    display: grid;
+    place-items: center;
+    width: clamp(74px, 6.4vw, 106px);
+    height: clamp(74px, 6.4vw, 106px);
+    background: var(--sd-editorial-fondo-icono);
+    border-radius: 50%;
+}
+
+.sd-editorial-icono {
+    width: 69%;
+    height: 69%;
+    object-fit: contain;
+}
+
+.sd-editorial-acento {
+    width: 4px;
+    height: clamp(46px, 5.8dvh, 64px);
+    border-radius: 999px;
+    background: var(--sd-editorial-color);
+}
+
+.sd-editorial-identidad {
+    min-width: 0;
+}
+
+.sd-editorial-area-titulo {
+    margin: 0 0 5px;
+    color: #0B2345;
+    font-size: clamp(1.32rem, 1.65vw, 1.85rem);
+    font-weight: 800;
+    line-height: 1.16;
+    letter-spacing: -0.016em;
+}
+
+.sd-editorial-area-enfoque {
+    display: block;
+    color: var(--sd-editorial-color);
+    font-size: clamp(0.63rem, 0.76vw, 0.83rem);
+    font-weight: 800;
+    letter-spacing: 0.012em;
+    line-height: 1.32;
+}
+
+.sd-editorial-area-texto {
+    min-width: 0;
+    margin: 0;
+    color: #35506E;
+    font-size: clamp(0.91rem, 1.09vw, 1.1rem);
+    line-height: 1.45;
+}
+
+/* 6. Ajustes de anchura para portatiles y resoluciones intermedias. */
+@media (min-width: 761px) and (max-width: 1310px) {
+    .sd-editorial-fila {
+        grid-template-columns: 70px 4px minmax(145px, 1fr);
+        column-gap: 13px;
+        row-gap: 5px;
+    }
+
+    .sd-editorial-circulo {
+        width: 70px;
+        height: 70px;
+    }
+
+    .sd-editorial-area-texto {
+        grid-column: 3;
+    }
+
+    .sd-editorial-contenido {
+        padding-right: 21px;
+        padding-left: 21px;
+    }
+
+    .sd-editorial-titulo {
+        font-size: clamp(1.9rem, 2.9vw, 2.55rem);
+    }
+}
+
+/* 7. Altura reducida, incluyendo F11 en portatiles. */
+@media (min-width: 1250px) and (max-height: 790px) {
+    .sd-layout:has(.sd-intro) {
+        gap: 13px;
+        padding-top: 8px;
+        padding-bottom: 6px;
+    }
+
+    .sd-editorial-contenido {
+        gap: 12px;
+        padding-top: 17px;
+        padding-bottom: 24px;
+    }
+
+    .sd-editorial-titulo {
+        margin-top: 12px;
+        margin-bottom: 13px;
+        font-size: clamp(1.8rem, 2.75vw, 2.3rem);
+    }
+
+    .sd-editorial-descripcion {
+        font-size: clamp(0.97rem, 1.2vw, 1.06rem);
+        line-height: 1.35;
+    }
+
+    .sd-editorial-fila {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .sd-editorial-fila .sd-editorial-circulo {
+        width: clamp(65px, 5.7vw, 78px);
+        height: clamp(65px, 5.7vw, 78px);
+    }
+
+    .sd-editorial-fila {
+        grid-template-columns: clamp(65px, 5.7vw, 78px) 4px minmax(145px, 210px) minmax(0, 1fr);
+    }
+
+    .sd-layout:has(.sd-intro) .sd-laboratorios .sd-lab-card {
+        height: clamp(105px, 13.9dvh, 113px);
+        min-height: 105px;
+    }
+
+    .sd-editorial-area-texto {
+        font-size: 0.92rem;
+        line-height: 1.36;
+    }
+}
+
+/* En escritorio estrecho y bajo, evitar que el texto salte debajo
+   del titulo: con 4 columnas puede ocupar el ancho libre. */
+@media (min-width: 1250px) and (max-width: 1310px) {
+    .sd-editorial-fila {
+        grid-template-columns: 70px 4px minmax(170px, 190px) minmax(0, 1fr);
+        column-gap: 13px;
+    }
+
+    .sd-editorial-fila .sd-editorial-area-texto {
+        grid-column: 4;
+    }
+}
+
+
+/* 8. Moviles: apilar la portada y la navegacion, sin cortes. */
+@media (max-width: 760px) {
+    .sd-layout:has(.sd-intro) .sd-intro-editorial {
+        border-radius: 19px;
+    }
+
+    .sd-editorial-contenido {
+        padding: 23px 20px 35px;
+        gap: 20px;
+    }
+
+    .sd-editorial-etiqueta {
+        font-size: 0.67rem;
+    }
+
+    .sd-editorial-titulo {
+        font-size: clamp(1.85rem, 7vw, 2.4rem);
+        margin-top: 18px;
+    }
+
+    .sd-editorial-descripcion {
+        font-size: 1.02rem;
+    }
+
+    .sd-editorial-onda-superior {
+        width: 75%;
+        height: 160px;
+    }
+
+    .sd-editorial-fila {
+        grid-template-columns: 64px 4px minmax(0, 1fr);
+        column-gap: 11px;
+        row-gap: 6px;
+        padding: 14px 0;
+    }
+
+    .sd-editorial-circulo {
+        width: 64px;
+        height: 64px;
+    }
+
+    .sd-editorial-fila .sd-editorial-area-texto {
+        grid-column: 3;
+        font-size: 0.93rem;
+    }
+
+    .sd-editorial-area-titulo {
+        font-size: 1.3rem;
+    }
+
+    .sd-editorial-area-enfoque {
+        font-size: 0.63rem;
+    }
+
+    .sd-editorial-la::after {
+        height: 4px;
+        bottom: -9px;
     }
 }

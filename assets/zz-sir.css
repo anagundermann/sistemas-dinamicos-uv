@@ -1034,3 +1034,111 @@
         grid-column: 1;
     }
 }
+
+/* =============================================================
+   SIR - INTERACCION VISUAL DE BOTONES Y PESTANAS
+   Alcance: solo botones del laboratorio SIR y sus modales.
+   Mantiene colores, medidas, disposicion y estado seleccionado.
+   ============================================================= */
+
+/* Botones superiores: mismas tonalidades, respuesta mas clara. */
+.sir-pagina .sir-barra-acciones .sir-boton {
+    cursor: pointer;
+    transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .sir-pagina .sir-barra-acciones .sir-boton:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 14px rgba(61, 34, 100, 0.14);
+    }
+}
+
+.sir-pagina .sir-barra-acciones .sir-boton:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 1px 4px rgba(61, 34, 100, 0.10);
+}
+
+.sir-pagina .sir-barra-acciones .sir-boton:focus-visible {
+    outline: 3px solid #9a77ce;
+    outline-offset: 2px;
+}
+
+/* Pestanas que seleccionan la visualizacion: ya son interactivas
+   en Dash; estos estilos ayudan a reconocerlo a primera vista. */
+.sir-pagina .sir-tabs .sir-tab,
+.sir-pagina .sir-tabs .sir-tab--seleccionada {
+    cursor: pointer;
+    transition:
+        background-color 180ms ease,
+        color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease,
+        filter 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+
+    /* Sin cambiar la pastilla violeta de la pestana seleccionada. */
+    .sir-pagina .sir-tabs .sir-tab:not(.sir-tab--seleccionada):hover {
+        background: #e9def7 !important;
+        box-shadow: inset 0 0 0 1px #d6c3ef;
+        transform: translateY(-1px);
+    }
+
+    .sir-pagina .sir-tabs .sir-tab--seleccionada:hover {
+        filter: brightness(1.07);
+        box-shadow: 0 3px 9px rgba(87, 34, 143, 0.18);
+    }
+}
+
+.sir-pagina .sir-tabs .sir-tab:active,
+.sir-pagina .sir-tabs .sir-tab--seleccionada:active {
+    transform: scale(0.985);
+}
+
+.sir-pagina .sir-tabs .sir-tab:focus-visible,
+.sir-pagina .sir-tabs .sir-tab--seleccionada:focus-visible {
+    outline: 3px solid #9a77ce;
+    outline-offset: -2px;
+}
+
+/* Botones 'Cerrar' de los modales SIR (se montan fuera de la pagina). */
+.sir-modal .sir-modal-cerrar {
+    cursor: pointer;
+    transition:
+        background-color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .sir-modal .sir-modal-cerrar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 14px rgba(61, 34, 100, 0.17);
+    }
+}
+
+.sir-modal .sir-modal-cerrar:active {
+    transform: scale(0.98);
+}
+
+.sir-modal .sir-modal-cerrar:focus-visible {
+    outline: 3px solid #9a77ce;
+    outline-offset: 2px;
+}
+
+/* Respeto a la preferencia del sistema operativo. */
+@media (prefers-reduced-motion: reduce) {
+
+    .sir-pagina .sir-barra-acciones .sir-boton,
+    .sir-pagina .sir-tabs .sir-tab,
+    .sir-pagina .sir-tabs .sir-tab--seleccionada,
+    .sir-modal .sir-modal-cerrar {
+        transition: none;
+    }
+}

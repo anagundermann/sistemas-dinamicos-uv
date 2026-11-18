@@ -79,12 +79,12 @@
 }
 
 .lv-mat-depredadores {
-    background: #fff8f1;
-    border-color: #f0d3b5;
+    background: #f7f3ff;
+    border-color: #d9c9fa;
 }
 
 .lv-mat-depredadores h4 {
-    color: #ad631c;
+    color: #7c3aed;
 }
 
 /* Ecuaciones centradas y con notación matemática. */
@@ -272,4 +272,25 @@
     .lv-mat-ecuacion {
         min-height: 125px;
     }
+}
+
+
+/* Condiciones iniciales: gris perla */
+.lv-mat-iniciales {
+    background: #f4f5f7;
+    border-color: #d9dde4;
+}
+
+/* Variables de estado: color de cada poblacion */
+.lv-mat-variables .lv-mat-variable:nth-child(1) .lv-mat-variable-simbolo p {
+    color: #2e7d5b;
+}
+
+.lv-mat-variables .lv-mat-variable:nth-child(2) .lv-mat-variable-simbolo p {
+    color: #7c3aed;
+}
+
+/* Parametros: azul marino neutro */
+.lv-mat-simbolo {
+    color: #29254d;
 }

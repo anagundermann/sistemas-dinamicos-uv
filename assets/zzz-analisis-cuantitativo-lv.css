@@ -34,3 +34,533 @@
         padding: 6px 8px;
     }
 }
+
+/* ============================================================
+   SIMULACION COMPLETA - RESULTADOS DESTACADOS Y FORMULAS NEUTRAS
+   Solo afecta a la segunda opcion del modal de analisis LV.
+   ============================================================ */
+
+.lv-modal-analisis .lv-vista-completa .lv-diagnostico-escenario {
+    padding: 15px 18px;
+    margin-bottom: 19px;
+    background: #F3F7FC;
+    border: 1px solid #C8D8E9;
+    border-left: 4px solid #315E8D;
+    border-radius: 12px;
+    animation-duration: 220ms;
+    animation-timing-function: ease-out;
+    animation-fill-mode: both;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-diagnostico-etiqueta {
+    color: #315E8D;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.065em;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-diagnostico-resultado {
+    color: #0B2345;
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1.18;
+    margin: 5px 0 4px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-diagnostico-movimiento {
+    color: #315E8D;
+    font-size: 0.93rem;
+    font-weight: 650;
+    margin-bottom: 6px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-diagnostico-explicacion {
+    color: #52677E;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    margin: 0;
+}
+
+/* Los indicadores calculados destacan mas que las formulas explicativas. */
+.lv-modal-analisis .lv-vista-completa .lv-metrica-completa {
+    background: #FFFFFF;
+    box-shadow: 0 2px 7px rgba(11, 35, 69, 0.055);
+}
+
+/* Las formulas se conservan, pero sin las antiguas cajas celestes. */
+.lv-modal-analisis .lv-vista-completa .lv-formulas-completo {
+    background: transparent;
+    border-radius: 0;
+}
+
+/* Animaciones distintas por clasificacion: se reactivan cuando cambia
+   el tipo de equilibrio, incluso si Dash reutiliza el mismo elemento. */
+@keyframes lv-diagnostico-centro-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes lv-diagnostico-foco-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes lv-diagnostico-nodo-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes lv-diagnostico-borde-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.lv-modal-analisis .lv-diagnostico-centro {
+    animation-name: lv-diagnostico-centro-entrada;
+}
+
+.lv-modal-analisis .lv-diagnostico-foco {
+    animation-name: lv-diagnostico-foco-entrada;
+}
+
+.lv-modal-analisis .lv-diagnostico-nodo {
+    animation-name: lv-diagnostico-nodo-entrada;
+}
+
+.lv-modal-analisis .lv-diagnostico-borde {
+    animation-name: lv-diagnostico-borde-entrada;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lv-modal-analisis .lv-vista-completa .lv-diagnostico-escenario {
+        animation: none;
+    }
+}
+
+/* ============================================================
+   SIMULACION COMPLETA - VALOR Y FORMULA EN UN MISMO ELEMENTO
+   No afecta a En un instante ni a otras paginas.
+   ============================================================ */
+
+.lv-modal-analisis .lv-vista-completa .lv-seccion-calculos {
+    margin-bottom: 22px;
+    min-width: 0;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-calculos-cuadricula {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    min-width: 0;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-calculo-paso {
+    min-width: 0;
+    padding: 12px 14px 8px;
+    background: #FFFFFF;
+    border: 1px solid #DFE7F0;
+    border-radius: 10px;
+    box-shadow: 0 2px 7px rgba(11, 35, 69, 0.055);
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-calculo-etiqueta {
+    color: #65748B;
+    font-size: 0.78rem;
+    line-height: 1.3;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-calculo-valor {
+    margin-top: 4px;
+    color: #183153;
+    font-size: 1.22rem;
+    font-weight: 750;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-calculo-formula {
+    margin-top: 7px;
+    border-top: 1px solid #EDF1F6;
+    overflow-x: auto;
+    min-width: 0;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-calculos-nota {
+    color: #65748B;
+    font-size: 0.79rem;
+    line-height: 1.45;
+    margin: 9px 0 0;
+}
+
+@media (max-width: 700px) {
+    .lv-modal-analisis .lv-vista-completa .lv-calculos-cuadricula {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* ============================================================
+   SIMULACION COMPLETA - DISEÑO GRIS PERLA, TRES SECCIONES
+   Solo esta vista; En un instante y las demas paginas no cambian.
+   ============================================================ */
+
+.lv-modal-analisis .lv-vista-completa {
+    --lv-perla: #F3F5F7;
+    --lv-perla-clara: #F8FAFB;
+    --lv-borde-perla: #DCE4EB;
+    --lv-azul-pizarra: #315E8D;
+    --lv-texto-principal: #0B2345;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-rango {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 5px 14px;
+    margin-bottom: 12px;
+    font-size: 0.77rem;
+    color: #65748B;
+}
+
+/* El gris perla delimita la estructura; los numeros usan sus colores originales. */
+.lv-modal-analisis .lv-vista-completa .lv-diagnostico-escenario {
+    display: grid;
+    grid-template-columns: minmax(190px, 235px) minmax(0, 1fr);
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+    background: var(--lv-perla);
+    border-color: var(--lv-borde-perla);
+    border-left-color: var(--lv-azul-pizarra);
+    padding: 13px 16px;
+    margin-bottom: 12px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-diagnostico-visual {
+    min-width: 0;
+    background: #FFFFFF;
+    border: 1px solid var(--lv-borde-perla);
+    border-radius: 10px;
+    padding: 5px 7px 3px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-fase-mini-etiqueta {
+    color: #617487;
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 650;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-fase-mini-leyenda {
+    color: #617487;
+    text-align: center;
+    font-size: 0.64rem;
+    margin: -2px 0 3px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-diagnostico-informacion {
+    min-width: 0;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-diagnostico-chip {
+    display: inline-block;
+    margin-top: 9px;
+    padding: 6px 10px;
+    color: var(--lv-azul-pizarra);
+    background: #FFFFFF;
+    border: 1px solid var(--lv-borde-perla);
+    border-radius: 7px;
+    font-size: 0.77rem;
+    font-weight: 550;
+    overflow-wrap: anywhere;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-diagnostico-aviso {
+    margin: 8px 0 0;
+    color: #65748B;
+    font-size: 0.74rem;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-resumen-metricas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-resumen-metricas .lv-metrica-completa,
+.lv-modal-analisis .lv-vista-completa .lv-calculo-paso {
+    background: var(--lv-perla-clara);
+    border-color: var(--lv-borde-perla);
+    box-shadow: 0 1px 4px rgba(11, 35, 69, 0.035);
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-lectura-rapida {
+    color: #344A60;
+    background: #FFFFFF;
+    border-left: 3px solid #9EB5C9;
+    padding: 7px 12px;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-lectura-rapida strong {
+    color: var(--lv-azul-pizarra);
+}
+
+/* Selector de profundidad: no sustituye al selector En un instante / Completa. */
+.lv-modal-analisis .lv-vista-completa .lv-completa-pestanas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    border-bottom: 1px solid var(--lv-borde-perla);
+    margin-bottom: 13px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-pestana {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 10px 13px;
+    border: 0 !important;
+    border-bottom: 3px solid transparent !important;
+    background: transparent !important;
+    color: #52677E;
+    font-size: 0.87rem;
+    font-weight: 650;
+    text-align: center;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-pestana:hover {
+    color: var(--lv-azul-pizarra);
+    background: var(--lv-perla-clara) !important;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-pestana-activa,
+.lv-modal-analisis .lv-vista-completa .lv-completa-pestana-activa:hover {
+    color: var(--lv-azul-pizarra) !important;
+    border-bottom-color: var(--lv-azul-pizarra) !important;
+    background: var(--lv-perla) !important;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-pestana:focus-visible {
+    outline: 2px solid var(--lv-azul-pizarra);
+    outline-offset: -2px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-panel {
+    min-width: 0;
+    padding-top: 3px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-grafico-eventos-panel {
+    padding: 10px 14px 8px;
+    border: 1px solid var(--lv-borde-perla);
+    background: #FFFFFF;
+    border-radius: 12px;
+    margin-bottom: 18px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-grafico-eventos-titulo {
+    color: var(--lv-texto-principal);
+    font-size: 0.98rem;
+    font-weight: 750;
+    margin: 0 0 7px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-grafico-eventos-nota {
+    color: #65748B;
+    font-size: 0.77rem;
+    line-height: 1.45;
+    margin: 6px 0 0;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-distancia-panel {
+    background: var(--lv-perla);
+    padding: 14px 17px;
+    border: 1px solid var(--lv-borde-perla);
+    border-radius: 12px;
+    margin-bottom: 18px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-distancia-titulo {
+    color: var(--lv-azul-pizarra);
+    font-size: 0.81rem;
+    font-weight: 750;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-distancia-valores {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: var(--lv-texto-principal);
+    font-size: 1.28rem;
+    font-weight: 800;
+    margin-top: 4px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-distancia-flecha {
+    color: #8797A8;
+    font-size: 1.05rem;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-distancia-final {
+    color: #0F9F94;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-completa-distancia-formula {
+    border-top: 1px solid var(--lv-borde-perla);
+    margin-top: 10px;
+    min-width: 0;
+    overflow-x: visible;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-interpretacion-detallada {
+    border: 1px solid var(--lv-borde-perla);
+    border-radius: 10px;
+    background: var(--lv-perla-clara);
+    padding: 9px 12px;
+    margin: 2px 0 12px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-interpretacion-detallada summary {
+    cursor: pointer;
+    color: var(--lv-azul-pizarra);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-interpretacion-detallada>section {
+    margin-top: 12px;
+}
+
+@media (max-width: 800px) {
+    .lv-modal-analisis .lv-vista-completa .lv-diagnostico-escenario {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lv-modal-analisis .lv-vista-completa .lv-diagnostico-visual {
+        max-width: 350px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 650px) {
+    .lv-modal-analisis .lv-vista-completa .lv-completa-resumen-metricas {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lv-modal-analisis .lv-vista-completa .lv-completa-pestana {
+        flex: 1 1 100%;
+        text-align: left;
+        padding: 9px 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lv-modal-analisis .lv-vista-completa .lv-completa-pestana {
+        transition: none;
+    }
+}
+
+/* ------------------------------------------------------------
+   Nulclinas: interruptor exterior al miniplano, en gris neutro.
+   No cambia las tarjetas de En un instante ni los graficos grandes.
+   ------------------------------------------------------------ */
+.lv-modal-analisis .lv-vista-completa .lv-nulclinas-control {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 23px;
+    padding: 1px 3px 0;
+    margin-top: 1px;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-nulclinas-switch {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 7px;
+    padding-left: 0;
+    min-height: 22px;
+    margin: 0;
+}
+
+.lv-modal-analisis .lv-vista-completa .lv-nulclinas-switch .form-check-label {
+    margin: 0;
+    font-size: 0.73rem;
+    font-weight: 600;
+    color: #454545;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+
+/* Interruptor de nulclinas: mismo tamaño que Guía */
+.lv-modal-analisis .lv-vista-completa .lv-nulclinas-switch .form-check-input {
+    flex: 0 0 auto;
+    float: none;
+    width: 28px;
+    height: 15px;
+    margin: 0;
+    cursor: pointer;
+
+    /* Exterior gris perla */
+    border: 1px solid #D0D5DA;
+    background-color: #E7E9ED;
+
+    /* Círculo interior gris */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23929AA3'/%3e%3c/svg%3e");
+    background-position: left center;
+    box-shadow: none;
+}
+
+/* Activado: exterior igual, círculo gris oscuro */
+.lv-modal-analisis .lv-vista-completa .lv-nulclinas-switch .form-check-input:checked {
+    background-color: #E7E9ED;
+    border-color: #D0D5DA;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23454545'/%3e%3c/svg%3e");
+    background-position: right center;
+}
+
+/* Eliminar el halo celeste de Bootstrap al hacer clic */
+.lv-modal-analisis .lv-vista-completa .lv-nulclinas-switch .form-check-input:focus {
+    box-shadow: none !important;
+    outline: none;
+}
+
+/* Mantener foco accesible al navegar con teclado */
+.lv-modal-analisis .lv-vista-completa .lv-nulclinas-switch .form-check-input:focus-visible {
+    outline: 2px solid #6B7280;
+    outline-offset: 2px;
+    box-shadow: none !important;
+}

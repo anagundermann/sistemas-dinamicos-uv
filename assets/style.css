@@ -148,18 +148,28 @@ select {
 }
 
 /* Inicio: mismo azul solido en portada y en todos los laboratorios. */
+/* Inicio: azul suave en todas las paginas */
+
 .sd-encabezado #sd-ir-inicio,
 .sd-encabezado #sd-ir-inicio.activo {
-    color: #FFFFFF;
-    background: #355F89;
-    border-color: #355F89;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    color: #285789;
+    background: #E8F1FB;
+    border: 1px solid #C9DEF4;
+    border-radius: 12px;
+    font-weight: 650;
+    box-shadow: none;
 }
 
 .sd-encabezado #sd-ir-inicio:hover,
 .sd-encabezado #sd-ir-inicio.activo:hover {
-    color: #FFFFFF;
-    background: #2D5276;
-    border-color: #2D5276;
+    color: #204A76;
+    background: #D9E9FA;
+    border-color: #A9C9ED;
 }
 
 .sd-encabezado #sd-ir-inicio:focus-visible {
@@ -670,4 +680,119 @@ select {
     html {
         scroll-behavior: auto;
     }
+}
+
+/* BIBLIOTECA MATEMATICA - AZUL SUAVE */
+
+.sd-encabezado .sd-conceptos-control .sd-consultar-boton {
+    color: #153B63;
+    background: #E8F1FB;
+    border: 1px solid #98B7D8;
+    font-weight: 650;
+    cursor: pointer;
+
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+/* Flecha discreta, sin icono de libro */
+
+.sd-encabezado .sd-conceptos-control .sd-consultar-boton::after {
+    content: "›";
+    display: inline-block;
+    margin-left: 9px;
+    font-size: 1.35em;
+    line-height: 0.7;
+    vertical-align: middle;
+    transition: transform 180ms ease;
+}
+
+/* Hover de Biblioteca */
+
+.sd-encabezado .sd-conceptos-control .sd-consultar-boton:hover {
+    color: #153B63;
+    background: #D8E9F9;
+    border-color: #719BC5;
+    box-shadow: 0 5px 14px rgba(30, 65, 110, 0.13);
+    transform: translateY(-2px);
+}
+
+.sd-encabezado .sd-conceptos-control .sd-consultar-boton:hover::after {
+    transform: translateX(3px);
+}
+
+/* INICIO - conserva su color, agrega movimiento */
+
+/* ==========================================
+   HEADER - BOTON INICIO DEFINITIVO
+   ========================================== */
+
+.sd-encabezado #sd-ir-inicio,
+.sd-encabezado #sd-ir-inicio.activo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    color: #294B70;
+    background: #F2F5F8;
+    border: 1px solid #D5DFE9;
+    border-radius: 12px;
+
+    font-weight: 650;
+    box-shadow: none;
+
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+.sd-encabezado #sd-ir-inicio:hover,
+.sd-encabezado #sd-ir-inicio.activo:hover {
+    color: #173B63;
+    background: #E4EBF2;
+    border-color: #B8CADA;
+    box-shadow: 0 4px 12px rgba(30, 65, 110, 0.10);
+    transform: translateY(-2px);
+}
+
+.sd-encabezado #sd-ir-inicio .sd-inicio-icono {
+    color: inherit;
+    font-size: 21px;
+    line-height: 1;
+}
+
+/* Accesibilidad y dispositivos tactiles */
+
+.sd-encabezado .sd-conceptos-control .sd-consultar-boton:focus-visible {
+    outline: 3px solid #8CB6DD;
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sd-encabezado .sd-conceptos-control .sd-consultar-boton,
+    .sd-encabezado .sd-conceptos-control .sd-consultar-boton::after,
+    .sd-encabezado #sd-ir-inicio {
+        transition: none;
+    }
+}
+
+/* Ocultar barra visual sin desactivar scroll */
+
+html,
+body {
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
+    /* Chrome y Edge */
 }

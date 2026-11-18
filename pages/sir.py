@@ -732,7 +732,7 @@ def crear_pagina():
                                 ],
                             ),
                             _sir_control_slider(
-                                "Día a inspeccionar",
+                                "Día (grafo y estado S–I–R)",
                                 "sir-slider-dia-grafo",
                                 0,
                                 180,
@@ -760,7 +760,7 @@ def crear_pagina():
                                 children=[
                                     dcc.Tabs(
                                         id="sir-tabs-graficos",
-                                        value="tab-curvas",
+                                        value="tab-grafo",
                                         className="sir-tabs",
                                         mobile_breakpoint=0,
                                         style={
@@ -975,12 +975,7 @@ def registrar_callbacks(app):
         R_nac = np.sum(R_mat, axis=0)
         N_total = np.sum(N_VEC)
 
-        idx_pico = np.argmax(I_nac)
-        i_max_val = I_nac[idx_pico] / N_total * 100.0
-        t_max_val = t[idx_pico]
         str_rebano = f"{(1.0 - 1.0 / r0) * 100.0:.1f}%" if r0 > 1.0 else "N/A"
-        str_imax = f"{i_max_val:.2f}%"
-        str_tmax = f"Día {int(t_max_val)}"
 
         dia_idx = min(max(int(45 if dia_grafo is None else dia_grafo), 0), dias)
         I_dia = I_mat[:, dia_idx]
@@ -1154,6 +1149,14 @@ def registrar_callbacks(app):
                 f"Región de {region_sel}",
             )
 
+        # El pico superior debe corresponder a la seleccion regional actual.
+        # Se usa el porcentaje de infectados de la poblacion seleccionada.
+        idx_pico = int(np.argmax(I_curr))
+        i_max_val = float(I_curr[idx_pico] / N_curr * 100.0)
+        t_max_val = t[idx_pico]
+        str_imax = f"{i_max_val:.2f}%"
+        str_tmax = f"Día {int(t_max_val)} · {region_sel}"
+
         fig_curvas = go.Figure()
         for serie, etiqueta, color, grosor in [
             (S_curr, "Susceptibles (S)", "#3B82F6", 2.6),
@@ -1274,7 +1277,7 @@ def registrar_callbacks(app):
             "tab-curvas": fig_curvas,
             "tab-grafo": fig_grafo,
             "tab-heatmap": fig_hm,
-        }.get(pestana, fig_curvas)
+        }.get(pestana, fig_grafo)
 
         return (
             str_r0,

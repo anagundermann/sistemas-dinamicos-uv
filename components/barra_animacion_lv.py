@@ -15,7 +15,7 @@ import dash_bootstrap_components as dbc
 # A 1x, 120 cuadros cada 140 ms: aproximadamente 17 segundos.
 NUM_FOTOGRAMAS = 120
 INTERVALO_BASE_MS = 140
-VELOCIDADES = {"0.5": 0.5, "1": 1.0, "1.5": 1.5, "2": 2.0}
+VELOCIDADES = {"0.5": 0.5, "1": 1.0, "1.5": 1.5, "2": 2.0, "4": 4.0, "6": 6.0}
 ID_PLAY = "lv-animacion-play"
 ID_PAUSA = "lv-animacion-pausa"
 ID_REINICIAR = "lv-animacion-reiniciar"
@@ -77,6 +77,8 @@ def crear_barra_animacion():
                             {"label": "1×", "value": "1"},
                             {"label": "1.5×", "value": "1.5"},
                             {"label": "2×", "value": "2"},
+                            {"label": "4×", "value": "4"},
+                            {"label": "6×", "value": "6"},
                         ],
                         size="sm",
                     ),
@@ -439,6 +441,12 @@ def _crear_parches(datos, n, figura_fases, figura_tiempo=None, guia_activa=False
     temporal["data"][0]["y"] = x
     temporal["data"][1]["x"] = t
     temporal["data"][1]["y"] = y
+    # No anticipar extremos durante Play. Solo se revelan al terminar.
+    termino = limite >= len(datos["t"])
+    temporal["data"][4]["visible"] = bool(termino and guia_activa)
+    temporal["data"][5]["visible"] = bool(termino and guia_activa)
+    temporal["data"][2]["visible"] = False
+    temporal["data"][3]["visible"] = False
     # Plano de fases: dibuja mas puntos hasta el instante actual.
     tiempos_curva = np.asarray(datos["t_curva"], dtype=float)
     hasta = int(np.searchsorted(tiempos_curva, t[-1], side="right"))
@@ -534,6 +542,7 @@ def controlar_animacion(
     Input(ID_RELOJ, "n_intervals"),
     Input(ID_DATOS, "data"),
     Input("lv-grafico-tiempo", "hoverData"),
+    Input("lv-extremo-seleccionado", "data"),
     Input(ID_REINICIAR, "n_clicks"),
     State("lv-grafico-fases", "figure"),
     State("lv-grafico-tiempo", "figure"),
@@ -545,6 +554,7 @@ def mostrar_fotograma(
     n_intervals,
     datos,
     hover_data,
+    seleccion,
     n_reiniciar,
     figura_fases,
     figura_tiempo,
@@ -564,7 +574,23 @@ def mostrar_fotograma(
             raise PreventUpdate
         return _crear_parches(datos, 0, figura_fases, figura_tiempo, guia_activa)
 
+    if accion == "lv-extremo-seleccionado":
+        if not seleccion or not guia_activa or datos is None:
+            raise PreventUpdate
+        t = float(seleccion["t"])
+        x = float(seleccion["x"])
+        y = float(seleccion["y"])
+        temporal = _parche_marcadores_temporales(figura_tiempo, t, x, y)
+        fases = _parche_marcador_fases(figura_fases, x, y)
+        _actualizar_formas_guia(temporal, fases, t, x, y, datos, guia_activa)
+        temporal["data"][2]["visible"] = False
+        temporal["data"][3]["visible"] = False
+        return temporal, fases, f"t = {t:.1f}", f"{x:.1f}", f"{y:.1f}"
+
     if accion == "lv-grafico-tiempo":
+        # Al seleccionar un extremo, el hover no mueve la guia fijada.
+        if seleccion:
+            raise PreventUpdate
         # Durante Play tiene prioridad el reloj; cuando esta pausado se
         # permite explorar manualmente cualquier instante visible.
         terminado = datos is not None and n_intervals >= len(datos["t"]) - 1
@@ -588,3 +614,100 @@ def mostrar_fotograma(
     if datos is None or esta_pausado:
         raise PreventUpdate
     return _crear_parches(datos, n_intervals, figura_fases, figura_tiempo, guia_activa)
+
+
+@callback(
+    Output("lv-extremo-seleccionado", "data"),
+    Input("lv-grafico-tiempo", "clickData"),
+    Input(ID_PLAY, "n_clicks"),
+    Input(ID_REINICIAR, "n_clicks"),
+    Input("lv-guia-vertical", "value"),
+    Input(ID_DATOS, "data"),
+    State("lv-grafico-tiempo", "figure"),
+    State("lv-extremo-seleccionado", "data"),
+    prevent_initial_call=True,
+)
+def seleccionar_extremo(
+    click_data, n_play, n_reiniciar, guia, datos, figura_tiempo, seleccion_actual
+):
+    """Clic para fijar un extremo; repetirlo o tocar una curva para liberarlo."""
+    accion = ctx.triggered_prop_ids
+    if "lv-grafico-tiempo.clickData" not in accion:
+        return None  # Play, reinicio, nueva solucion o guia apagada borran seleccion.
+
+    if not guia or not datos or not datos.get("t"):
+        raise PreventUpdate
+
+    # Al pulsar una curva normal se libera un extremo fijado.
+    # Esto permite retomar el desplazamiento de la guia con el mouse.
+    puntos = (click_data or {}).get("points", [])
+    if not any(p.get("curveNumber") in (4, 5) for p in puntos):
+        if seleccion_actual:
+            return None
+        raise PreventUpdate
+
+    # Los extremos son seleccionables si estan realmente visibles.
+    # Asi funcionan tambien despues de cambiar parametros sin pulsar Play.
+    trazas = (figura_tiempo or {}).get("data", [])
+    if len(trazas) < 6:
+        raise PreventUpdate
+
+    for punto in puntos:
+        indice_traza = punto.get("curveNumber")
+        if indice_traza not in (4, 5):
+            continue
+        if not bool(trazas[indice_traza].get("visible", False)):
+            continue
+        personalizado = punto.get("customdata")
+        if not isinstance(personalizado, (list, tuple)) or len(personalizado) < 2:
+            continue
+        try:
+            indice = int(personalizado[1])
+            t = float(datos["tiempo_completo"][indice])
+            x = float(datos["presas_completas"][indice])
+            y = float(datos["depredadores_completos"][indice])
+        except (IndexError, ValueError, TypeError, KeyError):
+            continue
+        poblacion = "presas" if indice_traza == 4 else "depredadores"
+
+        # El segundo clic sobre el mismo triangulo cancela la seleccion.
+        if seleccion_actual and seleccion_actual.get("poblacion") == poblacion:
+            mismo_indice = seleccion_actual.get("indice") == indice
+            mismo_tiempo = np.isclose(
+                float(seleccion_actual.get("t", -1)), t, atol=1e-8, rtol=0
+            )
+            if mismo_indice or mismo_tiempo:
+                return None
+
+        return {
+            "indice": indice,
+            "t": t,
+            "x": x,
+            "y": y,
+            "tipo": str(personalizado[0]),
+            "poblacion": poblacion,
+        }
+    raise PreventUpdate
+
+
+@callback(
+    Output("lv-extremo-etiqueta", "children"),
+    Output("lv-extremo-etiqueta", "style"),
+    Input("lv-extremo-seleccionado", "data"),
+    Input("lv-guia-vertical", "value"),
+)
+def mostrar_etiqueta_extremo(seleccion, guia_activa):
+    if not guia_activa or not seleccion:
+        return "", {"display": "none"}
+    tipo = seleccion["tipo"]
+    poblacion = seleccion["poblacion"]
+    es_maximo = tipo.startswith("Máximo")
+    simbolo = "▲" if es_maximo else "▼"
+    color = "#0D9488" if poblacion == "presas" else "#7C3AED"
+    return (
+        [
+            html.Span(simbolo, style={"color": color}),
+            f" {tipo} de {poblacion} · t = {seleccion['t']:.1f}",
+        ],
+        {"display": "inline-flex"},
+    )

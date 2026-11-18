@@ -1,4 +1,4 @@
-/* ANALISIS DEL SISTEMA · LOTKA-VOLTERRA
+/* MODAL-EQUILIBRIO Y ESTABILIDAD · LOTKA-VOLTERRA
    Sólo el contenido de este modal. No afecta Ecosistema,
    Modelo matemático, los gráficos ni los controles. */
 
@@ -72,13 +72,13 @@
 }
 
 .lv-ana-equilibrio-coexistencia {
-    border-color: #c5e0d1;
-    background: #f5faf7;
+    border-color: #d9dde4;
+    background: #f4f5f7;
 }
 
 .lv-ana-equilibrio-coexistencia h4,
 .lv-ana-equilibrio-coexistencia .lv-ana-estado-equilibrio {
-    color: #2e7d5b;
+    color: #334155;
 }
 
 .lv-ana-equilibrio-extincion h4 {
@@ -198,5 +198,264 @@
 
     .lv-ana-equilibrio {
         min-height: 100px;
+    }
+}
+
+/* ===========================================================
+   TEORIA: dos pestanas dentro del modal de Equilibrios.
+   Solo afecta .lv-ana-teoria; no altera F11 ni otros modales.
+   =========================================================== */
+.lv-ana-teoria {
+    min-width: 0;
+}
+
+/* Controles de las dos vistas en la cabecera real del modal.
+   El contenedor se oculta en Ecosistema y los demas modales. */
+.lv-modal .lv-ana-header-navegacion {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-left: auto;
+    margin-right: 12px;
+    min-width: 0;
+}
+
+.lv-modal .lv-ana-header-boton {
+    appearance: none;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #315b81;
+    background: #f4f8fc;
+    border: 1px solid #cbd8eb;
+    border-radius: 9px;
+    padding: 8px 11px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease,
+        background-color 180ms ease, border-color 180ms ease;
+}
+
+.lv-modal .lv-ana-header-boton-activo {
+    background: #deecfc;
+    color: #173f6b;
+    border-color: #78a8d6;
+    box-shadow: inset 0 -2px 0 #407bb4;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .lv-modal .lv-ana-header-boton:hover {
+        transform: translateY(-2px);
+        background: #eaf3ff;
+        border-color: #9ebede;
+        box-shadow: 0 4px 10px rgba(33, 74, 113, 0.12);
+    }
+
+    .lv-modal .lv-ana-header-boton-activo:hover {
+        background: #deecfc;
+        border-color: #78a8d6;
+    }
+}
+
+.lv-modal .lv-ana-header-boton:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.lv-modal .lv-ana-header-boton:focus-visible {
+    outline: 2px solid #407bb4;
+    outline-offset: 2px;
+}
+
+.lv-ana-teoria-contenido {
+    display: grid;
+    gap: 12px;
+    min-width: 0;
+}
+
+.lv-ana-teoria-columnas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(12px, 1.5vw, 20px);
+    align-items: start;
+}
+
+.lv-ana-teoria-columna {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+}
+
+.lv-ana-teoria-columna>h3 {
+    margin: 0 0 2px;
+    font-size: 1rem;
+    line-height: 1.3;
+}
+
+.lv-ana-teoria-tarjeta {
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+    padding: 10px 13px;
+    border: 1px solid #e7e1e9;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.lv-ana-teoria-tarjeta h4 {
+    color: var(--sd-indigo, #1e1b4b);
+    font-size: 0.88rem;
+    line-height: 1.3;
+}
+
+.lv-ana-teoria-tarjeta p {
+    font-size: 0.79rem;
+    line-height: 1.34;
+    color: var(--sd-secundario, #625e7c);
+}
+
+.lv-ana-teoria-verde {
+    /* Se mantiene el nombre por compatibilidad con los componentes Python. */
+    background: #f4f5f7;
+    border-color: #d9dde4;
+}
+
+.lv-ana-teoria-crema {
+    background: #fff8f1;
+    border-color: #f0d3b5;
+}
+
+.lv-ana-teoria-formula {
+    max-width: 100%;
+    min-width: 0;
+    /* La formula cabe en la tarjeta: no generar scroll vertical. */
+    overflow: visible;
+    color: #29254d;
+    text-align: center;
+    font-size: 0.93rem;
+    line-height: 1.2;
+}
+
+.lv-ana-teoria-formula p {
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.lv-ana-teoria-formula .MathJax {
+    max-width: 100%;
+}
+
+/* Evita los pequenos controles de desplazamiento que aparecian
+   al lado de la formula E_* en la tarjeta verde. */
+.lv-ana-teoria-formula mjx-container[display="true"] {
+    overflow: visible;
+}
+
+.lv-ana-teoria-condicion {
+    display: grid;
+    gap: 2px;
+    margin: 3px 0;
+    padding: 6px 9px;
+    background: #f8fafc;
+    border: 1px solid #d9dde4;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.lv-ana-teoria-condicion>strong {
+    font-size: 0.75rem;
+    color: #334155;
+}
+
+.lv-ana-teoria-criterios {
+    display: grid;
+    gap: 4px;
+    padding-top: 5px;
+    border-top: 1px solid #edd9c5;
+}
+
+.lv-ana-teoria-criterios p {
+    color: #3d3c57;
+}
+
+.lv-ana-teoria-tipos {
+    display: grid;
+    gap: 0;
+}
+
+.lv-ana-teoria-tipos>div {
+    display: grid;
+    grid-template-columns: 61px minmax(0, 1fr);
+    gap: 8px;
+    align-items: baseline;
+    padding: 5px 0;
+    border-bottom: 1px solid #f0edf3;
+    font-size: 0.79rem;
+    line-height: 1.3;
+}
+
+.lv-ana-teoria-tipos>div:last-child {
+    border-bottom: 0;
+}
+
+.lv-ana-teoria-tipos strong {
+    color: #245d91;
+    white-space: nowrap;
+}
+
+.lv-ana-teoria-tipos span {
+    color: #4c4969;
+}
+
+.lv-ana-teoria .lv-ana-teoria-nota {
+    color: #6a657f;
+    font-size: 0.76rem;
+    line-height: 1.32;
+}
+
+.lv-ana-teoria .lv-ana-teoria-idea {
+    border-radius: 12px;
+    padding: 9px 13px;
+    gap: 3px;
+}
+
+.lv-ana-teoria .lv-ana-teoria-idea p {
+    color: #29254d;
+    font-weight: 600;
+    font-size: 0.80rem;
+    line-height: 1.35;
+}
+
+@media (max-width: 850px) {
+    .lv-ana-teoria-columnas {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 1100px) {
+
+    /* En pantallas mas estrechas, los botones pueden pasar a otra linea. */
+    .lv-modal .modal-header {
+        flex-wrap: wrap;
+        gap: 9px;
+    }
+
+    .lv-modal .lv-ana-header-navegacion {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 560px) {
+    .lv-modal .lv-ana-header-boton {
+        padding: 7px 8px;
+        font-size: 0.72rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lv-modal .lv-ana-header-boton {
+        transition: none;
     }
 }

@@ -203,3 +203,380 @@
         transition: none;
     }
 }
+
+
+/* ============================================================
+   PORTADA ANTIGUA - HOVER DE TARJETAS DE LABORATORIOS
+   No modifica dimensiones ni distribucion F11.
+   ============================================================ */
+
+/* Transiciones suaves de las tarjetas y sus botones visuales. */
+.sd-laboratorios .sd-lab-card {
+    transition:
+        transform 200ms ease,
+        box-shadow 200ms ease,
+        border-color 200ms ease;
+}
+
+.sd-laboratorios .sd-lab-explorar {
+    transition:
+        transform 200ms ease,
+        filter 200ms ease,
+        box-shadow 200ms ease;
+}
+
+/* Efecto al acercar el mouse. */
+@media (hover: hover) and (pointer: fine) {
+
+    .sd-laboratorios .sd-lab-card:hover {
+        transform: translateY(-3px);
+        box-shadow:
+            0 12px 28px rgba(11, 35, 69, 0.17),
+            0 0 0 1px var(--sd-color-lab);
+    }
+
+    /* Resalta tambien el acceso Explorar. */
+    .sd-laboratorios .sd-lab-card:hover .sd-lab-explorar {
+        transform: translateX(3px);
+        filter: brightness(0.96);
+        box-shadow: 0 3px 9px rgba(11, 35, 69, 0.10);
+    }
+}
+
+/* Respuesta visual al hacer clic. */
+.sd-laboratorios .sd-lab-card:active {
+    transform: translateY(0) scale(0.995);
+}
+
+/* Accesibilidad con teclado. */
+.sd-laboratorios .sd-lab-card:focus-visible {
+    outline: 3px solid var(--sd-color-lab);
+    outline-offset: 2px;
+}
+
+/* Respetar movimiento reducido. */
+@media (prefers-reduced-motion: reduce) {
+
+    .sd-laboratorios .sd-lab-card,
+    .sd-laboratorios .sd-lab-explorar {
+        transition: none;
+    }
+}
+
+
+/* ============================================================
+   PORTADA ANTIGUA - MENSAJE HOVER
+   Muestra "Abrir laboratorio" al pasar el mouse.
+   No modifica las dimensiones de las tarjetas.
+   ============================================================ */
+
+.sd-laboratorios .sd-lab-card {
+    position: relative;
+}
+
+/* Mensaje oculto inicialmente. */
+.sd-laboratorios .sd-lab-card::after {
+    content: "↗ Abrir laboratorio";
+    position: absolute;
+    bottom: auto;
+    left: 8px;
+    right: auto;
+    top: 5px;
+    z-index: 10;
+
+    padding: 3px 7px;
+    border-radius: 6px;
+
+    background: rgba(11, 35, 69, 0.72);
+    color: rgba(255, 255, 255, 0.95);
+
+    font-size: 0.65rem;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+
+    box-shadow: 0 5px 14px rgba(11, 35, 69, 0.16);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(5px);
+    pointer-events: none;
+
+    transition:
+        opacity 180ms ease,
+        transform 180ms ease,
+        visibility 180ms ease;
+}
+
+/* Mostrar el mensaje al pasar el mouse. */
+@media (hover: hover) and (pointer: fine) {
+    .sd-laboratorios .sd-lab-card:hover {
+        z-index: 5;
+    }
+
+    .sd-laboratorios .sd-lab-card:hover::after {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}
+
+/* Mostrarlo tambien al navegar con teclado. */
+.sd-laboratorios .sd-lab-card:focus-visible::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sd-laboratorios .sd-lab-card::after {
+        transition: none;
+    }
+}
+
+/* Ocultar el mensaje flotante de las tarjetas. Eliminar si se quiere hover devuelat */
+.sd-laboratorios .sd-lab-card::after {
+    content: none;
+}
+
+
+/* AREA TEMATICA DE CADA LABORATORIO */
+
+.sd-laboratorios .sd-lab-area {
+    display: block;
+    align-self: flex-start;
+    margin-top: -1px;
+    color: var(--sd-color-lab);
+    font-size: 0.71rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.015em;
+    white-space: nowrap;
+}
+
+
+/* Colores discretos para las areas tematicas */
+
+.sd-laboratorios .sd-lab-azul .sd-lab-area,
+.sd-laboratorios .sd-lab-violeta .sd-lab-area {
+    color: #52708C;
+}
+
+.sd-laboratorios .sd-lab-turquesa .sd-lab-area {
+    color: #3C8877;
+}
+
+.sd-laboratorios .sd-lab-sir .sd-lab-area {
+    color: #75618F;
+}
+
+/* ==========================================
+   TITULO LABORATORIOS - ACENTO AZUL
+   Solo en la portada principal
+   ========================================== */
+
+.sd-layout:has(.sd-intro) .sd-laboratorios-titulo {
+    border-left: 5px solid #2563EB;
+    padding-left: 14px;
+    line-height: 1.3;
+}
+
+/* ==========================================================
+   PANEL LATERAL COMPACTO - SOLO PAGINAS INTERIORES
+   Reutiliza las cuatro tarjetas de Inicio.
+   No modifica el ancho ni la posicion de los laboratorios.
+   ========================================================== */
+
+/* En la portada, el panel conserva exactamente su apariencia. */
+.sd-layout:not(.sd-layout-laboratorio) .sd-panel-pestana {
+    display: none;
+}
+
+/* En las paginas interiores, la columna es una superposicion fija. */
+.sd-layout.sd-layout-laboratorio .sd-laboratorios {
+    display: flex;
+    /* Anula display:none de style.css. */
+    position: fixed;
+    z-index: 300;
+    top: 50%;
+    right: 0;
+    bottom: auto;
+    left: auto;
+
+    width: min(310px, calc(100vw - 28px));
+    max-width: none;
+    height: auto;
+    max-height: calc(100dvh - 32px);
+    min-height: 0;
+    margin: 0;
+    padding: 18px 12px 16px 14px;
+
+    flex-direction: column;
+    gap: 9px;
+    overflow: visible;
+    background: #F7F9FC;
+    border-left: 1px solid #D9E3EC;
+    border-radius: 16px 0 0 16px;
+    border-top: 1px solid #D9E3EC;
+    border-bottom: 1px solid #D9E3EC;
+
+    transform: translate3d(100%, -50%, 0);
+    box-shadow: none;
+    transition: transform 320ms cubic-bezier(0.22, 0.78, 0.24, 1);
+}
+
+.sd-layout.sd-layout-laboratorio .sd-laboratorios.sd-panel-abierto {
+    transform: translate3d(0, -50%, 0);
+    box-shadow: -9px 0 24px rgba(20, 42, 64, 0.12);
+}
+
+/* Pestana discreta, pegada al borde de la ventana. */
+.sd-layout.sd-layout-laboratorio .sd-panel-pestana {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: -18px;
+    right: auto;
+    transform: translateY(-50%);
+
+    width: 18px;
+    height: 112px;
+    margin: 0;
+    padding: 0;
+    background: rgba(139, 153, 169, 0.65);
+    color: #FFFFFF;
+    border: 1px solid #7E8FA2;
+    border-right: 0;
+    border-radius: 10px 0 0 10px;
+    box-shadow: -2px 1px 7px rgba(28, 45, 65, 0.14);
+
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 160ms ease;
+}
+
+.sd-layout.sd-layout-laboratorio .sd-panel-pestana:hover {
+    background: #6D7E90;
+}
+
+.sd-layout.sd-layout-laboratorio .sd-panel-pestana:focus-visible {
+    outline: 3px solid #7EA9D8;
+    outline-offset: 3px;
+}
+
+/* Cabecera y subtitulos a escala de menu, no como titulos de pagina. */
+.sd-layout.sd-layout-laboratorio .sd-laboratorios-titulo {
+    flex: none;
+    margin: 0 0 2px;
+    border-left: 4px solid #2563EB;
+    padding-left: 10px;
+    color: #0B2345;
+    font-size: 1.20rem;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.sd-layout.sd-layout-laboratorio .sd-laboratorios-grupos {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 11px;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    padding: 2px 5px 10px 0;
+}
+
+.sd-layout.sd-layout-laboratorio .sd-lab-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: none;
+    min-height: auto;
+}
+
+.sd-layout.sd-layout-laboratorio .sd-lab-grupo-titulo {
+    margin: 0;
+    padding-left: 6px;
+    color: #3B5877;
+    font-size: 0.68rem;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+}
+
+/* Tarjetas reducidas exclusivamente dentro del desplegable. */
+.sd-layout.sd-layout-laboratorio .sd-lab-card {
+    flex: none;
+    display: grid;
+    grid-template-columns: 33% minmax(0, 1fr);
+    align-items: center;
+    gap: 7px;
+    width: 100%;
+    min-height: 90px;
+    padding: 5px;
+    border-left-width: 6px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(11, 35, 69, 0.075);
+}
+
+.sd-layout.sd-layout-laboratorio .sd-lab-dibujo {
+    width: 100%;
+    height: 78px;
+    padding: 3px;
+    border-radius: 8px;
+}
+
+.sd-layout.sd-layout-laboratorio .sd-lab-textos {
+    gap: 2px;
+}
+
+.sd-layout.sd-layout-laboratorio .sd-lab-titulo {
+    font-size: 0.88rem;
+    line-height: 1.18;
+}
+
+.sd-layout.sd-layout-laboratorio .sd-lab-detalle {
+    font-size: 0.78rem;
+    line-height: 1.2;
+}
+
+.sd-layout.sd-layout-laboratorio .sd-lab-area {
+    font-size: 0.63rem;
+    line-height: 1.15;
+}
+
+.sd-layout.sd-layout-laboratorio .sd-lab-explorar {
+    margin: 2px 0 0;
+    padding: 3px 7px;
+    font-size: 0.73rem;
+    line-height: 1.2;
+}
+
+@media (max-width: 480px) {
+    .sd-layout.sd-layout-laboratorio .sd-laboratorios {
+        width: min(310px, calc(100vw - 24px));
+        padding: 16px 10px 14px 12px;
+    }
+
+    .sd-layout.sd-layout-laboratorio .sd-panel-pestana {
+        height: 98px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sd-layout.sd-layout-laboratorio .sd-laboratorios {
+        transition: none;
+    }
+}

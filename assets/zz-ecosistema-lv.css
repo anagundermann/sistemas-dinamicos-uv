@@ -1,9 +1,9 @@
 /* ============================================================
    ECOSISTEMA · ZORROS Y CONEJOS
-   Solo contenido del modal LV. No cambia graficos ni sliders.
+   Se utiliza Dash Cytoscape para animar el estado de los nodos.
+   CSS solo organiza las columnas y resalta la invitacion inicial.
    ============================================================ */
 
-/* Cabecera y pie del dbc.Modal conservan su comportamiento original. */
 .lv-modal .modal-content {
     max-height: min(88dvh, 860px);
     overflow: hidden;
@@ -46,7 +46,6 @@
     line-height: 1.45;
 }
 
-/* 55 %: ciclo interactivo | 45 %: contexto biologico */
 .lv-eco-columnas {
     display: grid;
     grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
@@ -64,31 +63,105 @@
 .lv-eco-grafo {
     width: 100%;
     min-width: 0;
-    /* Limita la altura del diagrama para que quepa en el modal. */
     height: clamp(290px, 44dvh, 350px) !important;
     border: 1px solid #e0e8e4;
     border-radius: 12px;
     background: #ffffff;
     overflow: hidden;
+    /* La mano indica interactividad; el fondo sirve para deseleccionar. */
+    cursor: pointer;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
 }
 
-/* La etapa activa se explica al lado del grafo, no debajo. */
+@media (hover: hover) and (pointer: fine) {
+    .lv-eco-grafo:hover {
+        border-color: #c0d5cb;
+        box-shadow: 0 0 0 2px rgba(46, 125, 91, 0.06);
+    }
+}
+
+.lv-eco-grafo:focus-within {
+    border-color: #a8cabc;
+    box-shadow: 0 0 0 2px rgba(46, 125, 91, 0.08);
+}
+
+.lv-eco-contexto {
+    display: grid;
+    gap: 13px;
+    min-width: 0;
+    align-content: start;
+}
+
+.lv-eco-seccion {
+    display: grid;
+    gap: 3px;
+}
+
+/* El unico mensaje de instruccion aparece en el recuadro rosado. */
 .lv-eco-detalle {
     display: grid;
-    gap: 4px;
-    border: 1px solid #F5BED9;
-    border-left: 4px solid #EC4899;
-    border-radius: 10px;
-    padding: 7px 13px;
-    background: #FCEAF3;
+    gap: 6px;
+    border: 1px solid #DCE4EB;
+    border-left: 4px solid #454545;
+    border-radius: 11px;
+    padding: 12px 15px;
+    background: #F3F5F7;
+}
+
+/* La invitacion inicial se distingue claramente de un texto informativo. */
+.lv-eco-detalle:has(.lv-eco-invitacion) {
+    background: #F3F5F7;
+    border-color: #DCE4EB;
+    border-left: 5px solid #454545;
+    box-shadow: 0 4px 16px rgba(11, 35, 69, 0.08);
+    padding: 15px 15px;
 }
 
 .lv-eco .lv-eco-detalle-etiqueta {
-    color: #A72D69;
+    color: #454545;
     font-size: 0.70rem;
     line-height: 1.25;
     letter-spacing: 0.05em;
     font-weight: 750;
+}
+
+.lv-eco-invitacion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lv-eco-invitacion-icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 45px;
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: #E2E5E9;
+    color: #454545;
+    font-size: 1.75rem;
+    line-height: 1;
+}
+
+.lv-eco-invitacion-mensaje {
+    min-width: 0;
+}
+
+.lv-eco-invitacion-titulo {
+    display: block;
+    color: #454545;
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.35;
+    margin-bottom: 5px;
+}
+
+.lv-eco .lv-eco-invitacion-texto {
+    color: #454545;
+    font-size: 0.86rem;
+    line-height: 1.45;
 }
 
 .lv-eco-detalle-titulo {
@@ -103,32 +176,20 @@
     line-height: 1.36;
 }
 
-.lv-eco .lv-eco-instruccion {
-    color: var(--sd-secundario, #625e7c);
-    font-size: 0.76rem;
-    line-height: 1.2;
-    margin-bottom: 1px;
-}
-
-.lv-eco-contexto {
-    display: grid;
-    gap: 6px;
-    min-width: 0;
-    align-content: start;
-}
-
-.lv-eco-seccion {
-    display: grid;
-    gap: 3px;
+.lv-eco .lv-eco-pista-reinicio {
+    margin-top: 9px;
+    color: #8b4b72;
+    font-size: 0.75rem;
+    line-height: 1.35;
 }
 
 .lv-eco-idea {
     display: grid;
     gap: 6px;
     padding: 7px 12px;
-    background: #f1faf7;
-    border: 1px solid #addbd1;
-    border-left: 4px solid var(--sd-turquesa, #14b8a6);
+    background: #fceaf3;
+    border: 1px solid #f5bed9;
+    border-left: 4px solid #ec4899;
     border-radius: 10px;
 }
 
@@ -148,5 +209,11 @@
 
     .lv-eco-contexto {
         gap: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lv-eco-grafo {
+        transition: none;
     }
 }

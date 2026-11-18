@@ -329,9 +329,9 @@
     --lv-modelo-fondo: #eaf3ff;
     --lv-modelo-borde: #bdd8f2;
     --lv-modelo-texto: #245d91;
-    --lv-modelo-activo-fondo: #d4e6fa;
-    --lv-modelo-activo-borde: #76a7d5;
-    --lv-modelo-activo-texto: #194d7c;
+    --lv-modelo-activo-fondo: #486A80;
+    --lv-modelo-activo-borde: #486A80;
+    --lv-modelo-activo-texto: #FFFFFF;
     --lv-modelo-aviso-texto: #67778d;
 }
 
@@ -540,4 +540,88 @@
     .lv-pagina .lv-modelo-siluetas {
         display: none;
     }
+}
+
+/* ==========================================================
+   LOTKA-VOLTERRA - TRANSICION SUAVE EN BOTONES
+   Solo controles de esta pagina; no afecta header, portada o SIR.
+   Conserva los colores, posiciones y estados activos existentes.
+   ========================================================== */
+
+/* Botones educativos, selector de modelo, analisis y animacion. */
+.lv-pagina .lv-botones-info button,
+.lv-pagina .lv-selector-modelo-botones button,
+.lv-pagina .lv-modelo-siluetas button,
+.lv-pagina .lv-panel-resultados button {
+    transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease,
+        filter 180ms ease;
+}
+
+/* La elevacion se aplica solo cuando hay mouse o trackpad. */
+@media (hover: hover) and (pointer: fine) {
+
+    .lv-pagina .lv-botones-info button:not(:disabled):hover,
+    .lv-pagina .lv-selector-modelo-botones button:not(:disabled):hover,
+    .lv-pagina .lv-modelo-siluetas button:not(:disabled):hover,
+    .lv-pagina .lv-panel-resultados button:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 14px rgba(30, 65, 110, .15);
+    }
+}
+
+/* Respuesta discreta al presionar, tambien en pantallas tactiles. */
+.lv-pagina .lv-botones-info button:not(:disabled):active,
+.lv-pagina .lv-selector-modelo-botones button:not(:disabled):active,
+.lv-pagina .lv-modelo-siluetas button:not(:disabled):active,
+.lv-pagina .lv-panel-resultados button:not(:disabled):active {
+    transform: translateY(0) scale(.98);
+    box-shadow: 0 2px 6px rgba(30, 65, 110, .10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .lv-pagina .lv-botones-info button,
+    .lv-pagina .lv-selector-modelo-botones button,
+    .lv-pagina .lv-modelo-siluetas button,
+    .lv-pagina .lv-panel-resultados button {
+        transition: none;
+    }
+}
+
+/* ==========================================================
+   EXTREMO SELECCIONADO - ETIQUETA FLOTANTE SIN ESPACIO EXTRA
+   No cambia la distribucion ni las dimensiones en F11.
+   ========================================================== */
+.lv-pagina .lv-estado-actual {
+    position: relative;
+    overflow: visible;
+}
+
+.lv-pagina .lv-extremo-etiqueta {
+    position: absolute;
+    z-index: 20;
+    left: 50%;
+    bottom: -15px;
+    transform: translateX(-50%);
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: max-content;
+    max-width: min(100%, 350px);
+    padding: 4px 9px;
+    border: 1px solid rgba(176, 190, 209, 0.75);
+    border-radius: 7px;
+    background: rgba(250, 252, 255, 0.94);
+    color: #334155;
+    box-shadow: 0 3px 10px rgba(30, 50, 85, 0.10);
+    font-size: 0.68rem;
+    font-weight: 650;
+    line-height: 1.2;
+    white-space: nowrap;
+    pointer-events: none;
 }

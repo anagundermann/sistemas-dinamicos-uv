@@ -4,21 +4,24 @@
    Este archivo solo modifica la biblioteca; no los laboratorios.
    ============================================================ */
 
+
 /* Acceso desde el encabezado de la aplicacion. */
 .sd-conceptos-control .sd-consultar-boton {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--sd-violeta, #7C3AED);
-    background: var(--sd-lavanda, #F3EDFF);
-    border: 1px solid var(--sd-borde-violeta, #D9C8FF);
+    color: #475569;
+    background: #FFFFFF;
+    border: 1px solid #C8CED8;
     border-radius: 10px;
     white-space: nowrap;
     cursor: pointer;
 }
 
 .sd-conceptos-control .sd-consultar-boton:hover {
-    background: #EDE2FF;
+    color: #475569;
+    background: #F5F7FA;
+    border-color: #B8C1CD;
 }
 
 /* Ventana unica: visible sin cubrir el borde completo de pantalla. */
@@ -35,7 +38,7 @@
     height: auto;
     max-height: calc(100dvh - 36px);
     background: #FFFFFF;
-    border: 1px solid #DDD6FE;
+    border: 1px solid #D9E1EA;
     border-radius: 20px;
     box-shadow: 0 24px 70px rgba(30, 27, 75, 0.23);
     overflow: hidden;
@@ -61,7 +64,7 @@
 }
 
 .sd-concepto-modal .sd-modal-etiqueta {
-    color: #7C3AED;
+    color: #315E8D;
     font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 0.06em;
@@ -69,7 +72,7 @@
 
 .sd-concepto-modal .sd-modal-titulo {
     margin: 0;
-    color: #1E1B4B;
+    color: #0B2345;
     font-size: clamp(1.28rem, 2vw, 1.65rem);
     font-weight: 800;
     line-height: 1.2;
@@ -129,9 +132,9 @@
     min-width: 0;
     padding: 8px 9px;
     text-align: left;
-    color: #1E1B4B;
+    color: #0B2345;
     background: #FFFFFF;
-    border: 1px solid #E1D9FC;
+    border: 1px solid #CCD8E5;
     border-radius: 10px;
     font-family: inherit;
     font-size: 0.89rem;
@@ -142,15 +145,15 @@
 }
 
 .sd-concepto-modal .sd-concepto-opcion:hover {
-    background: #F8F5FF;
-    border-color: #C9B7FF;
+    background: #F2F6FB;
+    border-color: #B2C6DA;
 }
 
 .sd-concepto-modal .sd-concepto-opcion-activa,
 .sd-concepto-modal .sd-concepto-opcion-activa:hover {
-    background: #EDE2FF;
-    color: #6D28D9;
-    border-color: #D0BDFF;
+    background: #E4EEF8;
+    color: #315E8D;
+    border-color: #B2C6DA;
     font-weight: 800;
 }
 
@@ -189,7 +192,7 @@
 
 .sd-concepto-modal .sd-modal-seccion-titulo {
     margin: 0 0 8px;
-    color: #1E1B4B;
+    color: #0B2345;
     font-size: 1.1rem;
     font-weight: 750;
     line-height: 1.3;
@@ -216,7 +219,7 @@
     padding: 6px 0 6px 16px;
     background: transparent;
     border: 0;
-    border-left: 4px solid #7C3AED;
+    border-left: 4px solid #315E8D;
     border-radius: 0;
     text-align: left;
     vertical-align: top;
@@ -224,7 +227,7 @@
 }
 
 .sd-concepto-modal .sd-modal-mathjax {
-    color: #272052;
+    color: #0B2345;
     font-size: 1.02rem;
 }
 
@@ -240,11 +243,11 @@
 /* Glosario de simbolos, delimitado con una linea sutil. */
 .sd-concepto-modal .sd-concepto-seccion-notacion {
     padding: 2px 0 2px 18px;
-    border-left: 2px solid #DDD6FE;
+    border-left: 2px solid #D9E1EA;
 }
 
 .sd-concepto-modal .sd-concepto-seccion-notacion .sd-modal-seccion-titulo {
-    color: #7C3AED;
+    color: #315E8D;
 }
 
 .sd-concepto-modal .sd-modal-notacion {
@@ -267,7 +270,7 @@
 }
 
 .sd-concepto-modal .sd-modal-notacion mjx-container {
-    color: #37316A;
+    color: #315E8D;
 }
 
 /* Mantener el fondo verde suave ya aprobado en la interpretacion. */
@@ -373,5 +376,62 @@
 
     .sd-concepto-modal .sd-concepto-opcion {
         padding: 7px 9px;
+    }
+}
+
+
+/* Biblioteca matematica: mismo aspecto en todas las paginas */
+
+.sd-encabezado .sd-conceptos-control .sd-consultar-boton {
+    color: #475569 !important;
+    background: #FFFFFF !important;
+    border-color: #C8CED8 !important;
+}
+
+/* Al pasar el mouse */
+.sd-encabezado .sd-conceptos-control .sd-consultar-boton:hover {
+    color: #475569 !important;
+    background: #F5F7FA !important;
+    border-color: #B8C1CD !important;
+}
+
+
+/* ============================================================
+   BIBLIOTECA MATEMATICA - INTERACCION SUAVE
+   ============================================================ */
+
+/* Transiciones de los botones laterales */
+.sd-concepto-modal .sd-concepto-opcion {
+    transition:
+        transform 180ms ease,
+        background-color 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        color 180ms ease;
+}
+
+/* Movimiento suave al pasar el mouse */
+@media (hover: hover) and (pointer: fine) {
+    .sd-concepto-modal .sd-concepto-opcion:hover {
+        transform: translateX(3px);
+        box-shadow: 0 3px 9px rgba(11, 35, 69, 0.09);
+    }
+}
+
+/* Respuesta al hacer clic */
+.sd-concepto-modal .sd-concepto-opcion:active {
+    transform: translateX(1px) scale(0.99);
+}
+
+/* Resaltar el concepto seleccionado */
+.sd-concepto-modal .sd-concepto-opcion-activa {
+    box-shadow: inset 3px 0 0 #315E8D;
+}
+
+/* Accesibilidad: respetar movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .sd-concepto-modal .sd-concepto-opcion {
+        transition: none;
+        transform: none;
     }
 }

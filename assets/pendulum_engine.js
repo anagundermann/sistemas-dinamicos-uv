@@ -1,7 +1,7 @@
 // Motor JS Dual para Simuladores de Péndulo Simple y Péndulo Doble
 // Crea instancias independientes con persistencia en segundo plano para Dash SPA
 
-(function() {
+(function () {
     function createPendulumEngine(fixedMode, prefix, defaultT1, defaultT2) {
         let initialized = false;
         const mode = fixedMode; // 'Simple' o 'Doble'
@@ -117,7 +117,7 @@
             return true;
         }
 
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             ensureCanvas();
         });
 
@@ -133,8 +133,8 @@
             let delta = t1 - t2;
             let den = 2.0 * m1 + m2 - m2 * Math.cos(2.0 * delta);
             let num1 = -g * (2.0 * m1 + m2) * Math.sin(t1)
-                       - m2 * g * Math.sin(t1 - 2.0 * t2)
-                       - 2.0 * Math.sin(delta) * m2 * (w2 * w2 * L2 + w1 * w1 * L1 * Math.cos(delta));
+                - m2 * g * Math.sin(t1 - 2.0 * t2)
+                - 2.0 * Math.sin(delta) * m2 * (w2 * w2 * L2 + w1 * w1 * L1 * Math.cos(delta));
             let dw1 = (num1 / (L1 * den)) - b * w1;
 
             let num2 = 2.0 * Math.sin(delta) * (
@@ -152,15 +152,15 @@
                 let y = states[i];
                 if (!y) continue;
                 let k1 = derivatives(y);
-                let k2 = derivatives([y[0]+0.5*dt*k1[0], y[1]+0.5*dt*k1[1], y[2]+0.5*dt*k1[2], y[3]+0.5*dt*k1[3]]);
-                let k3 = derivatives([y[0]+0.5*dt*k2[0], y[1]+0.5*dt*k2[1], y[2]+0.5*dt*k2[2], y[3]+0.5*dt*k2[3]]);
-                let k4 = derivatives([y[0]+dt*k3[0], y[1]+dt*k3[1], y[2]+dt*k3[2], y[3]+dt*k3[3]]);
+                let k2 = derivatives([y[0] + 0.5 * dt * k1[0], y[1] + 0.5 * dt * k1[1], y[2] + 0.5 * dt * k1[2], y[3] + 0.5 * dt * k1[3]]);
+                let k3 = derivatives([y[0] + 0.5 * dt * k2[0], y[1] + 0.5 * dt * k2[1], y[2] + 0.5 * dt * k2[2], y[3] + 0.5 * dt * k2[3]]);
+                let k4 = derivatives([y[0] + dt * k3[0], y[1] + dt * k3[1], y[2] + dt * k3[2], y[3] + dt * k3[3]]);
 
                 states[i] = [
-                    y[0] + (dt/6)*(k1[0] + 2*k2[0] + 2*k3[0] + k4[0]),
-                    y[1] + (dt/6)*(k1[1] + 2*k2[1] + 2*k3[1] + k4[1]),
-                    y[2] + (dt/6)*(k1[2] + 2*k2[2] + 2*k3[2] + k4[2]),
-                    y[3] + (dt/6)*(k1[3] + 2*k2[3] + 2*k3[3] + k4[3])
+                    y[0] + (dt / 6) * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]),
+                    y[1] + (dt / 6) * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]),
+                    y[2] + (dt / 6) * (k1[2] + 2 * k2[2] + 2 * k3[2] + k4[2]),
+                    y[3] + (dt / 6) * (k1[3] + 2 * k2[3] + 2 * k3[3] + k4[3])
                 ];
             }
             time += dt;
@@ -192,7 +192,7 @@
                 let s = states[i];
                 let x = mode === 'Simple' ? L1 * Math.sin(s[0]) : L1 * Math.sin(s[0]) + L2 * Math.sin(s[2]);
                 let y = mode === 'Simple' ? L1 * Math.cos(s[0]) : L1 * Math.cos(s[0]) + L2 * Math.cos(s[2]);
-                trails[i].push({x, y});
+                trails[i].push({ x, y });
 
                 if (!fixTrails) {
                     if (trails[i].length > 100) trails[i].shift();
@@ -214,10 +214,10 @@
 
             let t1wrap = wrapAngle(states[0][0]);
             if (mode === 'Simple') {
-                phaseHistory.push({x: t1wrap, y: states[0][1]});
+                phaseHistory.push({ x: t1wrap, y: states[0][1] });
             } else {
                 let t2wrap = wrapAngle(states[0][2]);
-                phaseHistory.push({x: t1wrap, y: t2wrap});
+                phaseHistory.push({ x: t1wrap, y: t2wrap });
             }
 
             let energies = calculateEnergy(states[0]);
@@ -396,7 +396,7 @@
             }
         }
 
-        function drawChart(ctx, can, histX, histY, color, minY, maxY) {
+        function drawChart(ctx, can, histX, histY, color, minY, maxY, cortarSaltosAngulares = false) {
             if (!ctx || !can) return;
             ctx.clearRect(0, 0, can.width, can.height);
 
@@ -433,7 +433,13 @@
                 let px = padL + ((histX[i] - minX) / (maxX - minX)) * w;
                 let clampedY = Math.max(minY, Math.min(maxY, histY[i]));
                 let py = padT + h - ((clampedY - minY) / (maxY - minY)) * h;
-                if (i === 0) ctx.moveTo(px, py);
+                // En el pendulo doble, los angulos se representan en [-PI, PI].
+                // Si cruzan ese limite, no unir los extremos con una recta falsa.
+                const saltoAngular = cortarSaltosAngulares && i > 0 && (
+                    Math.abs(histX[i] - histX[i - 1]) > Math.PI ||
+                    Math.abs(histY[i] - histY[i - 1]) > Math.PI
+                );
+                if (i === 0 || saltoAngular) ctx.moveTo(px, py);
                 else ctx.lineTo(px, py);
             }
             ctx.stroke();
@@ -446,7 +452,7 @@
             drawChart(ctxDiv, canDiv, timeHistory, divHistory, '#189100', -8.0, 0.8);
             let phX = phaseHistory.map(p => p.x);
             let phY = phaseHistory.map(p => p.y);
-            drawChart(ctxPhase, canPhase, phX, phY, '#0000aa', mode === 'Simple' ? -10 : -Math.PI, mode === 'Simple' ? 10 : Math.PI);
+            drawChart(ctxPhase, canPhase, phX, phY, '#0000aa', mode === 'Simple' ? -10 : -Math.PI, mode === 'Simple' ? 10 : Math.PI, mode === 'Doble');
         }
 
         let lastFrameTime = performance.now();
@@ -480,14 +486,14 @@
             syncCount: 0,
             mount: ensureCanvas,
 
-            refreshView: function() {
+            refreshView: function () {
                 ensureCanvas();
                 updateUIFromState();
                 updateIndicators();
                 drawAllInternal();
             },
 
-            sync: function(config) {
+            sync: function (config) {
                 this.syncCount++;
                 const currentBtnIniciar = el('btn-iniciar');
                 const isRemount = (currentBtnIniciar && currentBtnIniciar !== boundBtnIniciar);
@@ -594,7 +600,7 @@
                 }
             },
 
-            snapshot: function() {
+            snapshot: function () {
                 if (!initialized || states.length === 0) initStates();
                 return {
                     captured_at: Date.now(),

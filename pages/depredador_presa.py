@@ -19,6 +19,7 @@ from components.barra_animacion_lv import (
     crear_formas_guia,
     crear_anotaciones_guia,
     _estado_visible,
+    _serie_de_figura,
 )
 
 from dash import Input, Output, Patch, State, ctx, dcc, get_asset_url, html, no_update
@@ -76,13 +77,14 @@ CONTROL_K = ("K · Capacidad de carga", "lv-k", 50, 300, 10, 120)
 # 2/3=cursor de animacion, 4/5=extremos locales.
 
 
-def _traza_cursor_vacia(nombre, color):
-    """Reserva el indice del cursor sin dibujar puntos antes de Play."""
+def _traza_cursor_vacia(nombre, color, guia_activa=False):
+    """Reserva el cursor y solo muestra sus puntos con Guia activada."""
     return go.Scatter(
         x=[],
         y=[],
         mode="markers",
         name=nombre,
+        visible=False,  # Los puntos se guardan para sincronizar, pero no se dibujan.
         showlegend=False,
         hoverinfo="skip",
         marker={
@@ -94,37 +96,41 @@ def _traza_cursor_vacia(nombre, color):
 
 
 def _traza_extremos(tiempos, valores, nombre, color, guia_activa):
-    """Maximos y minimos locales interiores de toda la solucion.
+    """Extremos locales con triangulos; solo se revelan tras terminar Play.
 
-    Se ignoran ondulaciones insignificantes debidas a redondeo numerico.
-    Los extremos en t=0 y t=T no se clasifican como locales.
+    El indice numerico original se guarda en customdata para seleccionar
+    exactamente una muestra de la solucion, sin aproximarla con el mouse.
     """
     tiempos = np.asarray(tiempos, dtype=float)
     valores = np.asarray(valores, dtype=float)
     prominencia = max(0.001 * float(np.ptp(valores)), 1e-7)
     indices_max, _ = find_peaks(valores, prominence=prominencia)
     indices_min, _ = find_peaks(-valores, prominence=prominencia)
-
-    # Un trace por poblacion permite marcar ambos tipos sin agregar
-    # entradas en la leyenda ni cambiar el codigo de la animacion.
     indices = sorted([int(i) for i in indices_max] + [int(i) for i in indices_min])
     maximos = set(int(i) for i in indices_max)
-    etiquetas = ["Máx" if i in maximos else "Mín" for i in indices]
+    tipos = ["Máximo local" if i in maximos else "Mínimo local" for i in indices]
+    simbolos = ["triangle-up" if i in maximos else "triangle-down" for i in indices]
 
     return go.Scatter(
         x=tiempos[indices],
         y=valores[indices],
-        customdata=etiquetas,
+        customdata=[[tipo, int(i)] for tipo, i in zip(tipos, indices)],
         mode="markers",
         name=f"Extremos · {nombre}",
+        # Solucion completa disponible: mostrar si Guia ya esta activa.
+        # Durante Play, el callback de fotogramas los ocultara.
         visible=bool(guia_activa),
         showlegend=False,
         marker={
-            "size": 8,
+            "size": 10,
+            "symbol": simbolos,
             "color": color,
-            "line": {"color": "#FFFFFF", "width": 1.5},
+            "line": {"color": "#FFFFFF", "width": 1},
         },
-        hovertemplate="%{customdata} · t=%{x:.1f} · %{y:.1f}<extra></extra>",
+        # La informacion se muestra en la etiqueta flotante tras el clic.
+        # "none" conserva los eventos de clickData de Plotly.
+        hoverinfo="none",
+        hovertemplate=None,
         hoverlabel={
             "bgcolor": "#F3F6FA",
             "bordercolor": "#CBD5E1",
@@ -158,6 +164,7 @@ def crear_control(titulo, control_id, minimo, maximo, paso, valor):
                 value=valor,
                 marks={minimo: f"{minimo:g}", maximo: f"{maximo:g}"},
                 tooltip={"placement": "bottom", "always_visible": False},
+                allow_direct_input=False,
             ),
         ],
     )
@@ -223,6 +230,12 @@ def crear_panel_estado():
                 ],
             ),
             html.Div(
+                id="lv-extremo-etiqueta",
+                className="lv-extremo-etiqueta",
+                children="",
+                style={"display": "none"},
+            ),
+            html.Div(
                 className="lv-estado-valores",
                 children=[
                     html.Div(
@@ -263,6 +276,7 @@ def crear_pagina():
         children=[
             # Modelo activo: se usa en la simulacion y en el selector.
             dcc.Store(id="lv-modelo-seleccionado", data="clasico"),
+            dcc.Store(id="lv-extremo-seleccionado", data=None, storage_type="memory"),
             html.Header(
                 className="lv-cabecera",
                 children=[
@@ -418,7 +432,32 @@ def crear_pagina():
                 size="xl",
                 className="lv-modal",
                 children=[
-                    dbc.ModalHeader(dbc.ModalTitle(id="lv-modal-titulo")),
+                    dbc.ModalHeader(
+                        [
+                            dbc.ModalTitle(id="lv-modal-titulo"),
+                            html.Div(
+                                id="lv-ana-header-navegacion",
+                                className="lv-ana-header-navegacion",
+                                style={"display": "none"},
+                                children=[
+                                    html.Button(
+                                        "Puntos de equilibrio",
+                                        id="lv-ana-boton-equilibrios",
+                                        type="button",
+                                        n_clicks=0,
+                                        className="lv-ana-header-boton lv-ana-header-boton-activo",
+                                    ),
+                                    html.Button(
+                                        "Clasificación y estabilidad",
+                                        id="lv-ana-boton-estabilidad",
+                                        type="button",
+                                        n_clicks=0,
+                                        className="lv-ana-header-boton",
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
                     dbc.ModalBody(id="lv-modal-cuerpo"),
                     dbc.ModalFooter(
                         dbc.Button(
@@ -445,7 +484,9 @@ def contenido_modal(seccion, modelo_seleccionado, alpha, beta, gamma, delta, k):
     """Contenido educativo correspondiente al modelo activo."""
 
     if seccion == "modelo":
-        return "Ecosistema · Zorros y conejos", crear_contenido_ecosistema()
+        return "Ecosistema · Zorros y conejos", crear_contenido_ecosistema(
+            modelo_seleccionado
+        )
 
     if seccion == "ecuaciones":
         titulo = (
@@ -574,9 +615,13 @@ def registrar_callbacks(app):
 
         # Reservar los indices 2 y 3 para los marcadores que mueve Play.
         # Los indices 4 y 5 son los extremos fijos (visibles solo con Guia).
-        figura_tiempo.add_trace(_traza_cursor_vacia("Cursor · Presas", COLOR_PRESAS))
         figura_tiempo.add_trace(
-            _traza_cursor_vacia("Cursor · Depredadores", COLOR_DEPREDADORES)
+            _traza_cursor_vacia("Cursor · Presas", COLOR_PRESAS, guia_activa)
+        )
+        figura_tiempo.add_trace(
+            _traza_cursor_vacia(
+                "Cursor · Depredadores", COLOR_DEPREDADORES, guia_activa
+            )
         )
         figura_tiempo.add_trace(
             _traza_extremos(tiempos, presas, "Presas", COLOR_PRESAS, guia_activa)
@@ -623,11 +668,12 @@ def registrar_callbacks(app):
 
         figura_fases.add_trace(
             go.Scatter(
-                x=presas,
-                y=depredadores,
+                # Misma malla de la curva empleada durante Play.
+                x=datos["x_curva"],
+                y=datos["y_curva"],
                 mode="lines",
                 name="Trayectoria",
-                line={"color": COLOR_DEPREDADORES, "width": 3},
+                line={"color": "#486A80", "width": 3},
             )
         )
 
@@ -637,7 +683,7 @@ def registrar_callbacks(app):
                 y=[depredadores_0],
                 mode="markers",
                 name="Inicio",
-                marker={"color": COLOR_PRESAS, "size": 11},
+                marker={"color": "#0077B6", "size": 11},
             )
         )
 
@@ -770,15 +816,36 @@ def registrar_callbacks(app):
         Output("lv-grafico-tiempo", "figure", allow_duplicate=True),
         Output("lv-grafico-fases", "figure", allow_duplicate=True),
         Input("lv-guia-vertical", "value"),
+        Input("lv-animacion-play", "n_clicks"),
         State("lv-grafico-tiempo", "figure"),
         State("lv-grafico-fases", "figure"),
         State("lv-animacion-datos", "data"),
+        State("lv-animacion-reloj", "n_intervals"),
+        State("lv-animacion-reloj", "disabled"),
         prevent_initial_call=True,
     )
-    def alternar_guia_vertical(guia_activa, figura_tiempo, figura_fases, datos):
-        """Muestra guias sincronizadas, sin variar escalas ni recalcular ODE."""
+    def alternar_guia_vertical(
+        guia_activa,
+        n_play,
+        figura_tiempo,
+        figura_fases,
+        datos,
+        n_intervals,
+        reloj_detenido,
+    ):
+        """Muestra los extremos si la solucion completa esta a la vista.
 
+        Si Play empieza, los oculta de inmediato. Nunca recalcula las EDO.
+        """
         temporal = Patch()
+
+        if ctx.triggered_id == "lv-animacion-play":
+            # El primer fotograma aun no ha llegado: ocultarlos ya.
+            if figura_tiempo and len(figura_tiempo.get("data", [])) >= 6:
+                temporal["data"][4]["visible"] = False
+                temporal["data"][5]["visible"] = False
+                return temporal, no_update
+            return no_update, no_update
 
         fases = Patch()
 
@@ -786,11 +853,38 @@ def registrar_callbacks(app):
 
         temporal["layout"]["xaxis"]["showspikes"] = False
 
-        # Los indices 4 y 5 contienen extremos de presas y depredadores.
-        # Se muestran/ocultan sin alterar las curvas ni recalcular la solucion.
+        # Los cursores 2/3 se actualizan internamente, sin puntos visibles.
+        if figura_tiempo and len(figura_tiempo.get("data", [])) >= 4:
+            temporal["data"][2]["visible"] = False
+            temporal["data"][3]["visible"] = False
+
+        # Diferenciar dos casos validos:
+        # 1) Cambio de parametros: la solucion completa ya esta dibujada.
+        # 2) Play terminado: el recorrido animado llego al ultimo fotograma.
+        # Mientras Play avanza o esta pausado a mitad, no mostrar extremos.
+        mostrar_extremos = False
+        if guia_activa and datos and figura_tiempo:
+            trazas = figura_tiempo.get("data", [])
+            if len(trazas) >= 6:
+                tiempos_dibujados = _serie_de_figura(trazas[0].get("x", []))
+                tiempos_completos = datos.get("tiempo_completo", [])
+                fotogramas = datos.get("t", [])
+                termino_play = (
+                    len(fotogramas) > 1
+                    and n_intervals is not None
+                    and int(n_intervals) >= len(fotogramas) - 1
+                    and len(tiempos_dibujados) == len(fotogramas)
+                )
+                solucion_completa = (
+                    bool(reloj_detenido)
+                    and len(tiempos_completos) > 1
+                    and len(tiempos_dibujados) == len(tiempos_completos)
+                )
+                mostrar_extremos = bool(solucion_completa or termino_play)
+
         if figura_tiempo and len(figura_tiempo.get("data", [])) >= 6:
-            temporal["data"][4]["visible"] = bool(guia_activa)
-            temporal["data"][5]["visible"] = bool(guia_activa)
+            temporal["data"][4]["visible"] = mostrar_extremos
+            temporal["data"][5]["visible"] = mostrar_extremos
 
         # No se muestran ejes fijos del origen: usamos proyecciones dinamicas.
 
@@ -829,10 +923,15 @@ def registrar_callbacks(app):
         Output("lv-modal-informacion", "is_open"),
         Output("lv-modal-titulo", "children"),
         Output("lv-modal-cuerpo", "children"),
+        Output("lv-ana-header-navegacion", "style"),
+        Output("lv-ana-boton-equilibrios", "className"),
+        Output("lv-ana-boton-estabilidad", "className"),
         Input("lv-boton-modelo", "n_clicks"),
         Input("lv-boton-ecuaciones", "n_clicks"),
         Input("lv-boton-variables", "n_clicks"),
         Input("lv-boton-ciclos", "n_clicks"),
+        Input("lv-ana-boton-equilibrios", "n_clicks"),
+        Input("lv-ana-boton-estabilidad", "n_clicks"),
         Input("lv-cerrar-modal", "n_clicks"),
         State("lv-modal-titulo", "children"),
         State("lv-modal-cuerpo", "children"),
@@ -849,6 +948,8 @@ def registrar_callbacks(app):
         n_ecuaciones,
         n_variables,
         n_ciclos,
+        n_pestana_equilibrios,
+        n_pestana_estabilidad,
         n_cerrar,
         titulo,
         cuerpo,
@@ -859,11 +960,34 @@ def registrar_callbacks(app):
         delta,
         k,
     ):
-
+        """Abre los modales y conmuta las pestanas teoricas en su cabecera."""
         accion = ctx.triggered_id
+        boton_base = "lv-ana-header-boton"
+        boton_activo = "lv-ana-header-boton lv-ana-header-boton-activo"
+        botones_inicio = (boton_activo, boton_base)
 
         if accion == "lv-cerrar-modal":
-            return False, titulo, cuerpo
+            return False, titulo, cuerpo, {"display": "none"}, *botones_inicio
+
+        if accion in ("lv-ana-boton-equilibrios", "lv-ana-boton-estabilidad"):
+            pestana = (
+                "estabilidad" if accion == "lv-ana-boton-estabilidad" else "equilibrios"
+            )
+            nuevo_cuerpo = crear_contenido_analisis_sistema(
+                modelo_seleccionado,
+                alpha,
+                beta,
+                gamma,
+                delta,
+                k,
+                pestana=pestana,
+            )
+            clases = (
+                (boton_base, boton_activo)
+                if pestana == "estabilidad"
+                else botones_inicio
+            )
+            return True, titulo, nuevo_cuerpo, {"display": "flex"}, *clases
 
         secciones = {
             "lv-boton-modelo": "modelo",
@@ -882,10 +1006,14 @@ def registrar_callbacks(app):
                 delta,
                 k,
             )
+            navegacion = (
+                {"display": "flex"}
+                if accion == "lv-boton-variables"
+                else {"display": "none"}
+            )
+            return True, nuevo_titulo, nuevo_cuerpo, navegacion, *botones_inicio
 
-            return True, nuevo_titulo, nuevo_cuerpo
-
-        return False, no_update, no_update
+        return False, no_update, no_update, {"display": "none"}, *botones_inicio
 
     @app.callback(
         Output("lv-modelo-seleccionado", "data"),

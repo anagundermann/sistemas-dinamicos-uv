@@ -3,7 +3,7 @@
 from urllib.parse import quote
 import networkx as nx
 
-from dash import Dash, Input, Output, ctx, dcc, html
+from dash import Dash, Input, Output, State, ctx, dcc, html
 from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 
@@ -14,13 +14,17 @@ from pages import (
     depredador_presa,
     sir,
 )
-
-from components.conceptos_biblioteca import (
-    crear_consulta_conceptos,
-    registrar_callbacks_conceptos,
-)
+### Biblioteca matemática desactivada temporalmente.###
+# from components.conceptos_biblioteca import (
+#     crear_consulta_conceptos,
+#     registrar_callbacks_conceptos,
+# )
 
 from components.footer import crear_footer
+from components.tutorial_guiado import (
+    crear_tutorial_guiado,
+    registrar_callbacks_tutorial,
+)
 
 # --------------------------------------------------
 # PAGINAS Y LABORATORIOS
@@ -40,6 +44,14 @@ LABORATORIOS = [
     ("depredador_presa", "Depredador-presa", "Lotka-Volterra", "turquesa"),
     ("sir", "Modelo SIR", "Epidemias", "sir"),
 ]
+
+
+AREAS_LABORATORIOS = {
+    "pendulo_simple": "Física",
+    "pendulo_doble": "Física",
+    "depredador_presa": "Ecología",
+    "sir": "Epidemiología en red",
+}
 
 
 # --------------------------------------------------
@@ -127,6 +139,10 @@ def crear_tarjeta_navegacion(clave, titulo, detalle, color):
                         className="sd-lab-detalle",
                     ),
                     html.Span(
+                        AREAS_LABORATORIOS[clave],
+                        className="sd-lab-area",
+                    ),
+                    html.Span(
                         "Explorar  →",
                         className="sd-lab-explorar",
                     ),
@@ -146,7 +162,7 @@ app = Dash(
     suppress_callback_exceptions=True,
 )
 
-app.title = "Sistemas Dinámicos"
+app.title = "Sistemas Dinámicos Continuos"
 
 
 app.layout = html.Div(
@@ -162,18 +178,78 @@ app.layout = html.Div(
                 html.Div(
                     className="sd-marca",
                     children=[
+                        html.Img(
+                            src=(
+                                "data:image/svg+xml;charset=utf-8,"
+                                + quote(
+                                    '<svg xmlns="http://www.w3.org/2000/svg" '
+                                    'viewBox="0 0 48 48">'
+                                    '<path d="M5 34 C12 34 14 10 24 17 '
+                                    'S35 37 43 12" '
+                                    'fill="none" stroke="#3478D4" '
+                                    'stroke-width="3.2" '
+                                    'stroke-linecap="round"/>'
+                                    '<path d="M5 41 C14 24 20 40 28 32 '
+                                    'S38 25 43 30" '
+                                    'fill="none" stroke="#79B5E8" '
+                                    'stroke-width="2.5" '
+                                    'stroke-linecap="round"/>'
+                                    '<circle cx="24" cy="17" r="3.5" '
+                                    'fill="#153A65"/>'
+                                    "</svg>"
+                                )
+                            ),
+                            alt="Trayectorias dinámicas",
+                            style={
+                                "width": "48px",
+                                "height": "48px",
+                                "flexShrink": "0",
+                            },
+                        ),
                         html.H1(
-                            "Sistemas Dinámicos",
+                            "Sistemas Dinámicos Continuos",
                             className="sd-titulo-app",
+                            style={
+                                "fontSize": "26px",
+                                "lineHeight": "1.2",
+                                "margin": "0",
+                            },
                         ),
                     ],
+                    style={
+                        "display": "flex",
+                        "alignItems": "center",
+                        "gap": "14px",
+                    },
                 ),
                 html.Div(
                     className="sd-acciones-cabecera",
                     children=[
-                        crear_consulta_conceptos(),
+                        # crear_consulta_conceptos(),
                         html.Button(
-                            "Inicio",
+                            children=[
+                                html.Img(
+                                    src=(
+                                        "data:image/svg+xml;charset=utf-8,"
+                                        + quote(
+                                            '<svg xmlns="http://www.w3.org/2000/svg" '
+                                            'viewBox="0 0 24 24" fill="none" '
+                                            'stroke="#294B70" stroke-width="1.8" '
+                                            'stroke-linecap="round" stroke-linejoin="round">'
+                                            '<path d="M3 10.5 12 3l9 7.5V21H3V10.5Z"/>'
+                                            '<path d="M9 21v-7h6v7"/>'
+                                            "</svg>"
+                                        )
+                                    ),
+                                    className="sd-inicio-icono",
+                                    alt="",
+                                    style={
+                                        "width": "19px",
+                                        "height": "19px",
+                                    },
+                                ),
+                                html.Span("Inicio"),
+                            ],
                             id="sd-ir-inicio",
                             n_clicks=0,
                             className="sd-inicio",
@@ -187,8 +263,19 @@ app.layout = html.Div(
             className="sd-layout",
             children=[
                 html.Aside(
+                    id="sd-laboratorios",
                     className="sd-laboratorios",
                     children=[
+                        # Pestaña fija: solo visible dentro de los laboratorios.
+                        html.Button(
+                            "‹",
+                            id="sd-panel-toggle",
+                            n_clicks=0,
+                            type="button",
+                            title="Abrir laboratorios",
+                            className="sd-panel-pestana",
+                            **{"aria-label": "Abrir o cerrar los laboratorios"},
+                        ),
                         html.H2(
                             "Laboratorios",
                             className="sd-laboratorios-titulo",
@@ -240,6 +327,8 @@ app.layout = html.Div(
                 ),
             ],
         ),
+        # Guia global: se superpone, no ocupa espacio en el layout.
+        crear_tutorial_guiado(),
         # Footer compartido en todas las paginas.
         crear_footer(),
     ],
@@ -267,6 +356,35 @@ def cambiar_pagina(*_):
         raise PreventUpdate
 
     return destino
+
+
+# --------------------------------------------------
+# PANEL DESLIZANTE DE LABORATORIOS
+# --------------------------------------------------
+
+
+@app.callback(
+    Output("sd-laboratorios", "className"),
+    Output("sd-panel-toggle", "children"),
+    Output("sd-panel-toggle", "title"),
+    Input("sd-panel-toggle", "n_clicks"),
+    Input("sd-pagina-activa", "data"),
+    State("sd-laboratorios", "className"),
+)
+def alternar_panel_laboratorios(_clics, pagina, clases_actuales):
+    # Al navegar a otra pagina, el panel siempre se cierra.
+    # Unicamente la pestana permite abrirlo y cerrarlo.
+    abierto = (
+        ctx.triggered_id == "sd-panel-toggle"
+        and pagina != "introduccion"
+        and "sd-panel-abierto" not in (clases_actuales or "").split()
+    )
+
+    return (
+        "sd-laboratorios sd-panel-abierto" if abierto else "sd-laboratorios",
+        "›" if abierto else "‹",
+        "Cerrar laboratorios" if abierto else "Abrir laboratorios",
+    )
 
 
 @app.callback(
@@ -333,7 +451,12 @@ for _, modulo in PAGINAS.values():
     if callable(registrar):
         registrar(app)
 
-registrar_callbacks_conceptos(app)
+### Biblioteca matemática desactivada temporalmente. ###
+
+# registrar_callbacks_conceptos(app)
+
+# Guia global. De momento, configurada para Depredador-presa.
+registrar_callbacks_tutorial(app)
 
 
 # --------------------------------------------------

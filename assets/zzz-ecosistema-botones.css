@@ -1,0 +1,335 @@
+/* ============================================================
+   ECOSISTEMA · BOTONES DASH + CSS GRID (sin Cytoscape)
+   Hoja adicional: conserva assets/zz-ecosistema-lv.css.
+   El trazo de las flechas ocupa todo el espacio entre los nodos.
+   ============================================================ */
+
+.lv-eco .lv-eco-ciclo-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(100px, .72fr) minmax(0, 1fr);
+    grid-template-rows: 96px 146px 96px;
+    grid-template-areas:
+        "etapa1 arriba etapa2"
+        "izquierda centro derecha"
+        "etapa4 abajo etapa3";
+    align-items: stretch;
+    justify-items: stretch;
+    min-width: 0;
+    padding: 16px 12px;
+    background: #fff;
+    border: 1px solid #DCE4EB;
+    border-radius: 12px;
+}
+
+/* Los cuatro nodos se conservan blancos, verdes o violetas en el borde. */
+.lv-eco .lv-eco-nodo {
+    width: 100%;
+    height: 86px;
+    align-self: center;
+    padding: 10px 7px;
+    color: #323A43;
+    background: #fff;
+    font-family: inherit;
+    font-size: clamp(.83rem, 1.15vw, 1rem);
+    font-weight: 700;
+    line-height: 1.25;
+    border: 3px solid #B8C2BE;
+    border-radius: 15px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 2px 3px rgba(31, 38, 45, .05);
+    transition: transform 240ms ease, box-shadow 240ms ease;
+    will-change: transform;
+}
+
+.lv-eco .lv-eco-nodo-conejo {
+    border-color: #2e7d5b;
+}
+
+.lv-eco .lv-eco-nodo-zorro {
+    border-color: #7c3aed;
+}
+
+.lv-eco .lv-eco-nodo-paso-1 {
+    grid-area: etapa1;
+}
+
+.lv-eco .lv-eco-nodo-paso-2 {
+    grid-area: etapa2;
+}
+
+.lv-eco .lv-eco-nodo-paso-3 {
+    grid-area: etapa3;
+}
+
+.lv-eco .lv-eco-nodo-paso-4 {
+    grid-area: etapa4;
+}
+
+/* Elevacion deliberadamente visible, sin alterar el color del nodo. */
+.lv-eco .lv-eco-nodo-elegido {
+    transform: translateY(-10px) scale(1.035);
+    box-shadow: 0 18px 28px rgba(35, 40, 48, .30),
+        0 6px 10px rgba(35, 40, 48, .15);
+    z-index: 3;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .lv-eco .lv-eco-nodo:hover:not(.lv-eco-nodo-elegido) {
+        transform: translateY(-3px);
+        box-shadow: 0 7px 13px rgba(35, 40, 48, .13);
+    }
+}
+
+.lv-eco .lv-eco-nodo:focus-visible,
+.lv-eco .lv-eco-ciclo-reinicio-disponible:focus-visible {
+    outline: 2px solid #454545;
+    outline-offset: 4px;
+}
+
+/* Flechas dibujadas con una linea CSS y una punta triangular.
+   A diferencia de los caracteres Unicode, se alargan con el ancho del Grid. */
+.lv-eco .lv-eco-conector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    min-height: 0;
+    color: #A3ADB6;
+    line-height: 1.1;
+    text-align: center;
+    pointer-events: none;
+    transition: color 220ms ease;
+}
+
+.lv-eco .lv-eco-conector-texto {
+    font-size: clamp(.63rem, .9vw, .79rem);
+    font-weight: 650;
+    white-space: nowrap;
+    color: currentColor;
+}
+
+.lv-eco .lv-eco-conector-linea {
+    display: block;
+    position: relative;
+    flex-shrink: 0;
+    background: currentColor;
+    border-radius: 999px;
+    transition: background-color 220ms ease, box-shadow 220ms ease;
+}
+
+/* Tramos horizontales: ocupan casi todo el pasillo entre recuadros. */
+.lv-eco .lv-eco-conector-derecha {
+    grid-area: arriba;
+    padding: 0 13px;
+}
+
+.lv-eco .lv-eco-conector-izquierda {
+    grid-area: abajo;
+    padding: 0 13px;
+}
+
+.lv-eco .lv-eco-conector-derecha .lv-eco-conector-linea,
+.lv-eco .lv-eco-conector-izquierda .lv-eco-conector-linea {
+    width: 100%;
+    height: 4px;
+}
+
+.lv-eco .lv-eco-conector-derecha .lv-eco-conector-linea::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 12px solid currentColor;
+}
+
+.lv-eco .lv-eco-conector-izquierda .lv-eco-conector-linea::after {
+    content: "";
+    position: absolute;
+    left: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 12px solid currentColor;
+}
+
+/* Tramos verticales: la linea se estira hasta el espacio disponible. */
+.lv-eco .lv-eco-conector-abajo {
+    grid-area: derecha;
+    padding: 12px 0;
+}
+
+.lv-eco .lv-eco-conector-arriba {
+    grid-area: izquierda;
+    padding: 12px 0;
+}
+
+.lv-eco .lv-eco-conector-abajo .lv-eco-conector-linea,
+.lv-eco .lv-eco-conector-arriba .lv-eco-conector-linea {
+    width: 4px;
+    height: auto;
+    flex: 1 1 0;
+}
+
+.lv-eco .lv-eco-conector-abajo .lv-eco-conector-linea::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 12px solid currentColor;
+}
+
+.lv-eco .lv-eco-conector-arriba .lv-eco-conector-linea::after {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 12px solid currentColor;
+}
+
+/* La flecha saliente adquiere el color de la poblacion elegida. */
+.lv-eco .lv-eco-conector-activo.lv-eco-conector-conejo {
+    color: #2e7d5b;
+}
+
+.lv-eco .lv-eco-conector-activo.lv-eco-conector-zorro {
+    color: #7c3aed;
+}
+
+.lv-eco .lv-eco-conector-activo .lv-eco-conector-texto {
+    font-weight: 800;
+}
+
+.lv-eco .lv-eco-conector-activo .lv-eco-conector-linea {
+    box-shadow: 0 0 0 2px rgba(43, 49, 57, .08);
+}
+
+/* El centro se convierte en un control de reinicio al seleccionar una etapa. */
+.lv-eco .lv-eco-ciclo-centro {
+    grid-area: centro;
+    align-self: center;
+    justify-self: center;
+    max-width: 94%;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    padding: 9px 6px;
+    font-family: inherit;
+    text-align: center;
+    font-size: clamp(.65rem, .85vw, .76rem);
+    line-height: 1.25;
+    letter-spacing: .03em;
+    font-weight: 750;
+    color: #87929D;
+}
+
+.lv-eco .lv-eco-ciclo-centro:disabled {
+    cursor: default;
+    opacity: 1;
+}
+
+.lv-eco .lv-eco-ciclo-reinicio-disponible {
+    background: #F3F5F7;
+    border-color: #D8DDE2;
+    color: #454545;
+    cursor: pointer;
+    letter-spacing: 0;
+    transition: background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.lv-eco .lv-eco-ciclo-reinicio-disponible:hover {
+    background: #E5E9ED;
+    box-shadow: 0 2px 7px rgba(35, 40, 48, .12);
+}
+
+/* Los avisos del contexto respetan la paleta gris perla. */
+.lv-eco .lv-eco-detalle,
+.lv-eco .lv-eco-detalle:has(.lv-eco-invitacion),
+.lv-eco .lv-eco-idea {
+    background: #F3F5F7;
+    border-color: #DCE4EB;
+    border-left-color: #454545;
+}
+
+.lv-eco .lv-eco-detalle-etiqueta,
+.lv-eco .lv-eco-invitacion-titulo,
+.lv-eco .lv-eco-detalle-titulo {
+    color: #454545;
+}
+
+.lv-eco .lv-eco-invitacion-icono {
+    background: #E2E5E9;
+    color: #454545;
+}
+
+.lv-eco .lv-eco-invitacion-texto,
+.lv-eco .lv-eco-pista-reinicio {
+    color: #52606C;
+}
+
+.lv-eco .lv-eco-detalle:has(.lv-eco-invitacion) {
+    box-shadow: 0 4px 16px rgba(35, 40, 48, .08);
+}
+
+@media (max-width: 480px) {
+    .lv-eco .lv-eco-ciclo-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(70px, .67fr) minmax(0, 1fr);
+        grid-template-rows: 78px 126px 78px;
+        padding: 10px 5px;
+    }
+
+    .lv-eco .lv-eco-nodo {
+        height: 70px;
+        padding: 6px 4px;
+        font-size: .80rem;
+        border-width: 2px;
+    }
+
+    .lv-eco .lv-eco-conector-derecha,
+    .lv-eco .lv-eco-conector-izquierda {
+        padding: 0 7px;
+    }
+
+    .lv-eco .lv-eco-conector-texto {
+        font-size: .60rem;
+        white-space: normal;
+    }
+
+    .lv-eco .lv-eco-conector-abajo,
+    .lv-eco .lv-eco-conector-arriba {
+        padding: 8px 0;
+    }
+
+    .lv-eco .lv-eco-nodo-elegido {
+        transform: translateY(-7px) scale(1.02);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .lv-eco .lv-eco-nodo,
+    .lv-eco .lv-eco-conector,
+    .lv-eco .lv-eco-conector-linea {
+        transition: none;
+    }
+}
+
+/* Idea clave: recuperar el rosado */
+.lv-eco .lv-eco-idea {
+    background: #FCEAF3;
+    border-color: #F5BED9;
+    border-left: 5px solid #EC4899;
+}

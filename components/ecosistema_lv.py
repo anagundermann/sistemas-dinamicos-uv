@@ -1,15 +1,23 @@
-"""Modal Ecosistema: ciclo interactivo de zorros y conejos.
+"""Ciclo ecologico interactivo sin Cytoscape.
 
-Toda la logica del diagrama es Python y Dash Cytoscape. Los estilos
-externos de la ventana se encuentran en assets/zz-ecosistema-lv.css.
-El modal (cabecera y pie) se reutiliza desde pages/depredador_presa.py.
+Cuatro botones nativos de Dash, conectores fijos con CSS Grid y
+una sola etapa seleccionada. No altera el modelo matematico.
+
+Mantiene la interfaz esperada por pages/depredador_presa.py:
+    crear_contenido_ecosistema()
+    registrar_callbacks_ecosistema(app)
+
+Estilos adicionales: assets/zzz-ecosistema-botones.css
 """
 
-from dash import Input, Output, html
-import dash_cytoscape as cyto
+from urllib.parse import quote
+
+from dash import Input, Output, State, ctx, html
 
 
-# Datos editables; identificadores tecnicos ASCII.
+COLOR_CONEJOS = "#2e7d5b"
+COLOR_ZORROS = "#7c3aed"
+
 ETAPAS = {
     "paso-1": (
         "1 · Aumentan los conejos",
@@ -29,156 +37,166 @@ ETAPAS = {
     ),
 }
 
-# Cuatro posiciones constantes: un diagrama explicativo, no un editor.
-# Las dimensiones del elemento Cytoscape son responsivas mediante CSS.
-NODOS = [
-    ("paso-1", "↑ Conejos", "conejo", 110, 85),
-    ("paso-2", "↑ Zorros", "zorro", 395, 85),
-    ("paso-3", "↓ Conejos", "conejo", 395, 275),
-    ("paso-4", "↓ Zorros", "zorro", 110, 275),
-]
-
+# (id del conector, etapa de origen, direccion, etiqueta)
 ARISTAS = [
-    ("arista-1", "paso-1", "paso-2", "más alimento"),
-    ("arista-2", "paso-2", "paso-3", "más depredación"),
-    ("arista-3", "paso-3", "paso-4", "menos alimento"),
-    ("arista-4", "paso-4", "paso-1", "menos presión"),
-]
-
-ESTILO_BASE = [
-    {
-        "selector": "node",
-        "style": {
-            "shape": "round-rectangle",
-            "width": 130,
-            "height": 62,
-            "background-color": "#ffffff",
-            "border-width": 3,
-            "label": "data(label)",
-            "color": "#29254d",
-            "font-family": "Segoe UI, Arial, sans-serif",
-            "font-size": 17,
-            "font-weight": 700,
-            "text-halign": "center",
-            "text-valign": "center",
-            "text-wrap": "none",
-            "overlay-opacity": 0,
-        },
-    },
-    {"selector": 'node[tipo = "conejo"]', "style": {"border-color": "#2e7d5b"}},
-    {"selector": 'node[tipo = "zorro"]', "style": {"border-color": "#d9822b"}},
-    {
-        "selector": "edge",
-        "style": {
-            "curve-style": "straight",
-            "line-color": "#b8c2be",
-            "width": 3,
-            "target-arrow-shape": "triangle",
-            "target-arrow-color": "#b8c2be",
-            "arrow-scale": 1,
-            "label": "data(label)",
-            "color": "#57645f",
-            "font-family": "Segoe UI, Arial, sans-serif",
-            "font-size": 11,
-            "text-background-color": "#ffffff",
-            "text-background-opacity": 1,
-            "text-background-padding": 4,
-            "text-rotation": "none",
-            "overlay-opacity": 0,
-        },
-    },
-    {
-        "selector": "node.activo",
-        "style": {
-            "background-color": "#C0267D",
-            "border-color": "#C0267D",
-            "color": "#FFFFFF",
-            "underlay-color": "#EC4899",
-            "underlay-opacity": 0.30,
-            "underlay-padding": 9,
-        },
-    },
-    {
-        "selector": "edge.activo",
-        "style": {
-            "line-color": "#C0267D",
-            "width": 5,
-            "target-arrow-color": "#C0267D",
-            # Sin cambiar arrow-scale: evita una punta desproporcionada.
-        },
-    },
+    ("mas-alimento", "paso-1", "derecha", "más alimento"),
+    ("mas-depredacion", "paso-2", "abajo", "más depredación"),
+    ("menos-alimento", "paso-3", "izquierda", "menos alimento"),
+    ("menos-presion", "paso-4", "arriba", "menos presión"),
 ]
 
 
-def crear_elementos_ciclo(paso_activo="paso-1"):
-    """Devuelve nodos y aristas; activa el nodo y su arista saliente."""
-    elementos = []
-    for nodo_id, etiqueta, tipo, x, y in NODOS:
-        elementos.append(
-            {
-                "data": {"id": nodo_id, "label": etiqueta, "tipo": tipo},
-                "position": {"x": x, "y": y},
-                "classes": "activo" if nodo_id == paso_activo else "",
-            }
-        )
-    for arista_id, origen, destino, etiqueta in ARISTAS:
-        elementos.append(
-            {
-                "data": {
-                    "id": arista_id,
-                    "source": origen,
-                    "target": destino,
-                    "label": etiqueta,
-                },
-                "classes": "activo" if origen == paso_activo else "",
-            }
-        )
-    return elementos
+# ------------------------------------------------------------
+# COMPONENTES VISUALES
+# ------------------------------------------------------------
 
 
-def crear_detalle_ciclo(paso_activo="paso-1"):
-    titulo, descripcion = ETAPAS.get(paso_activo, ETAPAS["paso-1"])
+def _boton_etapa(paso, etiqueta, poblacion):
+    return html.Button(
+        etiqueta,
+        id=f"lv-eco-boton-{paso}",
+        n_clicks=0,
+        type="button",
+        className=f"lv-eco-nodo lv-eco-nodo-{poblacion} lv-eco-nodo-{paso}",
+        title="Seleccionar etapa del ciclo",
+    )
+
+
+def _clase_conector(direccion, origen, activo=False):
+    """Color de identidad de la flecha que sale de cada etapa."""
+    poblacion = "conejo" if origen in ("paso-1", "paso-3") else "zorro"
+    clase = f"lv-eco-conector lv-eco-conector-{direccion} lv-eco-conector-{poblacion}"
+    return clase + (" lv-eco-conector-activo" if activo else "")
+
+
+def _conector(arista_id, origen, direccion, etiqueta):
+    """Flecha larga: el trazo y la punta se dibujan con CSS nativo."""
+    return html.Div(
+        [
+            html.Span(etiqueta, className="lv-eco-conector-texto"),
+            html.Span(
+                "",
+                className="lv-eco-conector-linea",
+                **{"aria-hidden": "true"},
+            ),
+        ],
+        id=f"lv-eco-conector-{arista_id}",
+        className=_clase_conector(direccion, origen),
+    )
+
+
+def crear_detalle_ciclo(paso_activo=None):
+    """Texto de invitacion o explicacion de la etapa seleccionada."""
+    if paso_activo not in ETAPAS:
+        mano = (
+            '<svg xmlns="http://www.w3.org/2000/svg" '
+            'viewBox="0 0 24 24" fill="none" '
+            'stroke="#454545" stroke-width="2" '
+            'stroke-linecap="round" stroke-linejoin="round">'
+            '<path d="M22 14a8 8 0 0 1-8 8"/>'
+            '<path d="M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2"/>'
+            '<path d="M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1"/>'
+            '<path d="M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10"/>'
+            '<path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2'
+            "c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 "
+            '2.83-2.82L7 15"/>'
+            "</svg>"
+        )
+        return html.Div(
+            className="lv-eco-detalle-contenido lv-eco-invitacion",
+            children=[
+                html.Span(
+                    html.Img(
+                        src="data:image/svg+xml," + quote(mano, safe=""),
+                        alt="",
+                        style={"width": "27px", "height": "27px", "display": "block"},
+                    ),
+                    className="lv-eco-invitacion-icono",
+                    **{"aria-hidden": "true"},
+                ),
+                html.Div(
+                    [
+                        html.Strong(
+                            "Explora las etapas del ciclo",
+                            className="lv-eco-invitacion-titulo",
+                        ),
+                        html.P(
+                            "Selecciona uno de los cuatro recuadros para "
+                            "conocer cómo cambian las poblaciones.",
+                            className="lv-eco-invitacion-texto",
+                        ),
+                    ],
+                    className="lv-eco-invitacion-mensaje",
+                ),
+            ],
+        )
+
+    titulo, descripcion = ETAPAS[paso_activo]
     return html.Div(
         className="lv-eco-detalle-contenido",
         children=[
             html.Strong(titulo, className="lv-eco-detalle-titulo"),
             html.P(descripcion),
+            html.P(
+                "Haz clic otra vez en la etapa seleccionada para volver al inicio.",
+                className="lv-eco-pista-reinicio",
+            ),
         ],
     )
 
 
 def crear_ciclo_ecosistema():
-    """Crea el diagrama dirigido de cuatro etapas."""
+    """Ciclo de cuatro etapas, sin grafo ni coordenadas fijas."""
     return html.Section(
         className="lv-eco-panel-ciclo",
         children=[
             html.H3("El ciclo depredador–presa"),
-            html.P(
-                "Selecciona un nodo para explorar cada etapa.",
-                className="lv-eco-instruccion",
+            html.Div(
+                className="lv-eco-ciclo-grid",
+                children=[
+                    _boton_etapa("paso-1", "↑ Conejos", "conejo"),
+                    _conector(*ARISTAS[0]),
+                    _boton_etapa("paso-2", "↑ Zorros", "zorro"),
+                    _conector(*ARISTAS[3]),
+                    html.Button(
+                        "CICLO ECOLÓGICO",
+                        id="lv-eco-reiniciar",
+                        n_clicks=0,
+                        disabled=True,
+                        type="button",
+                        className="lv-eco-ciclo-centro",
+                        title="Volver a la invitación inicial",
+                    ),
+                    _conector(*ARISTAS[1]),
+                    _boton_etapa("paso-4", "↓ Zorros", "zorro"),
+                    _conector(*ARISTAS[2]),
+                    _boton_etapa("paso-3", "↓ Conejos", "conejo"),
+                ],
             ),
-            cyto.Cytoscape(
-                id="lv-eco-grafo",
-                elements=crear_elementos_ciclo(),
-                stylesheet=ESTILO_BASE,
-                layout={"name": "preset", "fit": True, "padding": 18},
-                className="lv-eco-grafo",
-                style={"width": "100%", "height": "325px"},
-                userZoomingEnabled=False,
-                userPanningEnabled=False,
-                autoungrabify=True,
-                boxSelectionEnabled=False,
-            ),
-            # La explicacion del nodo seleccionado aparece en la columna derecha.
         ],
     )
 
 
-def crear_contenido_ecosistema():
-    """Cuerpo del modal; se inserta en el dbc.Modal existente."""
+def crear_contenido_ecosistema(modelo_seleccionado="clasico"):
+    """Mantiene el mismo ciclo y adapta los supuestos al modelo activo."""
+    if modelo_seleccionado == "logistico":
+        texto_simplificacion = (
+            "Los recursos disponibles limitan el crecimiento natural de los "
+            "conejos mediante la capacidad de carga K. Se supone que los zorros "
+            "solo se alimentan de conejos. No considera migraciones, "
+            "enfermedades ni estaciones."
+        )
+    else:
+        texto_simplificacion = (
+            "Supone alimento ilimitado para las presas y que los zorros solo "
+            "se alimentan de ellas. No considera migraciones, enfermedades "
+            "ni estaciones."
+        )
+
     return html.Div(
         className="lv-eco",
         children=[
+            html.Div(id="lv-eco-etapa-elegida", children="", style={"display": "none"}),
             html.Div(
                 className="lv-eco-columnas",
                 children=[
@@ -200,7 +218,8 @@ def crear_contenido_ecosistema():
                                 className="lv-eco-detalle",
                                 children=[
                                     html.P(
-                                        "ETAPA SELECCIONADA",
+                                        "",
+                                        id="lv-eco-etiqueta",
                                         className="lv-eco-detalle-etiqueta",
                                     ),
                                     html.Div(
@@ -224,12 +243,7 @@ def crear_contenido_ecosistema():
                                 className="lv-eco-seccion",
                                 children=[
                                     html.H3("¿Qué simplifica el modelo?"),
-                                    html.P(
-                                        "Supone alimento ilimitado para las presas "
-                                        "y que los zorros solo se alimentan de ellas. "
-                                        "No considera migraciones, enfermedades "
-                                        "ni estaciones."
-                                    ),
+                                    html.P(texto_simplificacion),
                                 ],
                             ),
                             html.P(
@@ -245,16 +259,63 @@ def crear_contenido_ecosistema():
 
 
 def registrar_callbacks_ecosistema(app):
-    """Vincula la selección del nodo con los estilos y la explicación."""
+    """Seleccion persistente; repetir clic o pulsar centro restablece el inicio."""
 
     @app.callback(
-        Output("lv-eco-grafo", "elements"),
+        Output("lv-eco-etapa-elegida", "children"),
         Output("lv-eco-detalle", "children"),
-        Input("lv-eco-grafo", "tapNodeData"),
+        Output("lv-eco-etiqueta", "children"),
+        Output("lv-eco-reiniciar", "children"),
+        Output("lv-eco-reiniciar", "disabled"),
+        Output("lv-eco-reiniciar", "className"),
+        *[Output(f"lv-eco-boton-{paso}", "className") for paso in ETAPAS],
+        *[
+            Output(f"lv-eco-conector-{id_arista}", "className")
+            for id_arista, _, _, _ in ARISTAS
+        ],
+        *[Input(f"lv-eco-boton-{paso}", "n_clicks") for paso in ETAPAS],
+        Input("lv-eco-reiniciar", "n_clicks"),
+        State("lv-eco-etapa-elegida", "children"),
         prevent_initial_call=True,
     )
-    def actualizar_etapa_ecosistema(datos_nodo):
-        paso = (datos_nodo or {}).get("id", "paso-1")
-        if paso not in ETAPAS:
-            paso = "paso-1"
-        return crear_elementos_ciclo(paso), crear_detalle_ciclo(paso)
+    def actualizar_etapa_ecosistema(*argumentos):
+        anterior = argumentos[-1]
+        disparador = ctx.triggered_id
+
+        # El mismo nodo se deselecciona con un segundo clic.
+        # El boton del centro tambien limpia la seleccion directamente.
+        if disparador == "lv-eco-reiniciar":
+            elegido = None
+        elif isinstance(disparador, str) and disparador.startswith("lv-eco-boton-"):
+            paso = disparador.removeprefix("lv-eco-boton-")
+            elegido = None if paso == anterior else paso
+        else:
+            elegido = None
+
+        if elegido not in ETAPAS:
+            elegido = None
+
+        clases_botones = [
+            (
+                f"lv-eco-nodo lv-eco-nodo-{'conejo' if paso_id in ('paso-1', 'paso-3') else 'zorro'} "
+                f"lv-eco-nodo-{paso_id}"
+                + (" lv-eco-nodo-elegido" if paso_id == elegido else "")
+            )
+            for paso_id in ETAPAS
+        ]
+        clases_aristas = [
+            _clase_conector(direccion, origen, activo=(origen == elegido))
+            for _, origen, direccion, _ in ARISTAS
+        ]
+        return (
+            elegido or "",
+            crear_detalle_ciclo(elegido),
+            "ETAPA SELECCIONADA" if elegido else "",
+            "↺ Volver al inicio" if elegido else "CICLO ECOLÓGICO",
+            not bool(elegido),
+            "lv-eco-ciclo-centro lv-eco-ciclo-reinicio-disponible"
+            if elegido
+            else "lv-eco-ciclo-centro",
+            *clases_botones,
+            *clases_aristas,
+        )

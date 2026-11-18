@@ -10,30 +10,30 @@
     --lvcp-secundario: #64627d;
     --lvcp-borde: #e8dfe9;
 
-    /* Máximos de presas: verde pastel */
-    --lvcp-maximos-fondo: #f3faf6;
-    --lvcp-maximos-borde: #bfe2cb;
-    --lvcp-maximos-titulo: #2b805e;
+    /* Maximos y minimos: gris perla (concepto general de ambas poblaciones) */
+    --lvcp-maximos-fondo: #f4f5f7;
+    --lvcp-maximos-borde: #d9dde4;
+    --lvcp-maximos-titulo: #334155;
 
     /* Períodos observados: durazno pastel */
     --lvcp-periodos-fondo: #fff8f1;
     --lvcp-periodos-borde: #ffd3ae;
-    --lvcp-periodos-titulo: #a95a19;
+    --lvcp-periodos-titulo: #334155;
 
     /* Supuestos: fondo blanco */
     --lvcp-supuestos-fondo: #ffffff;
     --lvcp-supuestos-borde: #e8dfe9;
     --lvcp-supuestos-titulo: #22204c;
 
-    /* Aproximación: violeta pastel */
-    --lvcp-aproximacion-fondo: #f7f3fd;
-    --lvcp-aproximacion-borde: #d9cbf1;
-    --lvcp-aproximacion-titulo: #6549a0;
+    /* Aproximacion matematica: gris perla */
+    --lvcp-aproximacion-fondo: #f4f5f7;
+    --lvcp-aproximacion-borde: #d9dde4;
+    --lvcp-aproximacion-titulo: #334155;
 
-    /* Ciclos equivalentes: rosa pastel */
-    --lvcp-equivalentes-fondo: #fcebf4;
-    --lvcp-equivalentes-borde: #ffb7d8;
-    --lvcp-equivalentes-titulo: #ac326b;
+    /* Ciclos equivalentes: gris perla, sin competir con ideas clave */
+    --lvcp-equivalentes-fondo: #f4f5f7;
+    --lvcp-equivalentes-borde: #d9dde4;
+    --lvcp-equivalentes-titulo: #334155;
 
     /* Separador de la nota del promedio */
     --lvcp-periodos-separador: #f4dabf;
@@ -252,4 +252,14 @@
         overflow-x: auto;
         overflow-y: hidden;
     }
+}
+
+/* Formula general de extremos: ajustar MathJax sin barras internas. */
+.lv-modal .lv-ciclos .lv-ciclos-formula-extremos {
+    font-size: 0.92rem;
+    min-width: 0;
+}
+
+.lv-modal .lv-ciclos .lv-ciclos-formula-extremos mjx-container {
+    max-width: 100%;
 }
