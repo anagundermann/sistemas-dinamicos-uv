@@ -490,3 +490,11 @@
         bottom: -9px;
     }
 }
+
+/* Ajuste fino de la tarjeta principal de Inicio */
+@media (min-width: 1250px) {
+    .sd-layout:not(.sd-layout-laboratorio)>#sd-contenido-pagina {
+        padding-right: 12px;
+        padding-top: 10px;
+    }
+}
